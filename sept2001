@@ -1,0 +1,41 @@
+The files in this directory were updated in September 2001.  
+
+   The tables are extended to level (conductor) 10000.
+
+   For levels up to 8000 fuller data exists, including determination
+   of the optimal curve in each isogeny class and the degree of the
+   modular parametrization.  The numbering of the curves in each class
+   (with the optimal curve #1, except for class 990H) may be taken as
+   canonical and standard in this range.
+
+   For levels 8001-10000 we give all curves in each isogeny class, but
+   the first curve is not known to be optimal (unless the class only
+   contains one curve, of course).  The numbering of the curves in
+   each class containing more than one curve should NOT be taken as
+   canonical and standard: it will change if the optimal curve turns
+   out to be not the currently labelled first curve.  It is likely
+   (based on past observation) that, where the first curve in a class
+   is not optimal, it is related to the optimal curve by a 2-isogeny.
+
+   In the range 8001-10000 we also do not have the modular degree (in
+   most cases).
+
+   For any individual level in the range 8001-10000, it is possible to
+   carry out the extra computations needed to fill these gaps
+   (determining the optimal curve and modular degree), but doing so
+   for all curves in the range would probably take a few months with
+   the current algorithms and programs.  An independent computation by
+   Mark Watkins <watkins@math.psu.edu> has determined, conditionally
+   on the Stevens conjecture, which curve in each class is optimal,
+   and has determined its modular degree.  Our results agree for all
+   levels up to 8000 and we expect them to agree in the higher range
+   also.
+
+   The computations above level 10000 are under way and will continue.
+
+Update 17/9/01: Added 5104B1 to files, omitted due to an error
+discovered while working on 2*5104=10208.  Checking has shown that no
+further omissions were made at around the same time.
+
+	   					JEC
+						September 2001

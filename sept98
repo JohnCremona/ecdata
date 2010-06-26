@@ -1,0 +1,40 @@
+The files in this directory were updated in September 1998.  
+
+The main changes are
+
+1. (February 1998) 
+
+15 extra newforms and 16 curves were added at levels 3371, 4009, 4021,
+4051, 4195, 4279, 4339, 4451, 4495 (1 extra newform, 2 isogenous
+curves), 4499, 4595, 4631 (2 extra newforms), 4799, 4961.  These were
+omitted in error earlier, apparently because of a bug in the sparse
+linear algebra procedures I was using.  This was discovered in
+November 1997 by R. Schulze-Pillot, who determined the existence of a
+curve of conductor 4799 whic was not in my earlier table.  As a
+result, I recomputed the number of newforms for every level up to 5077,
+finding 15 more.
+
+As a result, some of the numbers of curves as listed in the 2nd
+edition of the Book need adjusting, as follows:
+
+N		all	r=0	r=1	r=2	r=3
+
+3001-4000	*3837*	*1665*	(2006)	(166)	(0)
+4001-5000	*3962*	*1690*	*2092*	*180*	(0)
+
+   1-5077	*17598*	*8095*	*8959*	*603*	(1)
+
+where *...* denotes a corrected number.
+
+2. The extra computations required to both determine the "strong"
+curve in each class and also compute the degree of the modular
+parametrization deg(phi) have now been completed to conductor 5300.
+At this point I have generators for all the strong curves only.
+
+3. The modular degrees for N=912 were wrong, here and in the book (2nd
+   edition);  now corrected.
+
+4. Partial data from 5300 to 5500 is now here.  This should be
+   completed to level 6000 shortly.
+
+						September 1998

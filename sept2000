@@ -1,0 +1,42 @@
+The files in this directory were updated in September 2000.  
+
+1. The main changes are to complete all tables to level 6000.
+Previously there were 10 levels in the range 5460-6000 for which the
+data was incomplete, and these have been finally finished off.
+
+Some of the numbers of curves as listed in the 2nd edition of the Book
+need correcting or adjusting, as follows:
+
+N		all	r=0	r=1	r=2	r=3
+
+   1-1000	 2463	 1321	 1124     18     0
+1001-2000	 3391    1575	 1737     79     0
+2001-3000	 3661    1663	 1852	 146	 0 
+3001-4000	*3837*	*1665*	 2006 	 166 	 0 
+4001-5000	*3962*	*1690*	*2092*	*180*	 0 
+5001-6000	*4074*	*1638*	*2213*	*222*	 1 
+
+   1-5077	*17598*	*8095*	*8959*	*603*	 1 
+   1-6000	*21388* *9552* *11024*  *811*   *1*
+
+where *...* denotes a corrected or new number.
+
+2. At this point I have generators for all the "strong" curves only
+   except for levels <1000.
+
+3. The modular degrees for N=912 were wrong, here and in the book (2nd
+   edition);  now corrected and complete to 6000, in the file
+   degphi.1-6000, and also in the file curves.1-6000.
+
+4. The following are only available for conductors up to 1000: 
+
+   (a) bsd.1-1000, allbsd.1-1000: "raw" data for Table 4 of the book,
+   and its extension to all isogenous curves.
+
+   (b) allgenerators.1-1000: Generators for all isogenous curves.
+
+   (c) bigshas.1-1000:  Curves with (analytic) order of Sha >1: all
+   isogenous curves, but only up to 1000.
+
+
+					September 2000
