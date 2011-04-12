@@ -1,67 +1,64 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<HTML>
-<HEAD>
-   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
-   <META NAME="GENERATOR" CONTENT="Mozilla/4.05 [en] (X11; I; OSF1 V4.0 alpha) [Netscape]">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   
+   <meta name="GENERATOR" content="Mozilla/4.05 [en] (X11; I; OSF1 V4.0 alpha) [Netscape]">
 <title>Elliptic Curve Data</title>
-<link rel="shortcut icon" href="http://www.loria.fr/%7Ezimmerma/records/ECM1.ico"><!-- credit to Phil Carmody-->
-</HEAD>
-<BODY BGCOLOR="#FFFFFF">
+<link rel="shortcut icon" href="http://www.loria.fr/~zimmerma/records/ECM1.ico"><!-- credit to Phil Carmody-->
+</head>
+<body bgcolor="#FFFFFF">
 
-<CENTER>
-<H2>
-Elliptic Curve Data<BR>
-by J. E. Cremona<BR>
-University of Nottingham, U.K.</H2>
-<P>
-<I>
-Updated <A HREF="sept2006">2006-09-24</A>
+<center>
+<h2>
+Elliptic Curve Data<br>
+by J. E. Cremona<br>
+University of Warwick, U.K.</h2>
+<p>
+<i>
+Updated <a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/april2011">2011-04-08</a>
+</i>
+</p></center>
+
+<hr>
+<a href="./Elliptic Curve Data_files/Elliptic Curve Data.html">UK&nbsp;site</a>
+<br><a href="http://sage.math.washington.edu/cremona/INDEX.html">US
+mirror</a> (maintained by William Stein)
 <br>
-(with minor corrections on 2006-12-15, 2007-01-05)
-</I>
-</CENTER>
+<hr width="100%">
 
-<HR>
-<A HREF="http://www.maths.nott.ac.uk/personal/jec/ftp/data/">UK&nbsp;site</A>
-<BR><A HREF="http://modular.ucsd.edu/cremona/">US
-mirror</A> (maintained by William Stein)
-<BR>
-<HR WIDTH="100%">
-
-<P>
+<p>
 This site contains various data files concerning modular elliptic
 curves, in a standard format to make them easily readable by other
 programs. For a typeset version of the same data (with some extra data
 about local reduction data) for conductors up to 1000, you can refer
-to the book <A
-HREF="http://www.maths.nott.ac.uk/~jec/book/amec.html">Algorithms for
-modular elliptic curves </A>, CUP 1992, second revised edition 1997.
+to the book <a href="http://www.warwick.ac.uk/staff/J.E.Cremona/book/amec.html">Algorithms for
+modular elliptic curves </a>, CUP 1992, second revised edition 1997.
 See the book's web site for more information, including errata for the
 current (2nd) edition, and errata to the first edition (not maintained
-since the appearance of the second edition).&nbsp;&nbsp; The errata
+since the appearance of the second edition). The errata
 lists include errors and omissions in the tables. The files here have
 the corrected data in them.
-</P>
+</p>
 
-<P>
-<B>Note:</B> As of 2000 the book is out of print, and CUP have no
+<p>
+<b>Note:</b> As of 2000 the book is out of print, and CUP have no
 plans to reprint it.
-</P>
+</p>
 
-<P>
+<p>
 The files correspond to tables 1-5 in the book (Table 5 is not in the
-First Edition), with an additional "Table 6" giving the isogeny
-matrices between curves in each isogeny class. They are compressed with
-gzip, which adds the suffix ".gz" to the filename.&nbsp;&nbsp; You may
+First Edition), with additional tables: Table 6 gives the isogeny
+matrices between curves in each isogeny class, and Table 7 lists the
+integral points on each curve. They are compressed with
+gzip, which adds the suffix ".gz" to the filename.; You may
 need to uncompress after transfer using gunzip, or your browser might
 uncompress the files automatically for you to view them.
-</P>
+</p>
 
-<P>
-At present the tables contain data for conductors up to <B>130000</B>.
-</P>
+<p>
+The tables currently contain data for conductors up to <b>140000</b>.
+</p>
 
-<P>
+<p>
 From September 2005: New labelling scheme introduced for isogeny
 classes.  The old scheme started
 A,B,...,Z,AA,BB,...,ZZ,AAA,BBB,... and had become unwieldy.  The new
@@ -71,180 +68,194 @@ a,b,...,z,ba,bb,...bz,ca,cb,... .  The change to lower case is to make
 codes such as bb unambiguous between the old and new systems.  For
 conductors less than 1728 the number of isogeny classes is at most 25
 and the only change is from upper to lower case.
-</P>
+</p>
 
-<P>
+<p>
 We give all curves in each isogeny class.  For levels (or conductors)
-up to 50000, the first one listed in each class is the so-called
+up to 60000, the first one listed in each class is the so-called
 "optimal" or "strong Weil" curve attached to each newform (referred to
-as optimal curves from now on).  For levels above 50000 we have not
+as optimal curves from now on).  For levels above 60000 we have not
 yet determined which curve in each class is optimal (except, of
 course, where the class has only one curve); but thanks to Mark
 Watkins's program, we can say that the first curve listed is optimal
 conditional if the Stevens' conjecture is valid.  The optimal curve
 can be determined in any individual case, but this would take a long
 time to do for all remaining cases.  Hence the numbering of the curves
-within each class may change for conductors over 50000 --but only if
+within each class may change for conductors over 60000 --but only if
 Stevens's conjecture is false.  Some of the data is common to all
 curves in the isogeny class.
-</P>
-<P>
+</p>
+<p>
 The modular degrees for conductors over 12000 were computed
 using Mark Watkins's program.
-</P>
+</p>
+<p>
+Generators for many rank 1 curves were computed using Magma's
+HeegnerPoint function written by Mark Watkins.
+</p>
+<p>
+The integral points for all curves were computed using Sage (version
+3.1) in a new implementation due to Michael Mardaus, Tobias Nagel and
+JEC.  For conductors up to 1000 we have checked that these agree with
+Magma (version V2.14-14). <b>N.B.</b> It is known that these lists are
+in some cases incomplete, and they will be updated.
+</p>
 
-<HR>
+<hr>
 
-<H3>
+<h3>
 SUMMARY TABLES
-</H3>
+</h3>
 
-<UL>
-<LI> 
-<A HREF="count.00000-09999.gz">1-9999</A>,
-<A HREF="count.10000-19999.gz">10000-19999</A>,
-<A HREF="count.20000-29999.gz">20000-29999</A>,
-<A HREF="count.30000-39999.gz">30000-39999</A>,
-<A HREF="count.40000-49999.gz">40000-49999</A>,
-<A HREF="count.50000-59999.gz">50000-59999</A>,
-<A HREF="count.60000-69999.gz">60000-69999</A>,
-<A HREF="count.70000-79999.gz">70000-79999</A>,
-<A HREF="count.80000-89999.gz">80000-89999</A>,
-<A HREF="count.90000-99999.gz">90000-99999</A>,
-<A HREF="count.100000-109999.gz">100000-109999</A>,
-<A HREF="count.110000-119999.gz">110000-119999</A>,
-<A HREF="count.120000-129999.gz">120000-129999</A>
-<BR>
+<ul>
+<li> 
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/count.00000-09999.gz">1-9999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/count.10000-19999.gz">10000-19999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/count.20000-29999.gz">20000-29999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/count.30000-39999.gz">30000-39999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/count.40000-49999.gz">40000-49999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/count.50000-59999.gz">50000-59999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/count.60000-69999.gz">60000-69999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/count.70000-79999.gz">70000-79999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/count.80000-89999.gz">80000-89999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/count.90000-99999.gz">90000-99999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/count.100000-109999.gz">100000-109999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/count.110000-119999.gz">110000-119999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/count.120000-129999.gz">120000-129999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/count.130000-139999.gz">130000-139999</a>
+<br>
 
 Lists of number of curves (up to isogeny) of each individual conductor
 (each file is 10000 lines long)
 
-<LI> <A HREF="table.html">Table</A> showing number of curves of each
+</li><li> <a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/table.html">Table</a> showing number of curves of each
 range of 10000 conductors, sorted by rank
 
-</UL>
+</li></ul>
 
 
-<H3>
+<h3>
 TABLE ONE: CURVES
-</H3>
+</h3>
 
-<UL>
-<LI>
-<A HREF="allcurves.00000-09999.gz">1-9999</A>,
-<A HREF="allcurves.10000-19999.gz">10000-19999</A>,
-<A HREF="allcurves.20000-29999.gz">20000-29999</A>,
-<A HREF="allcurves.30000-39999.gz">30000-39999</A>,
-<A HREF="allcurves.40000-49999.gz">40000-49999</A>,
-<A HREF="allcurves.50000-59999.gz">50000-59999</A>,
-<A HREF="allcurves.60000-69999.gz">60000-69999</A>,
-<A HREF="allcurves.70000-79999.gz">70000-79999</A>,
-<A HREF="allcurves.80000-89999.gz">80000-89999</A>,
-<A HREF="allcurves.90000-99999.gz">90000-99999</A>,
-<A HREF="allcurves.100000-109999.gz">100000-109999</A>,
-<A HREF="allcurves.110000-119999.gz">110000-119999</A>,
-<A HREF="allcurves.120000-129999.gz">120000-129999</A>
+<ul>
+<li>
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allcurves.00000-09999.gz">1-9999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allcurves.10000-19999.gz">10000-19999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allcurves.20000-29999.gz">20000-29999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allcurves.30000-39999.gz">30000-39999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allcurves.40000-49999.gz">40000-49999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allcurves.50000-59999.gz">50000-59999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allcurves.60000-69999.gz">60000-69999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allcurves.70000-79999.gz">70000-79999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allcurves.80000-89999.gz">80000-89999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allcurves.90000-99999.gz">90000-99999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allcurves.100000-109999.gz">100000-109999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allcurves.110000-119999.gz">110000-119999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allcurves.120000-129999.gz">120000-129999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allcurves.130000-139999.gz">130000-139999</a>
 
-<P>
+<p>
 One entry for each isomorphism class of curves, giving conductor N,
 letter id for isogeny class, number of the curve in the class,
 coefficients of minimal Weierstrass equation, rank r, order of torsion
-subgroup |T|.  For all N up to 50000 the optimal Gamma_0(N) curve is
+subgroup |T|.  For all N up to 60000 the optimal Gamma_0(N) curve is
 the one labelled 1 (except for class 990h when it is the curve
-labelled 3). For N>50000, this is true conditional on Stevens'
+labelled 3). For N&gt;60000, this is true conditional on Stevens'
 Conjecture.
-</P>
+</p>
 
-<P>
+<p>
 Data format with sample line: 
-<table cellspacing=10 border=1>
-<tr>
+<table cellspacing="10" border="1">
+<tbody><tr>
 <th>N</th> <th>C</th> <th>#</th> <th>curve</th> <th>r</th> <th>t</th>
 </tr>
 <tr>
 <td>2730</td> <td>bd</td> <td>1</td> <td>[1,0,0,-25725,1577457]</td>
 <td>0</td> <td>12</td> </tr>
-</table>
+</tbody></table>
 where:
-<UL>
-<LI> <B>N</B> = conductor 
-<LI> <B>C</B> = isogeny class (letter(s))
-<LI> <B>#</B> = number of curve in class = 1 (except for 990h3)
-<LI> <B>curve</B> = curve coefficients in format [a1,a2,a3,a4,a6]
-<LI> <B>r</B> = rank
-<LI> <B>t</B> = order of torsion
-</UL>
+</p><ul>
+<li> <b>N</b> = conductor 
+</li><li> <b>C</b> = isogeny class (letter(s))
+</li><li> <b>#</b> = number of curve in class = 1 (except for 990h3)
+</li><li> <b>curve</b> = curve coefficients in format [a1,a2,a3,a4,a6]
+</li><li> <b>r</b> = rank
+</li><li> <b>t</b> = order of torsion
+</li></ul>
 
 
-<P>
+<p>
 Simple searches may be carried out with the unix/linux utility awk.
 For example: 
-<P>
-<UL>
-<LI>All curves with torsion of order 12:
-<P ALIGN=LEFT><TT>&nbsp;&nbsp;&nbsp;awk '$6==12' allcurves.* | sort -n
--k 1</TT></P>
-<LI>All curves (so far only 210e2, 46410cn2 and 82110bt2) with torsion
+</p><p>
+</p><ul>
+<li>All curves with torsion of order 12:
+<p align="LEFT"><tt>&nbsp;&nbsp;&nbsp;awk '$6==12' allcurves.* | sort -n
+-k 1</tt></p>
+</li><li>All curves (so far only 210e2, 46410cn2 and 82110bt2) with torsion
 of order 16: 
-<P ALIGN=LEFT><TT>&nbsp;&nbsp;&nbsp;awk '$6==16' allcurves.*</TT></P>
-<LI>All curves of rank 3:
-<P ALIGN=LEFT><TT>&nbsp;&nbsp;&nbsp;awk '$5==3' allcurves.* | sort -n
--k 1 </TT></P>
-</UL>
+<p align="LEFT"><tt>&nbsp;&nbsp;&nbsp;awk '$6==16' allcurves.*</tt></p>
+</li><li>All curves of rank 3:
+<p align="LEFT"><tt>&nbsp;&nbsp;&nbsp;awk '$5==3' allcurves.* | sort -n
+-k 1 </tt></p>
+</li></ul>
 
 If it is desired to have the curve coefficients in five separate
 fields with spaces as field separators, this can be achieved using
-scripts such as this: <P ALIGN=LEFT><TT>&nbsp;&nbsp;&nbsp;sed
-'s/[]\[,]/ /g' allcurves.00000-10000</TT></P>
+scripts such as this: <p align="LEFT"><tt>&nbsp;&nbsp;&nbsp;sed
+'s/[]\[,]/ /g' allcurves.00000-10000</tt></p>
 
 <!--
 <LI><A HREF="curves.1-1000.html">curves.1-1000.html</A>, experimental
 format for a table in html.
 -->
 
-</UL>
+</li></ul>
 
 
-<H3>
+<h3>
 TABLE TWO: GENERATORS
-</H3>
+</h3>
 
-<UL>
-<LI>
-<A HREF="allgens.00000-09999.gz">1-9999</A>,
-<A HREF="allgens.10000-19999.gz">10000-19999</A>,
-<A HREF="allgens.20000-29999.gz">20000-29999</A>,
-<A HREF="allgens.30000-39999.gz">30000-39999</A>,
-<A HREF="allgens.40000-49999.gz">40000-49999</A>,
-<A HREF="allgens.50000-59999.gz">50000-59999</A>,
-<A HREF="allgens.60000-69999.gz">60000-69999</A>,
-<A HREF="allgens.70000-79999.gz">70000-79999</A>,
-<A HREF="allgens.80000-89999.gz">80000-89999</A>,
-<A HREF="allgens.90000-99999.gz">90000-99999</A>,
-<A HREF="allgens.100000-109999.gz">100000-109999</A>,
-<A HREF="allgens.110000-119999.gz">110000-119999</A>,
-<A HREF="allgens.120000-129999.gz">120000-129999</A>
+<ul>
+<li>
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allgens.00000-09999.gz">1-9999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allgens.10000-19999.gz">10000-19999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allgens.20000-29999.gz">20000-29999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allgens.30000-39999.gz">30000-39999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allgens.40000-49999.gz">40000-49999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allgens.50000-59999.gz">50000-59999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allgens.60000-69999.gz">60000-69999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allgens.70000-79999.gz">70000-79999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allgens.80000-89999.gz">80000-89999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allgens.90000-99999.gz">90000-99999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allgens.100000-109999.gz">100000-109999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allgens.110000-119999.gz">110000-119999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allgens.120000-129999.gz">120000-129999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allgens.130000-139999.gz">130000-139999</a>
 
-<P>
+<p>
 For each curve of positive rank, generators are given for the Mordell
-group modulo torsion, in projective coordinates. <B>N.B.</B> In
+group, in projective coordinates. <b>N.B.</b> In
 <b>all</b> cases (as of 4/9/06) I have checked that the point(s) given
 are indeed generators (modulo torsion).  Each entry consists of
 conductor N, isogeny class code, number of curve in class, curve
-coefficients, rank r (>0), and r sets of three projective
+coefficients, rank r (&gt;0), and r sets of three projective
 coordinates. For example, the entry
-</P>
-<table cellspacing=20 border=1>
-<tr>
-<td>389<td>a<td>1<td>[0,1,1,-2,0]<td>2<td>[0:0:1]<td>[1:0:1]
-</tr>
-</table>
-<P>
+</p>
+<table cellspacing="20" border="1">
+<tbody><tr>
+<td>389</td><td>a</td><td>1</td><td>[0,1,1,-2,0]</td><td>2</td><td>[0:0:1]</td><td>[1:0:1]
+</td></tr>
+</tbody></table>
+<p>
 means that curve 389a1 = [0,1,1,-2,0] has rank 2 with generators [0:0:1]=(0,0)
 and [1:0:1]=(1,0), while the entry
-</P>
-<table cellspacing=2 border=1>
-<tr>
+</p>
+<table cellspacing="2" border="1">
+<tbody><tr>
 <td>4602</td>
 <td>a</td>
 <td>1</td>
@@ -252,112 +263,118 @@ and [1:0:1]=(1,0), while the entry
 <td>1</td>
 <td>[175781888357266265777015693706802984972253428834450486976370&nbsp;:&nbsp;19575260230015313702261379022151675961965157108920263594545223&nbsp;:&nbsp;11451799510178287699130942513632433218384249076487302907]</td>
 </tr>
-</table>
-<P>
+</tbody></table>
+<p>
 means that curve 4602a1 = [1,1,0,-37746035,-89296920339] has rank 1 with
 generator
-<PRE>
-&nbsp;77985922458974949246858229195945103471590&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 19575260230015313702261379022151675961965157108920263594545223
+</p><pre>&nbsp;77985922458974949246858229195945103471590&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 19575260230015313702261379022151675961965157108920263594545223
 [----------------------------------------- ,&nbsp;&nbsp;&nbsp;&nbsp;-------------------------------------------------------------- ]
 &nbsp;&nbsp;&nbsp;&nbsp;2254020761884782243^2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2254020761884782243^3
-</PRE>
+</pre>
+<b>N.B.</b> For N&gt;130000 the format of these files was changed to
+include information about the torsion, including the torsion group
+structure (in the form [] or [t] or [t1,t2]) and up to two torsion
+generators;  and there is therefore a line in the file for every
+curve, not just those of positive rank.  The files for N&lt;130000
+will be updated in due course.
+</li></ul>
 
-</UL>
 
-
-<H3>
+<h3>
 TABLE THREE: HECKE EIGENVALUES
-</H3>
+</h3>
 
-<UL>
-<LI>
-<A HREF="aplist.00000-09999.gz">1-9999</A>,
-<A HREF="aplist.10000-19999.gz">10000-19999</A>,
-<A HREF="aplist.20000-29999.gz">20000-29999</A>,
-<A HREF="aplist.30000-39999.gz">30000-39999</A>,
-<A HREF="aplist.40000-49999.gz">40000-49999</A>,
-<A HREF="aplist.50000-59999.gz">50000-59999</A>,
-<A HREF="aplist.60000-69999.gz">60000-69999</A>,
-<A HREF="aplist.70000-79999.gz">70000-79999</A>,
-<A HREF="aplist.80000-89999.gz">80000-89999</A>,
-<A HREF="aplist.90000-99999.gz">90000-99999</A>,
-<A HREF="aplist.100000-109999.gz">100000-109999</A>,
-<A HREF="aplist.110000-119999.gz">110000-119999</A>,
-<A HREF="aplist.120000-129999.gz">120000-129999</A>
-<BR>
+<ul>
+<li>
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/aplist.00000-09999.gz">1-9999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/aplist.10000-19999.gz">10000-19999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/aplist.20000-29999.gz">20000-29999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/aplist.30000-39999.gz">30000-39999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/aplist.40000-49999.gz">40000-49999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/aplist.50000-59999.gz">50000-59999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/aplist.60000-69999.gz">60000-69999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/aplist.70000-79999.gz">70000-79999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/aplist.80000-89999.gz">80000-89999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/aplist.90000-99999.gz">90000-99999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/aplist.100000-109999.gz">100000-109999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/aplist.110000-119999.gz">110000-119999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/aplist.120000-129999.gz">120000-129999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/aplist.130000-139999.gz">130000-139999</a>
+<br>
 Hecke eigenvalues for p&lt;100 for each of the corresponding newforms for
 Gamma_0(N). When p|N the entry is simply "+" or "-" and is a W-eigenvalue,
-as in Antwerp IV. When there are primes p|n with p>100 the corresponding
+as in Antwerp IV. When there are primes p|n with p&gt;100 the corresponding
 eigenvalue(s) are in extra column(s), as in
-<BR>
-<table cellspacing=10 border=1>
-<tr>
-<td>101<td>a<td>0<td>-2<td>-1<td>-2<td>-2<td>1<td>3<td>-5<td>1
-<td>-4<td>-9<td>-2<td>8<td>-8<td>7<td>-2
-<td>-14<td>4<td>2<td>13<td>8<td>-9<td>-4
-<td>14<td>2<td>+(101)
-</tr></table>
-<BR>
-<table cellspacing=10 border=1>
-<tr>
-<td>10201<td>a<td>0<td>2<td>-1<td>2<td>2<td>1<td>3<td>-5<td>
-1<td>4<td>-9<td>-2<td>-8<td>-8<td>7<td>2<td>14<td>-4<td>
--2<td>13<td>-8<td>-9<td>4<td>-14<td>2<td>+(101)</tr></table>
-<BR>
-<table cellspacing=10 border=1>
-<tr>
-<td>19153<td>a<td>2<td>0<td>-1<td>0<td>-4<td>7<td>-3<td>-3<td>-6<td>3<td>8<td>-2<td>0<td>1<td>1<td>0<td>15<td>6<td>
--13<td>12<td>-2<td>2<td>9<td>-9<td>-10<td>+(107)<td>-(179)
-</tr></table>
-<BR>
+<br>
+<table cellspacing="10" border="1">
+<tbody><tr>
+<td>101</td><td>a</td><td>0</td><td>-2</td><td>-1</td><td>-2</td><td>-2</td><td>1</td><td>3</td><td>-5</td><td>1
+</td><td>-4</td><td>-9</td><td>-2</td><td>8</td><td>-8</td><td>7</td><td>-2
+</td><td>-14</td><td>4</td><td>2</td><td>13</td><td>8</td><td>-9</td><td>-4
+</td><td>14</td><td>2</td><td>+(101)
+</td></tr></tbody></table>
+<br>
+<table cellspacing="10" border="1">
+<tbody><tr>
+<td>10201</td><td>a</td><td>0</td><td>2</td><td>-1</td><td>2</td><td>2</td><td>1</td><td>3</td><td>-5</td><td>
+1</td><td>4</td><td>-9</td><td>-2</td><td>-8</td><td>-8</td><td>7</td><td>2</td><td>14</td><td>-4</td><td>
+-2</td><td>13</td><td>-8</td><td>-9</td><td>4</td><td>-14</td><td>2</td><td>+(101)</td></tr></tbody></table>
+<br>
+<table cellspacing="10" border="1">
+<tbody><tr>
+<td>19153</td><td>a</td><td>2</td><td>0</td><td>-1</td><td>0</td><td>-4</td><td>7</td><td>-3</td><td>-3</td><td>-6</td><td>3</td><td>8</td><td>-2</td><td>0</td><td>1</td><td>1</td><td>0</td><td>15</td><td>6</td><td>
+-13</td><td>12</td><td>-2</td><td>2</td><td>9</td><td>-9</td><td>-10</td><td>+(107)</td><td>-(179)
+</td></tr></tbody></table>
+<br>
 so the total number of fields is 27, 28 or 29 on each line (assuming
 N&lt;1113121=101*103*107) 
-</UL>
+</li></ul>
 
 
-<H3>
+<h3>
 TABLE FOUR: BSD DATA and ANALYTIC ORDERS OF SHA
-</H3>
+</h3>
 
-<UL>
-<LI>
-<A HREF="bsd.1-1000.gz">1-1000</A>
-<P>
+<ul>
+<li>
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/bsd.1-1000.gz">1-1000</a>
+<p>
 Birch--Swinnerton-Dyer data for the first (strong Weil or optimal)
 curve in each class, exactly as in the book.  Column headings:
 Conductor, class id letter, rank, real period w, L^(r)(1)/r!,
 regulator R, rational factor, S. Here the rational factor is
 L^(r)(1)/wRr!; when r=0 this is exact and given as a pair of integers
-(numerator denominator); when r>0 it is approximate, but easily
+(numerator denominator); when r&gt;0 it is approximate, but easily
 recognisable. Lastly, S is the value of the order of the
 Tate-Shafarevich group as predicted by B-SD (the "analytic order of
 Sha"), given the previous data and also the local factors and
-torsion. When r=0 this is exact; when r>0 it is approximate, and was
+torsion. When r=0 this is exact; when r&gt;0 it is approximate, and was
 computed to several places but to save space is just entered as
-1.0. (S>1 in only 4 cases, where S=4 or 9).
-</P>
+1.0. (S&gt;1 in only 4 cases, where S=4 or 9).
+</p>
 
-<LI>
-<A HREF="allbsd.00000-09999.gz">1-9999</A>,
-<A HREF="allbsd.10000-19999.gz">10000-19999</A>,
-<A HREF="allbsd.20000-29999.gz">20000-29999</A>,
-<A HREF="allbsd.30000-39999.gz">30000-39999</A>,
-<A HREF="allbsd.40000-49999.gz">40000-49999</A>,
-<A HREF="allbsd.50000-59999.gz">50000-59999</A>,
-<A HREF="allbsd.60000-69999.gz">60000-69999</A>,
-<A HREF="allbsd.70000-79999.gz">70000-79999</A>,
-<A HREF="allbsd.80000-89999.gz">80000-89999</A>,
-<A HREF="allbsd.90000-99999.gz">90000-99999</A>,
-<A HREF="allbsd.100000-109999.gz">100000-109999</A>,
-<A HREF="allbsd.110000-119999.gz">110000-119999</A>,
-<A HREF="allbsd.120000-129999.gz">120000-129999</A>
-<BR>
+</li><li>
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbsd.00000-09999.gz">1-9999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbsd.10000-19999.gz">10000-19999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbsd.20000-29999.gz">20000-29999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbsd.30000-39999.gz">30000-39999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbsd.40000-49999.gz">40000-49999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbsd.50000-59999.gz">50000-59999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbsd.60000-69999.gz">60000-69999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbsd.70000-79999.gz">70000-79999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbsd.80000-89999.gz">80000-89999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbsd.90000-99999.gz">90000-99999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbsd.100000-109999.gz">100000-109999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbsd.110000-119999.gz">110000-119999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbsd.120000-129999.gz">120000-129999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbsd.130000-139999.gz">130000-139999</a>
+<br>
 Same as previous but with data for all the curves (not only the
-optimal ones) up to the current bound.   <BR>
+optimal ones) up to the current bound.   <br>
 Data format with sample lines: 
 
-<table cellspacing=10 border=1>
-<tr>
+<table cellspacing="10" border="1">
+<tbody><tr>
 <th>N</th><th>C</th><th>#</th><th>curve</th><th>r</th><th>t</th>
 <th>cp</th><th>om</th><th>L</th><th>R</th><th>S</th>
 </tr>
@@ -371,112 +388,116 @@ Data format with sample lines:
 <td>5077</td> <td>a</td> <td>1</td> <td>[0,0,1,-7,6]</td> <td>3</td> <td>1</td>
 <td>1</td> <td>4.151687983</td> <td>1.73184990</td> <td> 0.41714355</td> <td>1.00000000</td>
 </tr>
-</table>
+</tbody></table>
 where:
-<UL>
-<LI> <B>N</B> = conductor 
-<LI> <B>C</B> = isogeny class (letter(s))
-<LI> <B>#</B> = number of curve in class
-<LI> <B>curve</B> = curve coefficients in format [a1,a2,a3,a4,a6]
-<LI> <B>r</B> = rank
-<LI> <B>t</B> = order of torsion
-<LI> <B>cp</B> = product of Tamagawa factors <I>c<SUB>p</SUB></I>
-<LI> <B>om</B> = real period
-<LI> <B>L</B> = <I>L<SUP>(r)</SUP>(E,1)</I>/<i>r</i>!.
-<LI> <B>R</B> = Regulator
-<LI> <B>S</B> = (Analytic) order of Sha.
-</UL>
+<ul>
+<li> <b>N</b> = conductor 
+</li><li> <b>C</b> = isogeny class (letter(s))
+</li><li> <b>#</b> = number of curve in class
+</li><li> <b>curve</b> = curve coefficients in format [a1,a2,a3,a4,a6]
+</li><li> <b>r</b> = rank
+</li><li> <b>t</b> = order of torsion
+</li><li> <b>cp</b> = product of Tamagawa factors <i>c<sub>p</sub></i>
+</li><li> <b>om</b> = real period
+</li><li> <b>L</b> = <i>L<sup>(r)</sup>(E,1)</i>/<i>r</i>!.
+</li><li> <b>R</b> = Regulator
+</li><li> <b>S</b> = (Analytic) order of Sha.
+</li></ul>
 
 
-<LI>
-<A HREF="allbigsha.00000-09999.gz">1-9999</A>,
-<A HREF="allbigsha.10000-19999.gz">10000-19999</A>,
-<A HREF="allbigsha.20000-29999.gz">20000-29999</A>,
-<A HREF="allbigsha.30000-39999.gz">30000-39999</A>,
-<A HREF="allbigsha.40000-49999.gz">40000-49999</A>,
-<A HREF="allbigsha.50000-59999.gz">50000-59999</A>,
-<A HREF="allbigsha.60000-69999.gz">60000-69999</A>,
-<A HREF="allbigsha.70000-79999.gz">70000-79999</A>,
-<A HREF="allbigsha.80000-89999.gz">80000-89999</A>,
-<A HREF="allbigsha.90000-99999.gz">90000-99999</A>,
-<A HREF="allbigsha.100000-109999.gz">100000-109999</A>,
-<A HREF="allbigsha.110000-119999.gz">110000-119999</A>,
-<A HREF="allbigsha.120000-129999.gz">120000-129999</A>
-<BR>
+</li><li>
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbigsha.00000-09999.gz">1-9999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbigsha.10000-19999.gz">10000-19999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbigsha.20000-29999.gz">20000-29999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbigsha.30000-39999.gz">30000-39999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbigsha.40000-49999.gz">40000-49999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbigsha.50000-59999.gz">50000-59999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbigsha.60000-69999.gz">60000-69999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbigsha.70000-79999.gz">70000-79999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbigsha.80000-89999.gz">80000-89999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbigsha.90000-99999.gz">90000-99999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbigsha.100000-109999.gz">100000-109999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbigsha.110000-119999.gz">110000-119999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbigsha.120000-129999.gz">120000-129999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allbigsha.130000-139999.gz">130000-139999</a>
+<br>
 Lists of the curves with non-trivial Tate-Shafarevich group, according
 to the BSD conjecture; i.e., curves whose "analytic order of Sha" is
-greater than 1.  The record (to level 100000) is 676 for 95438a1.
-<LI>
-<A HREF="shas.html">shas.html</A><BR>
+greater than 1.  The record (to level 100000) is 784=28<sup>2</sup>
+for 138437c1.
+</li><li>
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/shas.html">shas.html</a><br>
 A summary table of large Shas.
-</UL>
+</li></ul>
 
 
-<H3>
+<h3>
 TABLE FIVE: PARAMETRIZATION DEGREES
-</H3>
+</h3>
 
-<UL>
-<LI>
-<A HREF="degphi.00000-09999.gz">1-9999</A>,
-<A HREF="degphi.10000-19999.gz">10000-19999</A>,
-<A HREF="degphi.20000-29999.gz">20000-29999</A>,
-<A HREF="degphi.30000-39999.gz">30000-39999</A>,
-<A HREF="degphi.40000-49999.gz">40000-49999</A>,
-<A HREF="degphi.50000-59999.gz">50000-59999</A>,
-<A HREF="degphi.60000-69999.gz">60000-69999</A>,
-<A HREF="degphi.70000-79999.gz">70000-79999</A>,
-<A HREF="degphi.80000-89999.gz">80000-89999</A>,
-<A HREF="degphi.90000-99999.gz">90000-99999</A>,
-<A HREF="degphi.100000-109999.gz">100000-109999</A>,
-<A HREF="degphi.110000-119999.gz">110000-119999</A>,
-<A HREF="degphi.120000-129999.gz">120000-129999</A>
-<BR>
+<ul>
+<li>
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/degphi.00000-09999.gz">1-9999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/degphi.10000-19999.gz">10000-19999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/degphi.20000-29999.gz">20000-29999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/degphi.30000-39999.gz">30000-39999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/degphi.40000-49999.gz">40000-49999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/degphi.50000-59999.gz">50000-59999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/degphi.60000-69999.gz">60000-69999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/degphi.70000-79999.gz">70000-79999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/degphi.80000-89999.gz">80000-89999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/degphi.90000-99999.gz">90000-99999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/degphi.100000-109999.gz">100000-109999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/degphi.110000-119999.gz">110000-119999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/degphi.120000-129999.gz">120000-129999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/degphi.130000-139999.gz">130000-139999</a>
+<br>
 A table of the degree of the modular parameterizations of each
-"optimal" or "strong Weil" curve.  For conductors greater than 23800
+"optimal" or "strong Weil" curve.  For conductors greater than 60000
 the optimality is conditional on Stevens' conjecture, and for
 conductors greater than 12000 the degree was computed using Mark
-Watkins's program <TT>ec</TT>.  Optimality and degrees for conductors
-greater than 50000 may become unconditional in due course.
-<BR>
+Watkins's program <tt>ec</tt>.  Optimality and degrees for conductors
+greater than 60000 may become unconditional in due course.
+<br>
 Data format with sample line: 
-<table cellspacing=10 border=1>
-<tr>
+<table cellspacing="10" border="1">
+<tbody><tr>
 <th>N</th> <th>id</th> <th>degree</th> <th>primes</th> <th>curve</th>
 </tr>
 <tr>
 <td>5077</td> <td>a 1</td> <td>1984</td> <td>{2,31}</td> <td>[0,0,1,-7,6]</td>
-</table>
+</tr></tbody></table>
 where "primes" is the set of primes dividing the degree.
-</UL>
+</li></ul>
 
-<H3>
+<h3>
 TABLE SIX: ISOGENY MATRICES
-</H3>
+</h3>
 
-<UL>
-<LI>
-<A HREF="allisog.00000-09999.gz">1-9999</A>,
-<A HREF="allisog.10000-19999.gz">10000-19999</A>,
-<A HREF="allisog.20000-29999.gz">20000-29999</A>,
-<A HREF="allisog.30000-39999.gz">30000-39999</A>,
-<A HREF="allisog.40000-49999.gz">40000-49999</A>,
-<A HREF="allisog.50000-59999.gz">50000-59999</A>,
-<A HREF="allisog.60000-69999.gz">60000-69999</A>,
-<A HREF="allisog.70000-79999.gz">70000-79999</A>,
-<A HREF="allisog.80000-89999.gz">80000-89999</A>,
-<A HREF="allisog.90000-99999.gz">90000-99999</A>,
-<A HREF="allisog.100000-109999.gz">100000-109999</A>,
-<A HREF="allisog.110000-119999.gz">110000-119999</A>,
-<A HREF="allisog.120000-129999.gz">120000-129999</A>
-<BR>
+<ul>
+<li>
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allisog.00000-09999.gz">1-9999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allisog.10000-19999.gz">10000-19999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allisog.20000-29999.gz">20000-29999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allisog.30000-39999.gz">30000-39999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allisog.40000-49999.gz">40000-49999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allisog.50000-59999.gz">50000-59999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allisog.60000-69999.gz">60000-69999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allisog.70000-79999.gz">70000-79999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allisog.80000-89999.gz">80000-89999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allisog.90000-99999.gz">90000-99999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allisog.100000-109999.gz">100000-109999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allisog.110000-119999.gz">110000-119999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allisog.120000-129999.gz">120000-129999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/allisog.130000-139999.gz">130000-139999</a>
+<br>
 A table giving the degrees of isogenies within each isogeny class
 (suggested by William Stein).   One row for each isogeny class.
 
-<BR>
+<br>
 Data format with sample line: 
-<table cellspacing=10 border=1>
-<tr>
+<table cellspacing="10" border="1">
+<tbody><tr>
 <th>N</th> <th>class</th> <th>#</th> <th>[a1,a2,a3,a4,a6]</th>
 <th>curves in the class</th>
 <th>isogeny matrix</th>
@@ -485,7 +506,7 @@ Data format with sample line:
 <td>14</td> <td>a</td> <td>1</td> <td>[1,0,1,4,-6]</td>
 <td>[[1,0,1,4,-6],[1,0,1,-36,-70],[1,0,1,-171,-874],[1,0,1,-1,0],[1,0,1,-2731,-55146],[1,0,1,-11,12]]</td>
 <td>[[0,2,3,3,0,0],[2,0,0,0,3,3],[3,0,0,0,2,0],[3,0,0,0,0,2],[0,3,2,0,0,0],[0,3,0,2,0,0]]</td>
-</table>
+</tr></tbody></table>
 where the isogeny matrix has (<i>i</i>,<i>j</i>) entry <i>l</i> when
 the there is an isogeny of prime degree <i>l</i> from curve <i>i</i>
 to curve <i>j</i>. 
@@ -493,21 +514,57 @@ to curve <i>j</i>.
 <b>Warning:</b> in most <b>but not all</b> cases, the order of the curves in
 the class here is the same as in the main table of curves.  
 The discrepancies are rare for conductors greater than 30000.
-</UL>
+</li></ul>
+
+<h3>
+TABLE SEVEN: INTEGRAL POINTS
+</h3>
+
+<ul>
+<li>
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/intpts.00000-09999.gz">1-9999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/intpts.10000-19999.gz">10000-19999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/intpts.20000-29999.gz">20000-29999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/intpts.30000-39999.gz">30000-39999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/intpts.40000-49999.gz">40000-49999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/intpts.50000-59999.gz">50000-59999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/intpts.60000-69999.gz">60000-69999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/intpts.70000-79999.gz">70000-79999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/intpts.80000-89999.gz">80000-89999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/intpts.90000-99999.gz">90000-99999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/intpts.100000-109999.gz">100000-109999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/intpts.110000-119999.gz">110000-119999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/intpts.120000-129999.gz">120000-129999</a>,
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/intpts.130000-139999.gz">130000-139999</a>
+<br>
+A table giving the x-coordinates of all integral points on all
+curves. <b>Corrected</b> 2009-01-01, but still incomplete.
+
+<br>
+Data format with sample line: 
+<table cellspacing="10" border="1">
+<tbody><tr>
+<th>Curve</th> <th>[a1,a2,a3,a4,a6]</th>
+<th align="left">x-coordinates of integral points</th>
+</tr>
+<tr>
+
+<td>114114bz1</td>
+<td>[1,0,0,-858375,380956041]</td>
+<td>[-1098,-1042,-990,-954,-756,-522,-426,-72,36,102,270,354,414,498,596,630,726,918,960,1334,1590,1818,1974,2702,3006,3690,5250,6966,8352,9702,18054,24438,31848,48150,119988,295254,913014]</td>
+</tr></tbody></table>
+</li></ul>
 
 
-<HR>
-<P><B>Recent update notes</B>:&nbsp; <A HREF="sept2006">24 September 2006</A>
+<hr>
+<p><b>Recent update notes</b>:&nbsp; <a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/april2011">8 April 2011</a>
+</p><hr>
+
+<tt>john dot cremona at gmail dot com</tt>
+
+
 <hr>
 
-<tt>&#74;&#111;&#104;&#110;&#46;&#67;&#114;&#101;&#109;&#111;&#110;&#97;&#64;&#110;&#111;&#116;&#116;&#105;&#110;&#103;&#104;&#97;&#109;&#46;&#97;&#99;&#46;&#117;&#107;</tt>
 
-
-<hr>
-<p>
-      <a href="http://validator.w3.org/check?uri=referer"><img border="0"
-          src="http://www.w3.org/Icons/valid-html401"
-          alt="Valid HTML 4.01!" height="31" width="88"></a>
-    </p>
-</BODY>
-</HTML>
+</body>
+</html>
