@@ -1,4 +1,9 @@
-Last major update: 8/04/011
+Last minor update: 12/04/2011
+Last major update: 08/04/2011
+
+12/04/11 * Corrected paricurves.130000-139999 (deleted extraneous
+           Pythonic Ls)
+         * Corrected L''(1) and |Sha| for 135014r1  
 
 08/04/11 * Added all data for 130000-139999
          * Changed allgens format to include torsion (so there is one
