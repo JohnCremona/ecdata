@@ -1,5 +1,9 @@
-Last minor update: 12/04/2011
+Last minor update: 15/04/2011
 Last major update: 08/04/2011
+
+15/04/11 * Updated allgens.n0000-n9999 for n in 0..12 to include
+	   torsion generators and rank 0 curves.  Updated INDEX to
+	   reflect this.
 
 12/04/11 * Corrected paricurves.130000-139999 (deleted extraneous
            Pythonic Ls)
