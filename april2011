@@ -1,5 +1,8 @@
-Last minor update: 15/04/2011
+Last minor update: 21/04/2011
 Last major update: 08/04/2011
+
+21/04/11 * Updated intpts.130000-139999 (data for 130416 was garbled),
+           thanks to Geoff bailey.
 
 15/04/11 * Updated allgens.n0000-n9999 for n in 0..12 to include
 	   torsion generators and rank 0 curves.  Updated INDEX to
