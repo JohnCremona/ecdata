@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   
+
    <meta name="GENERATOR" content="Mozilla/4.05 [en] (X11; I; OSF1 V4.0 alpha) [Netscape]">
 <title>Elliptic Curve Data</title>
 <link rel="shortcut icon" href="http://www.loria.fr/~zimmerma/records/ECM1.ico"><!-- credit to Phil Carmody-->
@@ -14,12 +14,12 @@ by J. E. Cremona<br>
 University of Warwick, U.K.</h2>
 <p>
 <i>
-Updated <a href="sept2011">2011-09-15</a>
+Updated <a href="oct2011">2011-10-26</a>
 </i>
 </p></center>
 
 <hr>
-<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/INDEX.html">UK&nbsp;site</a> 
+<a href="http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/INDEX.html">UK&nbsp;site</a>
 <br><a href="http://sage.math.washington.edu/cremona/INDEX.html">US
 mirror</a> (maintained by William Stein)
 <br>
@@ -55,7 +55,7 @@ uncompress the files automatically for you to view them.
 </p>
 
 <p>
-The tables currently contain data for conductors up to <b>190000</b>.
+The tables currently contain data for conductors up to <b>200000</b>.
 </p>
 
 <p>
@@ -109,7 +109,7 @@ SUMMARY TABLES
 </h3>
 
 <ul>
-<li> 
+<li>
 <a href="count.00000-09999.gz">1-9999</a>,
 <a href="count.10000-19999.gz">10000-19999</a>,
 <a href="count.20000-29999.gz">20000-29999</a>,
@@ -128,7 +128,8 @@ SUMMARY TABLES
 <a href="count.150000-159999.gz">150000-159999</a>,
 <a href="count.160000-169999.gz">160000-169999</a>,
 <a href="count.170000-179999.gz">170000-179999</a>,
-<a href="count.180000-189999.gz">180000-189999</a>
+<a href="count.180000-189999.gz">180000-189999</a>,
+<a href="count.190000-199999.gz">190000-199999</a>
 <br>
 
 Lists of number of curves (up to isogeny) of each individual conductor
@@ -164,7 +165,8 @@ TABLE ONE: CURVES
 <a href="allcurves.150000-159999.gz">150000-159999</a>,
 <a href="allcurves.160000-169999.gz">160000-169999</a>,
 <a href="allcurves.170000-179999.gz">170000-179999</a>,
-<a href="allcurves.180000-189999.gz">180000-189999</a>
+<a href="allcurves.180000-189999.gz">180000-189999</a>,
+<a href="allcurves.190000-199999.gz">190000-199999</a>
 
 <p>
 One entry for each isomorphism class of curves, giving conductor N,
@@ -177,7 +179,7 @@ Conjecture.
 </p>
 
 <p>
-Data format with sample line: 
+Data format with sample line:
 <table cellspacing="10" border="1">
 <tbody><tr>
 <th>N</th> <th>C</th> <th>#</th> <th>curve</th> <th>r</th> <th>t</th>
@@ -188,7 +190,7 @@ Data format with sample line:
 </tbody></table>
 where:
 </p><ul>
-<li> <b>N</b> = conductor 
+<li> <b>N</b> = conductor
 </li><li> <b>C</b> = isogeny class (letter(s))
 </li><li> <b>#</b> = number of curve in class = 1 (except for 990h3)
 </li><li> <b>curve</b> = curve coefficients in format [a1,a2,a3,a4,a6]
@@ -199,14 +201,14 @@ where:
 
 <p>
 Simple searches may be carried out with the unix/linux utility awk.
-For example: 
+For example:
 </p><p>
 </p><ul>
 <li>All curves with torsion of order 12:
 <p align="LEFT"><tt>&nbsp;&nbsp;&nbsp;awk '$6==12' allcurves.* | sort -n
 -k 1</tt></p>
-</li><li>All curves (so far only 210e2, 46410cn2 and 82110bt2) with torsion
-of order 16: 
+</li><li>All curves (so far only 210e2, 46410cn2, 82110bt2 and 110670cp2) with torsion
+of order 16:
 <p align="LEFT"><tt>&nbsp;&nbsp;&nbsp;awk '$6==16' allcurves.*</tt></p>
 </li><li>All curves of rank 3:
 <p align="LEFT"><tt>&nbsp;&nbsp;&nbsp;awk '$5==3' allcurves.* | sort -n
@@ -250,7 +252,8 @@ TABLE TWO: GENERATORS
 <a href="allgens.150000-159999.gz">150000-159999</a>,
 <a href="allgens.160000-169999.gz">160000-169999</a>,
 <a href="allgens.170000-179999.gz">170000-179999</a>,
-<a href="allgens.180000-189999.gz">180000-189999</a>
+<a href="allgens.180000-189999.gz">180000-189999</a>,
+<a href="allgens.190000-199999.gz">190000-199999</a>
 
 <p>
 For every curve, generators are given for the Mordell group, in
@@ -324,7 +327,8 @@ TABLE THREE: HECKE EIGENVALUES
 <a href="aplist.150000-159999.gz">150000-159999</a>,
 <a href="aplist.160000-169999.gz">160000-169999</a>,
 <a href="aplist.170000-179999.gz">170000-179999</a>,
-<a href="aplist.180000-189999.gz">180000-189999</a>
+<a href="aplist.180000-189999.gz">180000-189999</a>,
+<a href="aplist.190000-199999.gz">190000-199999</a>
 <br>
 Hecke eigenvalues for p&lt;100 for each of the corresponding newforms for
 Gamma_0(N). When p|N the entry is simply "+" or "-" and is a W-eigenvalue,
@@ -352,7 +356,7 @@ eigenvalue(s) are in extra column(s), as in
 </td></tr></tbody></table>
 <br>
 so the total number of fields is 27, 28 or 29 on each line (assuming
-N&lt;1113121=101*103*107) 
+N&lt;1113121=101*103*107)
 </li></ul>
 
 
@@ -397,11 +401,12 @@ computed to several places but to save space is just entered as
 <a href="allbsd.150000-159999.gz">150000-159999</a>,
 <a href="allbsd.160000-169999.gz">160000-169999</a>,
 <a href="allbsd.170000-179999.gz">170000-179999</a>,
-<a href="allbsd.180000-189999.gz">180000-189999</a>
+<a href="allbsd.180000-189999.gz">180000-189999</a>,
+<a href="allbsd.190000-199999.gz">190000-199999</a>
 <br>
 Same as previous but with data for all the curves (not only the
 optimal ones) up to the current bound.   <br>
-Data format with sample lines: 
+Data format with sample lines:
 
 <table cellspacing="10" border="1">
 <tbody><tr>
@@ -421,7 +426,7 @@ Data format with sample lines:
 </tbody></table>
 where:
 <ul>
-<li> <b>N</b> = conductor 
+<li> <b>N</b> = conductor
 </li><li> <b>C</b> = isogeny class (letter(s))
 </li><li> <b>#</b> = number of curve in class
 </li><li> <b>curve</b> = curve coefficients in format [a1,a2,a3,a4,a6]
@@ -454,17 +459,19 @@ where:
 <a href="allbigsha.150000-159999.gz">150000-159999</a>,
 <a href="allbigsha.160000-169999.gz">160000-169999</a>,
 <a href="allbigsha.170000-179999.gz">170000-179999</a>,
-<a href="allbigsha.180000-189999.gz">180000-189999</a>
+<a href="allbigsha.180000-189999.gz">180000-189999</a>,
+<a href="allbigsha.190000-199999.gz">190000-199999</a>
 <br>
 Lists of the curves with non-trivial Tate-Shafarevich group, according
 to the BSD conjecture; i.e., curves whose "analytic order of Sha" is
-greater than 1.  The record (to conductor 180000) is 5625=75<sup>2</sup>
+greater than 1.  The record (to conductor 200000) is 5625=75<sup>2</sup>
 for 165066d3.
 </li><li>
 <a href="shas.html">shas.html</a><br>
-A summary table of large Shas.  Note that (up to conductor 180000)
-there are 85047 elliptic curves with nontrivial Sha, all with rank
-either 0 (79353 curves) or 1 (5694 curves).
+A summary table of large Shas.  Note that (up to conductor 200000)
+there are 89959 elliptic curves with nontrivial Sha, with ranks
+0 (83866 curves),  1 (6091 curves) or 2 (2 curves, namely
+194040co6 and 194766c4.
 </li></ul>
 
 
@@ -492,7 +499,8 @@ TABLE FIVE: PARAMETRIZATION DEGREES
 <a href="degphi.150000-159999.gz">150000-159999</a>,
 <a href="degphi.160000-169999.gz">160000-169999</a>,
 <a href="degphi.170000-179999.gz">170000-179999</a>,
-<a href="degphi.180000-189999.gz">180000-189999</a>
+<a href="degphi.180000-189999.gz">180000-189999</a>,
+<a href="degphi.190000-199999.gz">190000-199999</a>
 <br>
 A table of the degree of the modular parameterizations of each
 "optimal" or "strong Weil" curve.  For conductors greater than 60000
@@ -500,9 +508,9 @@ the optimality is conditional on Stevens' conjecture, and for
 conductors greater than 12000 the degree was computed using Mark
 Watkins's programs <tt>ec</tt> and <tt>sympow</tt>.  Optimality and
 degrees for conductors greater than 60000 may become unconditional in
-due course. 
+due course.
 <br>
-Data format with sample line: 
+Data format with sample line:
 <table cellspacing="10" border="1">
 <tbody><tr>
 <th>N</th> <th>id</th> <th>degree</th> <th>primes</th> <th>curve</th>
@@ -537,13 +545,14 @@ TABLE SIX: ISOGENY MATRICES
 <a href="allisog.150000-159999.gz">150000-159999</a>,
 <a href="allisog.160000-169999.gz">160000-169999</a>,
 <a href="allisog.170000-179999.gz">170000-179999</a>,
-<a href="allisog.180000-189999.gz">180000-189999</a>
+<a href="allisog.180000-189999.gz">180000-189999</a>,
+<a href="allisog.190000-199999.gz">190000-199999</a>
 <br>
 A table giving the degrees of isogenies within each isogeny class
 (suggested by William Stein).   One row for each isogeny class.
 
 <br>
-Data format with sample line: 
+Data format with sample line:
 <table cellspacing="10" border="1">
 <tbody><tr>
 <th>N</th> <th>class</th> <th>#</th> <th>[a1,a2,a3,a4,a6]</th>
@@ -557,10 +566,10 @@ Data format with sample line:
 </tr></tbody></table>
 where the isogeny matrix has (<i>i</i>,<i>j</i>) entry <i>l</i> when
 the there is an isogeny of prime degree <i>l</i> from curve <i>i</i>
-to curve <i>j</i>. 
+to curve <i>j</i>.
 <br>
 <b>Warning:</b> in most <b>but not all</b> cases, the order of the curves in
-the class here is the same as in the main table of curves.  
+the class here is the same as in the main table of curves.
 The discrepancies are rare for conductors greater than 30000.
 </li></ul>
 
@@ -588,13 +597,14 @@ TABLE SEVEN: INTEGRAL POINTS
 <a href="intpts.150000-159999.gz">150000-159999</a>,
 <a href="intpts.160000-169999.gz">160000-169999</a>,
 <a href="intpts.170000-179999.gz">170000-179999</a>,
-<a href="intpts.180000-189999.gz">180000-189999</a>
+<a href="intpts.180000-189999.gz">180000-189999</a>,
+<a href="intpts.190000-199999.gz">190000-199999</a>
 <br>
 A table giving the x-coordinates of (almost) all integral points on all
 curves. <b>Corrected</b> 2009-01-01, but still incomplete.
 
 <br>
-Data format with sample line: 
+Data format with sample line:
 <table cellspacing="10" border="1">
 <tbody><tr>
 <th>Curve</th> <th>[a1,a2,a3,a4,a6]</th>
@@ -610,7 +620,7 @@ Data format with sample line:
 
 
 <hr>
-<p><b>Recent update notes</b>:&nbsp; <a href="sept2011">September 2011</a>
+<p><b>Recent update notes</b>:&nbsp; <a href="oct2011">October 2011</a>
 </p><hr>
 
 <tt>john dot cremona at gmail dot com</tt>
