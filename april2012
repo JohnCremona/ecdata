@@ -1,5 +1,9 @@
 Last major update: 02/03/2012
 
+02/04/12 * Fixed spacing in allcurves.9* and allcurves.12*
+         * Added alllabels.* files giving the map from Cremona labels
+           to LMFDB labels
+
 27/03/12 * Changed all allgens files for non-cyclic torsion groups so
            that the torsion generator orders match the group invariants.
 
