@@ -1,4 +1,7 @@
 Last major update: 02/03/2012
+Last minor update: 07/04/2012
+
+07/04/12 * Added alldegphi.* files giving the modular degrees for all curves
 
 02/04/12 * Fixed spacing in allcurves.9* and allcurves.12*
          * Added alllabels.* files giving the map from Cremona labels
