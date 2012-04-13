@@ -71,35 +71,34 @@ and the only change is from upper to lower case.
 </p>
 
 <p>
-We give all curves in each isogeny class.  For levels (or conductors)
-up to 60000, the first one listed in each class is the so-called
-"optimal" or "strong Weil" curve attached to each newform (referred to
-as optimal curves from now on).  For levels above 60000 we have not
-yet determined which curve in each class is optimal (except, of
-course, where the class has only one curve); but thanks to Mark
-Watkins's program, we can say that the first curve listed is optimal
-conditional if the Stevens' conjecture is valid.  The optimal curve
-can be determined in any individual case, but this would take a long
-time to do for all remaining cases.  Hence the numbering of the curves
-within each class may change for conductors over 60000 --but only if
-Stevens's conjecture is false.  Some of the data is common to all
-curves in the isogeny class.
+We give all curves in each isogeny class.  For all classes of curves
+of conductor less than 60000, and many others, the first one listed in
+each class is proved to be the so-called "optimal" or "strong Weil"
+curve attached to each newform (referred to as optimal curves from now
+on).  For conductors above 60000, see the
+section <a href="#optimality">"Optimality and the Manin constant"</a>
+below.
+</p>
+<p>
+Some of the data is common to all curves in the isogeny class.
 </p>
 <p>
 The modular degrees for conductors over 12000 were computed
-using Mark Watkins's program.
+using Mark Watkins's programs <tt>ec</tt> and <tt>sympow</tt>.
 </p>
 <p>
-Generators for many rank 1 curves were computed using Magma's
-HeegnerPoint function written by Mark Watkins.
+Generators for many rank 1 curves were computed using either Magma's
+<tt>HeegnerPoint</tt> function (written by Mark Watkins) or
+GP's <tt>ellheegner</tt> function written by Christophe Delaunay and
+Bill Allombert, based on the same ideas of Delaunay and Watkins.
 </p>
 <p>
-The integral points for all curves were computed using Sage (version
-3.1) in a new implementation due to Michael Mardaus, Tobias Nagel and
-JEC.  For conductors up to 1000 we have checked that these agree with
-Magma (version V2.14-14). <b>N.B.</b> It is known that these lists are
-in some cases incomplete, due to bugs in the program mentioned; they
-need to be corrected.
+The integral points for all curves were computed using Sage in a new
+implementation due to Michael Mardaus, Tobias Nagel and JEC.  For
+conductors up to 1000 we have checked that these agree with Magma
+(version V2.14-14). <b>N.B.</b> It is known that these lists are in
+some cases incomplete, due to bugs in the program mentioned; they need
+to be corrected.
 </p>
 
 <hr>
@@ -178,10 +177,12 @@ TABLE ONE: CURVES
 One entry for each isomorphism class of curves, giving conductor N,
 letter id for isogeny class, number of the curve in the class,
 coefficients of minimal Weierstrass equation, rank r, order of torsion
-subgroup |T|.  For all N up to 60000 the optimal Gamma_0(N) curve is
-the one labelled 1 (except for class 990h when it is the curve
-labelled 3). For N&gt;60000, this is true conditional on Stevens'
-Conjecture.
+subgroup |T|.  For all N up to 60000 the optimal
+&Gamma;<sub>0</sub>(N) curve is the one labelled 1 (except for class
+990h when it is the curve labelled 3). For N&gt;60000, this is
+probably also true, but in some cases remains conditional on Stevens'
+Conjecture (see the section <a href="#optimality">"Optimality and the
+Manin constant"</a> below).
 </p>
 
 <p>
@@ -343,7 +344,7 @@ TABLE THREE: HECKE EIGENVALUES
 <a href="aplist.220000-229999.gz">220000-229999</a>
 <br>
 Hecke eigenvalues for p&lt;100 for each of the corresponding newforms for
-Gamma_0(N). When p|N the entry is simply "+" or "-" and is a W-eigenvalue,
+&Gamma;<sub>0</sub>(N). When p|N the entry is simply "+" or "-" and is a W-eigenvalue,
 as in Antwerp IV. When there are primes p|n with p&gt;100 the corresponding
 eigenvalue(s) are in extra column(s), as in
 <br>
@@ -380,7 +381,7 @@ TABLE FOUR: BSD DATA and ANALYTIC ORDERS OF SHA
 <li>
 <a href="bsd.1-1000.gz">1-1000</a>
 <p>
-Birch--Swinnerton-Dyer data for the first (strong Weil or optimal)
+Birch--Swinnerton-Dyer data for the optimal
 curve in each class, exactly as in the book.  Column headings:
 Conductor, class id letter, rank, real period w, L^(r)(1)/r!,
 regulator R, rational factor, S. Here the rational factor is
@@ -499,6 +500,7 @@ TABLE FIVE: PARAMETRIZATION DEGREES
 
 <ul>
 <li>
+Optimal curves:<br>
 <a href="degphi.00000-09999.gz">1-9999</a>,
 <a href="degphi.10000-19999.gz">10000-19999</a>,
 <a href="degphi.20000-29999.gz">20000-29999</a>,
@@ -523,13 +525,7 @@ TABLE FIVE: PARAMETRIZATION DEGREES
 <a href="degphi.210000-219999.gz">210000-219999</a>,
 <a href="degphi.220000-229999.gz">220000-229999</a>
 <br>
-A table of the degree of the modular parameterizations of each
-"optimal" or "strong Weil" curve.  For conductors greater than 60000
-the optimality is conditional on Stevens' conjecture, and for
-conductors greater than 12000 the degree was computed using Mark
-Watkins's programs <tt>ec</tt> and <tt>sympow</tt>.  Optimality and
-degrees for conductors greater than 60000 may become unconditional in
-due course.
+A table of the degree of the modular parameterizations of each optimal curve.
 <br>
 Data format with sample line:
 <table cellspacing="10" border="1">
@@ -540,7 +536,53 @@ Data format with sample line:
 <td>5077</td> <td>a 1</td> <td>1984</td> <td>{2,31}</td> <td>[0,0,1,-7,6]</td>
 </tr></tbody></table>
 where "primes" is the set of primes dividing the degree.
-</li></ul>
+</li>
+
+<li>
+All curves:<br>
+<a href="alldegphi.00000-09999.gz">1-9999</a>,
+<a href="alldegphi.10000-19999.gz">10000-19999</a>,
+<a href="alldegphi.20000-29999.gz">20000-29999</a>,
+<a href="alldegphi.30000-39999.gz">30000-39999</a>,
+<a href="alldegphi.40000-49999.gz">40000-49999</a>,
+<a href="alldegphi.50000-59999.gz">50000-59999</a>,
+<a href="alldegphi.60000-69999.gz">60000-69999</a>,
+<a href="alldegphi.70000-79999.gz">70000-79999</a>,
+<a href="alldegphi.80000-89999.gz">80000-89999</a>,
+<a href="alldegphi.90000-99999.gz">90000-99999</a>,
+<a href="alldegphi.100000-109999.gz">100000-109999</a>,
+<a href="alldegphi.110000-119999.gz">110000-119999</a>,
+<a href="alldegphi.120000-129999.gz">120000-129999</a>,
+<a href="alldegphi.130000-139999.gz">130000-139999</a>,
+<a href="alldegphi.140000-149999.gz">140000-149999</a>,
+<a href="alldegphi.150000-159999.gz">150000-159999</a>,
+<a href="alldegphi.160000-169999.gz">160000-169999</a>,
+<a href="alldegphi.170000-179999.gz">170000-179999</a>,
+<a href="alldegphi.180000-189999.gz">180000-189999</a>,
+<a href="alldegphi.190000-199999.gz">190000-199999</a>,
+<a href="alldegphi.200000-209999.gz">200000-209999</a>,
+<a href="alldegphi.210000-219999.gz">210000-219999</a>,
+<a href="alldegphi.220000-229999.gz">220000-229999</a>
+<br>
+A table of the degree of the modular parameterizations of every curve.
+<br>
+Data format with sample line:
+<table cellspacing="10" border="1">
+<tbody><tr>
+<th>N</th> <th>id</th> <th>#</th> <th>curve</th> <th>degree</th>
+</tr>
+<tr>
+<td>11</td> <td>a</td> <td>1</td> <td>[0,-1,1,-10,-20]</td> <td> 1</td>
+</tr>
+<tr>
+<td>11</td> <td>a</td> <td>2</td> <td>[0,-1,1,-7820,-263580]</td> <td> 5</td>
+</tr>
+<tr>
+<td>11</td> <td>a</td> <td>3</td> <td>[0,-1,1,0,0]</td> <td> 5</td>
+</tr></tbody></table>
+</li>
+
+</ul>
 
 <h3>
 TABLE SIX: ISOGENY MATRICES
@@ -572,8 +614,7 @@ TABLE SIX: ISOGENY MATRICES
 <a href="allisog.210000-219999.gz">210000-219999</a>,
 <a href="allisog.220000-229999.gz">220000-229999</a>
 <br>
-A table giving the degrees of isogenies within each isogeny class
-(suggested by William Stein).   One row for each isogeny class.
+A table giving the degrees of isogenies within each isogeny class.   One row for each isogeny class.
 
 <br>
 Data format with sample line:
@@ -588,8 +629,10 @@ Data format with sample line:
 <td>[[1,0,1,4,-6],[1,0,1,-36,-70],[1,0,1,-171,-874],[1,0,1,-1,0],[1,0,1,-2731,-55146],[1,0,1,-11,12]]</td>
 <td>[[0,2,3,3,0,0],[2,0,0,0,3,3],[3,0,0,0,2,0],[3,0,0,0,0,2],[0,3,2,0,0,0],[0,3,0,2,0,0]]</td>
 </tr></tbody></table>
-where the isogeny matrix has (<i>i</i>,<i>j</i>) entry <i>l</i> when
+where for N&lt;130000 the isogeny matrix has (<i>i</i>,<i>j</i>) entry <i>l</i> when
 the there is an isogeny of prime degree <i>l</i> from curve <i>i</i>
+to curve <i>j</i>, otherwise 0, and for N&ge;130000 the isogeny matrix has (<i>i</i>,<i>j</i>) entry <i>d</i> when
+the there is a cyclic isogeny of degree <i>d</i> from curve <i>i</i>
 to curve <i>j</i>.
 <br>
 <b>Warning:</b> in most <b>but not all</b> cases, the order of the curves in
@@ -645,6 +688,70 @@ Data format with sample line:
 </tr></tbody></table>
 </li></ul>
 
+<h3>
+<a NAME="optimality">TABLE EIGHT: OPTIMALITY AND THE MANIN CONSTANT</a>
+</h3>
+
+<ul>
+<li>
+<p>
+For isogeny classes of curves of conductor greater than 60000, we have
+not yet determined in all cases which curve in each class is optimal.
+However, in all cases we have verified that the Manin constant of the
+optimal curve is equal to 1 (as it is conjectured to be for every
+optimal curve), even in cases where we do not know for sure which
+curve is optimal.
+</p>
+<p>
+While we could (using our modular symbols programs) determine the
+optimal curve in any individual case, this would take a long time to
+do for all remaining cases.  For more details on this, see my Appendix
+to the paper "The Manin Constant" by Amod Agashe, Ken Ribet and
+William Stein [Pure and Applied Mathematics Quarterly, Vol. 2 no.2
+(2006), pp. 617-636.] and <a href="manin.txt">these notes</a> updating
+the results for all conductors to 230000.  These updated results
+include the verification that Manin's constant is 1 in all cases,
+together with a list of which curves in the class might be optimal,
+given the incomplete modular symbol computations carried out to date.
+Note, however, that it follows from computation of the modular degrees
+of all curves in the class (which computation is conditional on
+Stevens's conjecture) that the optimal curve is indeed the first curve
+listed.
+</p>
+<p>
+<a href="optimal.06">60000-69999</a>,
+<a href="optimal.07">70000-79999</a>,
+<a href="optimal.08">80000-89999</a>,
+<a href="optimal.09">90000-99999</a>,
+<a href="optimal.10">100000-109999</a>,
+<a href="optimal.11">110000-119999</a>,
+<a href="optimal.12">120000-129999</a>,
+<a href="optimal.13">130000-139999</a>,
+<a href="optimal.14">140000-149999</a>,
+<a href="optimal.15">150000-159999</a>,
+<a href="optimal.16">160000-169999</a>,
+<a href="optimal.17">170000-179999</a>,
+<a href="optimal.18">180000-189999</a>,
+<a href="optimal.19">190000-199999</a>,
+<a href="optimal.20">200000-209999</a>,
+<a href="optimal.21">210000-219999</a>,
+<a href="optimal.22">220000-229999</a>
+<br>
+Summary of results known regarding optimality of all classes with
+conductor greater than 600000 and size at least 2.
+<br>
+Sample lines:
+<table cellspacing="10" border="1">
+<tbody><tr>
+<th>Class</th> <th>Manin's constant</th> <th align="left">possible optimal curves</th>
+</tr>
+<tr><td>60003a</td><td>c=1</td><td>optimal curve is E1</td></tr>
+<tr><td>60005a</td><td>c=1</td><td>2 possible optimal curves: E1 E2</td></tr>
+<tr><td>61710cz</td><td>c=1</td><td>6 possible optimal curves: E1 E2 E3 E5 E6 E8</td></tr>
+</tbody></table>
+</p>
+</li>
+</ul>
 
 <hr>
 <p><b>Recent update notes</b>:&nbsp; <a href="april2012">April 2012</a>
@@ -658,3 +765,4 @@ Data format with sample line:
 
 </body>
 </html>
+
