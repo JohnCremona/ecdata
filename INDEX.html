@@ -5,6 +5,16 @@
 <title>Elliptic Curve Data</title>
 <link rel="shortcut icon" href="http://www.loria.fr/~zimmerma/records/ECM1.ico"><!-- credit to Phil Carmody-->
 </head>
+<script language="JavaScript">
+<!--
+function JumpToIt(frm) {
+    var newPage = frm.url.options[frm.url.selectedIndex].value
+    if (newPage != "None") {
+        window.open(newPage)
+    }
+}
+//-->
+</script>
 <body bgcolor="#FFFFFF">
 
 <center>
@@ -14,7 +24,7 @@ by J. E. Cremona<br>
 University of Warwick, U.K.</h2>
 <p>
 <i>
-Updated <a href="april2012">2012-04-11</a>
+Updated <a href="april2012">2012-04-13</a>
 </i>
 </p></center>
 
@@ -106,41 +116,46 @@ to be corrected.
 <h3>
 SUMMARY TABLES
 </h3>
-
 <ul>
 <li>
-<a href="count.00000-09999.gz">1-9999</a>,
-<a href="count.10000-19999.gz">10000-19999</a>,
-<a href="count.20000-29999.gz">20000-29999</a>,
-<a href="count.30000-39999.gz">30000-39999</a>,
-<a href="count.40000-49999.gz">40000-49999</a>,
-<a href="count.50000-59999.gz">50000-59999</a>,
-<a href="count.60000-69999.gz">60000-69999</a>,
-<a href="count.70000-79999.gz">70000-79999</a>,
-<a href="count.80000-89999.gz">80000-89999</a>,
-<a href="count.90000-99999.gz">90000-99999</a>,
-<a href="count.100000-109999.gz">100000-109999</a>,
-<a href="count.110000-119999.gz">110000-119999</a>,
-<a href="count.120000-129999.gz">120000-129999</a>,
-<a href="count.130000-139999.gz">130000-139999</a>,
-<a href="count.140000-149999.gz">140000-149999</a>,
-<a href="count.150000-159999.gz">150000-159999</a>,
-<a href="count.160000-169999.gz">160000-169999</a>,
-<a href="count.170000-179999.gz">170000-179999</a>,
-<a href="count.180000-189999.gz">180000-189999</a>,
-<a href="count.190000-199999.gz">190000-199999</a>,
-<a href="count.200000-209999.gz">200000-209999</a>,
-<a href="count.210000-219999.gz">210000-219999</a>,
-<a href="count.220000-229999.gz">220000-229999</a>
-<br>
-
+<form>
+<select name="url" width=30>
+<option value="None">Select a conductor range</option>
+<option value="count.00000-09999.gz">1-9999</option>
+<option value="count.10000-19999.gz">10000-19999</option>
+<option value="count.20000-29999.gz">20000-29999</option>
+<option value="count.30000-39999.gz">30000-39999</option>
+<option value="count.40000-49999.gz">40000-49999</option>
+<option value="count.50000-59999.gz">50000-59999</option>
+<option value="count.60000-69999.gz">60000-69999</option>
+<option value="count.70000-79999.gz">70000-79999</option>
+<option value="count.80000-89999.gz">80000-89999</option>
+<option value="count.90000-99999.gz">90000-99999</option>
+<option value="count.100000-109999.gz">100000-109999</option>
+<option value="count.110000-119999.gz">110000-119999</option>
+<option value="count.120000-129999.gz">120000-129999</option>
+<option value="count.130000-139999.gz">130000-139999</option>
+<option value="count.140000-149999.gz">140000-149999</option>
+<option value="count.150000-159999.gz">150000-159999</option>
+<option value="count.160000-169999.gz">160000-169999</option>
+<option value="count.170000-179999.gz">170000-179999</option>
+<option value="count.180000-189999.gz">180000-189999</option>
+<option value="count.190000-199999.gz">190000-199999</option>
+<option value="count.200000-209999.gz">200000-209999</option>
+<option value="count.210000-219999.gz">210000-219999</option>
+<option value="count.220000-229999.gz">220000-229999</option>
+</select>
+<input type=button value="Fetch" onClick="JumpToIt(this.form)">
+</form>
 Lists of number of curves (up to isogeny) of each individual conductor
 (each file is 10000 lines long).
+</li>
 
-</li><li> <a href="table.html">Table</a> showing number of curves of each
+<li> <a href="table.html">Table</a> showing number of curves of each
 range of 10000 conductors, sorted by rank.
+</li>
 
-</li></ul>
+</ul>
 
 
 <h3>
@@ -149,30 +164,35 @@ TABLE ONE: CURVES
 
 <ul>
 <li>
-<a href="allcurves.00000-09999.gz">1-9999</a>,
-<a href="allcurves.10000-19999.gz">10000-19999</a>,
-<a href="allcurves.20000-29999.gz">20000-29999</a>,
-<a href="allcurves.30000-39999.gz">30000-39999</a>,
-<a href="allcurves.40000-49999.gz">40000-49999</a>,
-<a href="allcurves.50000-59999.gz">50000-59999</a>,
-<a href="allcurves.60000-69999.gz">60000-69999</a>,
-<a href="allcurves.70000-79999.gz">70000-79999</a>,
-<a href="allcurves.80000-89999.gz">80000-89999</a>,
-<a href="allcurves.90000-99999.gz">90000-99999</a>,
-<a href="allcurves.100000-109999.gz">100000-109999</a>,
-<a href="allcurves.110000-119999.gz">110000-119999</a>,
-<a href="allcurves.120000-129999.gz">120000-129999</a>,
-<a href="allcurves.130000-139999.gz">130000-139999</a>,
-<a href="allcurves.140000-149999.gz">140000-149999</a>,
-<a href="allcurves.150000-159999.gz">150000-159999</a>,
-<a href="allcurves.160000-169999.gz">160000-169999</a>,
-<a href="allcurves.170000-179999.gz">170000-179999</a>,
-<a href="allcurves.180000-189999.gz">180000-189999</a>,
-<a href="allcurves.190000-199999.gz">190000-199999</a>,
-<a href="allcurves.200000-209999.gz">200000-209999</a>,
-<a href="allcurves.210000-219999.gz">210000-219999</a>,
-<a href="allcurves.220000-229999.gz">220000-229999</a>
-
+<form>
+<select name="url" width=30>
+<option value="None">Select a conductor range</option>
+<option value="allcurves.00000-09999.gz">1-9999</option>
+<option value="allcurves.10000-19999.gz">10000-19999</option>
+<option value="allcurves.20000-29999.gz">20000-29999</option>
+<option value="allcurves.30000-39999.gz">30000-39999</option>
+<option value="allcurves.40000-49999.gz">40000-49999</option>
+<option value="allcurves.50000-59999.gz">50000-59999</option>
+<option value="allcurves.60000-69999.gz">60000-69999</option>
+<option value="allcurves.70000-79999.gz">70000-79999</option>
+<option value="allcurves.80000-89999.gz">80000-89999</option>
+<option value="allcurves.90000-99999.gz">90000-99999</option>
+<option value="allcurves.100000-109999.gz">100000-109999</option>
+<option value="allcurves.110000-119999.gz">110000-119999</option>
+<option value="allcurves.120000-129999.gz">120000-129999</option>
+<option value="allcurves.130000-139999.gz">130000-139999</option>
+<option value="allcurves.140000-149999.gz">140000-149999</option>
+<option value="allcurves.150000-159999.gz">150000-159999</option>
+<option value="allcurves.160000-169999.gz">160000-169999</option>
+<option value="allcurves.170000-179999.gz">170000-179999</option>
+<option value="allcurves.180000-189999.gz">180000-189999</option>
+<option value="allcurves.190000-199999.gz">190000-199999</option>
+<option value="allcurves.200000-209999.gz">200000-209999</option>
+<option value="allcurves.210000-219999.gz">210000-219999</option>
+<option value="allcurves.220000-229999.gz">220000-229999</option>
+</select>
+<input type=button value="Fetch" onClick="JumpToIt(this.form)">
+</form>
 <p>
 One entry for each isomorphism class of curves, giving conductor N,
 letter id for isogeny class, number of the curve in the class,
@@ -241,29 +261,35 @@ TABLE TWO: GENERATORS
 
 <ul>
 <li>
-<a href="allgens.00000-09999.gz">1-9999</a>,
-<a href="allgens.10000-19999.gz">10000-19999</a>,
-<a href="allgens.20000-29999.gz">20000-29999</a>,
-<a href="allgens.30000-39999.gz">30000-39999</a>,
-<a href="allgens.40000-49999.gz">40000-49999</a>,
-<a href="allgens.50000-59999.gz">50000-59999</a>,
-<a href="allgens.60000-69999.gz">60000-69999</a>,
-<a href="allgens.70000-79999.gz">70000-79999</a>,
-<a href="allgens.80000-89999.gz">80000-89999</a>,
-<a href="allgens.90000-99999.gz">90000-99999</a>,
-<a href="allgens.100000-109999.gz">100000-109999</a>,
-<a href="allgens.110000-119999.gz">110000-119999</a>,
-<a href="allgens.120000-129999.gz">120000-129999</a>,
-<a href="allgens.130000-139999.gz">130000-139999</a>,
-<a href="allgens.140000-149999.gz">140000-149999</a>,
-<a href="allgens.150000-159999.gz">150000-159999</a>,
-<a href="allgens.160000-169999.gz">160000-169999</a>,
-<a href="allgens.170000-179999.gz">170000-179999</a>,
-<a href="allgens.180000-189999.gz">180000-189999</a>,
-<a href="allgens.190000-199999.gz">190000-199999</a>,
-<a href="allgens.200000-209999.gz">200000-209999</a>,
-<a href="allgens.210000-219999.gz">210000-219999</a>,
-<a href="allgens.220000-229999.gz">220000-229999</a>
+<form>
+<select name="url" width=30>
+<option value="None">Select a conductor range</option>
+<option value="allgens.00000-09999.gz">1-9999</option>
+<option value="allgens.10000-19999.gz">10000-19999</option>
+<option value="allgens.20000-29999.gz">20000-29999</option>
+<option value="allgens.30000-39999.gz">30000-39999</option>
+<option value="allgens.40000-49999.gz">40000-49999</option>
+<option value="allgens.50000-59999.gz">50000-59999</option>
+<option value="allgens.60000-69999.gz">60000-69999</option>
+<option value="allgens.70000-79999.gz">70000-79999</option>
+<option value="allgens.80000-89999.gz">80000-89999</option>
+<option value="allgens.90000-99999.gz">90000-99999</option>
+<option value="allgens.100000-109999.gz">100000-109999</option>
+<option value="allgens.110000-119999.gz">110000-119999</option>
+<option value="allgens.120000-129999.gz">120000-129999</option>
+<option value="allgens.130000-139999.gz">130000-139999</option>
+<option value="allgens.140000-149999.gz">140000-149999</option>
+<option value="allgens.150000-159999.gz">150000-159999</option>
+<option value="allgens.160000-169999.gz">160000-169999</option>
+<option value="allgens.170000-179999.gz">170000-179999</option>
+<option value="allgens.180000-189999.gz">180000-189999</option>
+<option value="allgens.190000-199999.gz">190000-199999</option>
+<option value="allgens.200000-209999.gz">200000-209999</option>
+<option value="allgens.210000-219999.gz">210000-219999</option>
+<option value="allgens.220000-229999.gz">220000-229999</option>
+</select>
+<input type=button value="Fetch" onClick="JumpToIt(this.form)">
+</form>
 
 <p>
 For every curve, generators are given for the Mordell group, in
@@ -319,30 +345,35 @@ TABLE THREE: HECKE EIGENVALUES
 
 <ul>
 <li>
-<a href="aplist.00000-09999.gz">1-9999</a>,
-<a href="aplist.10000-19999.gz">10000-19999</a>,
-<a href="aplist.20000-29999.gz">20000-29999</a>,
-<a href="aplist.30000-39999.gz">30000-39999</a>,
-<a href="aplist.40000-49999.gz">40000-49999</a>,
-<a href="aplist.50000-59999.gz">50000-59999</a>,
-<a href="aplist.60000-69999.gz">60000-69999</a>,
-<a href="aplist.70000-79999.gz">70000-79999</a>,
-<a href="aplist.80000-89999.gz">80000-89999</a>,
-<a href="aplist.90000-99999.gz">90000-99999</a>,
-<a href="aplist.100000-109999.gz">100000-109999</a>,
-<a href="aplist.110000-119999.gz">110000-119999</a>,
-<a href="aplist.120000-129999.gz">120000-129999</a>,
-<a href="aplist.130000-139999.gz">130000-139999</a>,
-<a href="aplist.140000-149999.gz">140000-149999</a>,
-<a href="aplist.150000-159999.gz">150000-159999</a>,
-<a href="aplist.160000-169999.gz">160000-169999</a>,
-<a href="aplist.170000-179999.gz">170000-179999</a>,
-<a href="aplist.180000-189999.gz">180000-189999</a>,
-<a href="aplist.190000-199999.gz">190000-199999</a>,
-<a href="aplist.200000-209999.gz">200000-209999</a>,
-<a href="aplist.210000-219999.gz">210000-219999</a>,
-<a href="aplist.220000-229999.gz">220000-229999</a>
-<br>
+<form>
+<select name="url" width=30>
+<option value="None">Select a conductor range</option>
+<option value="aplist.00000-09999.gz">1-9999</option>
+<option value="aplist.10000-19999.gz">10000-19999</option>
+<option value="aplist.20000-29999.gz">20000-29999</option>
+<option value="aplist.30000-39999.gz">30000-39999</option>
+<option value="aplist.40000-49999.gz">40000-49999</option>
+<option value="aplist.50000-59999.gz">50000-59999</option>
+<option value="aplist.60000-69999.gz">60000-69999</option>
+<option value="aplist.70000-79999.gz">70000-79999</option>
+<option value="aplist.80000-89999.gz">80000-89999</option>
+<option value="aplist.90000-99999.gz">90000-99999</option>
+<option value="aplist.100000-109999.gz">100000-109999</option>
+<option value="aplist.110000-119999.gz">110000-119999</option>
+<option value="aplist.120000-129999.gz">120000-129999</option>
+<option value="aplist.130000-139999.gz">130000-139999</option>
+<option value="aplist.140000-149999.gz">140000-149999</option>
+<option value="aplist.150000-159999.gz">150000-159999</option>
+<option value="aplist.160000-169999.gz">160000-169999</option>
+<option value="aplist.170000-179999.gz">170000-179999</option>
+<option value="aplist.180000-189999.gz">180000-189999</option>
+<option value="aplist.190000-199999.gz">190000-199999</option>
+<option value="aplist.200000-209999.gz">200000-209999</option>
+<option value="aplist.210000-219999.gz">210000-219999</option>
+<option value="aplist.220000-229999.gz">220000-229999</option>
+</select>
+<input type=button value="Fetch" onClick="JumpToIt(this.form)">
+</form>
 Hecke eigenvalues for p&lt;100 for each of the corresponding newforms for
 &Gamma;<sub>0</sub>(N). When p|N the entry is simply "+" or "-" and is a W-eigenvalue,
 as in Antwerp IV. When there are primes p|n with p&gt;100 the corresponding
@@ -396,30 +427,35 @@ computed to several places but to save space is just entered as
 </p>
 
 </li><li>
-<a href="allbsd.00000-09999.gz">1-9999</a>,
-<a href="allbsd.10000-19999.gz">10000-19999</a>,
-<a href="allbsd.20000-29999.gz">20000-29999</a>,
-<a href="allbsd.30000-39999.gz">30000-39999</a>,
-<a href="allbsd.40000-49999.gz">40000-49999</a>,
-<a href="allbsd.50000-59999.gz">50000-59999</a>,
-<a href="allbsd.60000-69999.gz">60000-69999</a>,
-<a href="allbsd.70000-79999.gz">70000-79999</a>,
-<a href="allbsd.80000-89999.gz">80000-89999</a>,
-<a href="allbsd.90000-99999.gz">90000-99999</a>,
-<a href="allbsd.100000-109999.gz">100000-109999</a>,
-<a href="allbsd.110000-119999.gz">110000-119999</a>,
-<a href="allbsd.120000-129999.gz">120000-129999</a>,
-<a href="allbsd.130000-139999.gz">130000-139999</a>,
-<a href="allbsd.140000-149999.gz">140000-149999</a>,
-<a href="allbsd.150000-159999.gz">150000-159999</a>,
-<a href="allbsd.160000-169999.gz">160000-169999</a>,
-<a href="allbsd.170000-179999.gz">170000-179999</a>,
-<a href="allbsd.180000-189999.gz">180000-189999</a>,
-<a href="allbsd.190000-199999.gz">190000-199999</a>,
-<a href="allbsd.200000-209999.gz">200000-209999</a>,
-<a href="allbsd.210000-219999.gz">210000-219999</a>,
-<a href="allbsd.220000-229999.gz">220000-229999</a>
-<br>
+<form>
+<select name="url" width=30>
+<option value="None">Select a conductor range</option>
+<option value="allbsd.00000-09999.gz">1-9999</option>
+<option value="allbsd.10000-19999.gz">10000-19999</option>
+<option value="allbsd.20000-29999.gz">20000-29999</option>
+<option value="allbsd.30000-39999.gz">30000-39999</option>
+<option value="allbsd.40000-49999.gz">40000-49999</option>
+<option value="allbsd.50000-59999.gz">50000-59999</option>
+<option value="allbsd.60000-69999.gz">60000-69999</option>
+<option value="allbsd.70000-79999.gz">70000-79999</option>
+<option value="allbsd.80000-89999.gz">80000-89999</option>
+<option value="allbsd.90000-99999.gz">90000-99999</option>
+<option value="allbsd.100000-109999.gz">100000-109999</option>
+<option value="allbsd.110000-119999.gz">110000-119999</option>
+<option value="allbsd.120000-129999.gz">120000-129999</option>
+<option value="allbsd.130000-139999.gz">130000-139999</option>
+<option value="allbsd.140000-149999.gz">140000-149999</option>
+<option value="allbsd.150000-159999.gz">150000-159999</option>
+<option value="allbsd.160000-169999.gz">160000-169999</option>
+<option value="allbsd.170000-179999.gz">170000-179999</option>
+<option value="allbsd.180000-189999.gz">180000-189999</option>
+<option value="allbsd.190000-199999.gz">190000-199999</option>
+<option value="allbsd.200000-209999.gz">200000-209999</option>
+<option value="allbsd.210000-219999.gz">210000-219999</option>
+<option value="allbsd.220000-229999.gz">220000-229999</option>
+</select>
+<input type=button value="Fetch" onClick="JumpToIt(this.form)">
+</form>
 Same as previous but with data for all the curves (not only the
 optimal ones) up to the current bound.   <br>
 Data format with sample lines:
@@ -454,38 +490,45 @@ where:
 </li><li> <b>R</b> = Regulator
 </li><li> <b>S</b> = (Analytic) order of Sha.
 </li></ul>
-
-
-</li><li>
-<a href="allbigsha.00000-09999.gz">1-9999</a>,
-<a href="allbigsha.10000-19999.gz">10000-19999</a>,
-<a href="allbigsha.20000-29999.gz">20000-29999</a>,
-<a href="allbigsha.30000-39999.gz">30000-39999</a>,
-<a href="allbigsha.40000-49999.gz">40000-49999</a>,
-<a href="allbigsha.50000-59999.gz">50000-59999</a>,
-<a href="allbigsha.60000-69999.gz">60000-69999</a>,
-<a href="allbigsha.70000-79999.gz">70000-79999</a>,
-<a href="allbigsha.80000-89999.gz">80000-89999</a>,
-<a href="allbigsha.90000-99999.gz">90000-99999</a>,
-<a href="allbigsha.100000-109999.gz">100000-109999</a>,
-<a href="allbigsha.110000-119999.gz">110000-119999</a>,
-<a href="allbigsha.120000-129999.gz">120000-129999</a>,
-<a href="allbigsha.130000-139999.gz">130000-139999</a>,
-<a href="allbigsha.140000-149999.gz">140000-149999</a>,
-<a href="allbigsha.150000-159999.gz">150000-159999</a>,
-<a href="allbigsha.160000-169999.gz">160000-169999</a>,
-<a href="allbigsha.170000-179999.gz">170000-179999</a>,
-<a href="allbigsha.180000-189999.gz">180000-189999</a>,
-<a href="allbigsha.190000-199999.gz">190000-199999</a>,
-<a href="allbigsha.200000-209999.gz">200000-209999</a>,
-<a href="allbigsha.210000-219999.gz">210000-219999</a>,
-<a href="allbigsha.220000-229999.gz">220000-229999</a>
+</li>
 <br>
+<li>
+<form>
+<select name="url" width=30>
+<option value="None">Select a conductor range</option>
+<option value="allbigsha.00000-09999.gz">1-9999</option>
+<option value="allbigsha.10000-19999.gz">10000-19999</option>
+<option value="allbigsha.20000-29999.gz">20000-29999</option>
+<option value="allbigsha.30000-39999.gz">30000-39999</option>
+<option value="allbigsha.40000-49999.gz">40000-49999</option>
+<option value="allbigsha.50000-59999.gz">50000-59999</option>
+<option value="allbigsha.60000-69999.gz">60000-69999</option>
+<option value="allbigsha.70000-79999.gz">70000-79999</option>
+<option value="allbigsha.80000-89999.gz">80000-89999</option>
+<option value="allbigsha.90000-99999.gz">90000-99999</option>
+<option value="allbigsha.100000-109999.gz">100000-109999</option>
+<option value="allbigsha.110000-119999.gz">110000-119999</option>
+<option value="allbigsha.120000-129999.gz">120000-129999</option>
+<option value="allbigsha.130000-139999.gz">130000-139999</option>
+<option value="allbigsha.140000-149999.gz">140000-149999</option>
+<option value="allbigsha.150000-159999.gz">150000-159999</option>
+<option value="allbigsha.160000-169999.gz">160000-169999</option>
+<option value="allbigsha.170000-179999.gz">170000-179999</option>
+<option value="allbigsha.180000-189999.gz">180000-189999</option>
+<option value="allbigsha.190000-199999.gz">190000-199999</option>
+<option value="allbigsha.200000-209999.gz">200000-209999</option>
+<option value="allbigsha.210000-219999.gz">210000-219999</option>
+<option value="allbigsha.220000-229999.gz">220000-229999</option>
+</select>
+<input type=button value="Fetch" onClick="JumpToIt(this.form)">
+</form>
 Lists of the curves with non-trivial Tate-Shafarevich group, according
 to the BSD conjecture; i.e., curves whose "analytic order of Sha" is
 greater than 1.  The record (to conductor 220000) is 5625=75<sup>2</sup>
 for 165066d3.
-</li><li>
+</li>
+<br>
+<li>
 <a href="shas.html">shas.html</a><br>
 A summary table of large Shas.  Note that (up to conductor 230000)
 there are 104970 elliptic curves with non-trivial Sha, with ranks
@@ -500,31 +543,36 @@ TABLE FIVE: PARAMETRIZATION DEGREES
 
 <ul>
 <li>
-Optimal curves:<br>
-<a href="degphi.00000-09999.gz">1-9999</a>,
-<a href="degphi.10000-19999.gz">10000-19999</a>,
-<a href="degphi.20000-29999.gz">20000-29999</a>,
-<a href="degphi.30000-39999.gz">30000-39999</a>,
-<a href="degphi.40000-49999.gz">40000-49999</a>,
-<a href="degphi.50000-59999.gz">50000-59999</a>,
-<a href="degphi.60000-69999.gz">60000-69999</a>,
-<a href="degphi.70000-79999.gz">70000-79999</a>,
-<a href="degphi.80000-89999.gz">80000-89999</a>,
-<a href="degphi.90000-99999.gz">90000-99999</a>,
-<a href="degphi.100000-109999.gz">100000-109999</a>,
-<a href="degphi.110000-119999.gz">110000-119999</a>,
-<a href="degphi.120000-129999.gz">120000-129999</a>,
-<a href="degphi.130000-139999.gz">130000-139999</a>,
-<a href="degphi.140000-149999.gz">140000-149999</a>,
-<a href="degphi.150000-159999.gz">150000-159999</a>,
-<a href="degphi.160000-169999.gz">160000-169999</a>,
-<a href="degphi.170000-179999.gz">170000-179999</a>,
-<a href="degphi.180000-189999.gz">180000-189999</a>,
-<a href="degphi.190000-199999.gz">190000-199999</a>,
-<a href="degphi.200000-209999.gz">200000-209999</a>,
-<a href="degphi.210000-219999.gz">210000-219999</a>,
-<a href="degphi.220000-229999.gz">220000-229999</a>
-<br>
+Optimal curves:
+<form>
+<select name="url" width=30>
+<option value="None">Select a conductor range</option>
+<option value="degphi.00000-09999.gz">1-9999</option>
+<option value="degphi.10000-19999.gz">10000-19999</option>
+<option value="degphi.20000-29999.gz">20000-29999</option>
+<option value="degphi.30000-39999.gz">30000-39999</option>
+<option value="degphi.40000-49999.gz">40000-49999</option>
+<option value="degphi.50000-59999.gz">50000-59999</option>
+<option value="degphi.60000-69999.gz">60000-69999</option>
+<option value="degphi.70000-79999.gz">70000-79999</option>
+<option value="degphi.80000-89999.gz">80000-89999</option>
+<option value="degphi.90000-99999.gz">90000-99999</option>
+<option value="degphi.100000-109999.gz">100000-109999</option>
+<option value="degphi.110000-119999.gz">110000-119999</option>
+<option value="degphi.120000-129999.gz">120000-129999</option>
+<option value="degphi.130000-139999.gz">130000-139999</option>
+<option value="degphi.140000-149999.gz">140000-149999</option>
+<option value="degphi.150000-159999.gz">150000-159999</option>
+<option value="degphi.160000-169999.gz">160000-169999</option>
+<option value="degphi.170000-179999.gz">170000-179999</option>
+<option value="degphi.180000-189999.gz">180000-189999</option>
+<option value="degphi.190000-199999.gz">190000-199999</option>
+<option value="degphi.200000-209999.gz">200000-209999</option>
+<option value="degphi.210000-219999.gz">210000-219999</option>
+<option value="degphi.220000-229999.gz">220000-229999</option>
+</select>
+<input type=button value="Fetch" onClick="JumpToIt(this.form)">
+</form>
 A table of the degree of the modular parameterizations of each optimal curve.
 <br>
 Data format with sample line:
@@ -537,33 +585,38 @@ Data format with sample line:
 </tr></tbody></table>
 where "primes" is the set of primes dividing the degree.
 </li>
-
-<li>
-All curves:<br>
-<a href="alldegphi.00000-09999.gz">1-9999</a>,
-<a href="alldegphi.10000-19999.gz">10000-19999</a>,
-<a href="alldegphi.20000-29999.gz">20000-29999</a>,
-<a href="alldegphi.30000-39999.gz">30000-39999</a>,
-<a href="alldegphi.40000-49999.gz">40000-49999</a>,
-<a href="alldegphi.50000-59999.gz">50000-59999</a>,
-<a href="alldegphi.60000-69999.gz">60000-69999</a>,
-<a href="alldegphi.70000-79999.gz">70000-79999</a>,
-<a href="alldegphi.80000-89999.gz">80000-89999</a>,
-<a href="alldegphi.90000-99999.gz">90000-99999</a>,
-<a href="alldegphi.100000-109999.gz">100000-109999</a>,
-<a href="alldegphi.110000-119999.gz">110000-119999</a>,
-<a href="alldegphi.120000-129999.gz">120000-129999</a>,
-<a href="alldegphi.130000-139999.gz">130000-139999</a>,
-<a href="alldegphi.140000-149999.gz">140000-149999</a>,
-<a href="alldegphi.150000-159999.gz">150000-159999</a>,
-<a href="alldegphi.160000-169999.gz">160000-169999</a>,
-<a href="alldegphi.170000-179999.gz">170000-179999</a>,
-<a href="alldegphi.180000-189999.gz">180000-189999</a>,
-<a href="alldegphi.190000-199999.gz">190000-199999</a>,
-<a href="alldegphi.200000-209999.gz">200000-209999</a>,
-<a href="alldegphi.210000-219999.gz">210000-219999</a>,
-<a href="alldegphi.220000-229999.gz">220000-229999</a>
 <br>
+<li>
+All curves:
+<form>
+<select name="url" width=30>
+<option value="None">Select a conductor range</option>
+<option value="alldegphi.00000-09999.gz">1-9999</option>
+<option value="alldegphi.10000-19999.gz">10000-19999</option>
+<option value="alldegphi.20000-29999.gz">20000-29999</option>
+<option value="alldegphi.30000-39999.gz">30000-39999</option>
+<option value="alldegphi.40000-49999.gz">40000-49999</option>
+<option value="alldegphi.50000-59999.gz">50000-59999</option>
+<option value="alldegphi.60000-69999.gz">60000-69999</option>
+<option value="alldegphi.70000-79999.gz">70000-79999</option>
+<option value="alldegphi.80000-89999.gz">80000-89999</option>
+<option value="alldegphi.90000-99999.gz">90000-99999</option>
+<option value="alldegphi.100000-109999.gz">100000-109999</option>
+<option value="alldegphi.110000-119999.gz">110000-119999</option>
+<option value="alldegphi.120000-129999.gz">120000-129999</option>
+<option value="alldegphi.130000-139999.gz">130000-139999</option>
+<option value="alldegphi.140000-149999.gz">140000-149999</option>
+<option value="alldegphi.150000-159999.gz">150000-159999</option>
+<option value="alldegphi.160000-169999.gz">160000-169999</option>
+<option value="alldegphi.170000-179999.gz">170000-179999</option>
+<option value="alldegphi.180000-189999.gz">180000-189999</option>
+<option value="alldegphi.190000-199999.gz">190000-199999</option>
+<option value="alldegphi.200000-209999.gz">200000-209999</option>
+<option value="alldegphi.210000-219999.gz">210000-219999</option>
+<option value="alldegphi.220000-229999.gz">220000-229999</option>
+</select>
+<input type=button value="Fetch" onClick="JumpToIt(this.form)">
+</form>
 A table of the degree of the modular parameterizations of every curve.
 <br>
 Data format with sample line:
@@ -590,31 +643,37 @@ TABLE SIX: ISOGENY MATRICES
 
 <ul>
 <li>
-<a href="allisog.00000-09999.gz">1-9999</a>,
-<a href="allisog.10000-19999.gz">10000-19999</a>,
-<a href="allisog.20000-29999.gz">20000-29999</a>,
-<a href="allisog.30000-39999.gz">30000-39999</a>,
-<a href="allisog.40000-49999.gz">40000-49999</a>,
-<a href="allisog.50000-59999.gz">50000-59999</a>,
-<a href="allisog.60000-69999.gz">60000-69999</a>,
-<a href="allisog.70000-79999.gz">70000-79999</a>,
-<a href="allisog.80000-89999.gz">80000-89999</a>,
-<a href="allisog.90000-99999.gz">90000-99999</a>,
-<a href="allisog.100000-109999.gz">100000-109999</a>,
-<a href="allisog.110000-119999.gz">110000-119999</a>,
-<a href="allisog.120000-129999.gz">120000-129999</a>,
-<a href="allisog.130000-139999.gz">130000-139999</a>,
-<a href="allisog.140000-149999.gz">140000-149999</a>,
-<a href="allisog.150000-159999.gz">150000-159999</a>,
-<a href="allisog.160000-169999.gz">160000-169999</a>,
-<a href="allisog.170000-179999.gz">170000-179999</a>,
-<a href="allisog.180000-189999.gz">180000-189999</a>,
-<a href="allisog.190000-199999.gz">190000-199999</a>,
-<a href="allisog.200000-209999.gz">200000-209999</a>,
-<a href="allisog.210000-219999.gz">210000-219999</a>,
-<a href="allisog.220000-229999.gz">220000-229999</a>
-<br>
-A table giving the degrees of isogenies within each isogeny class.   One row for each isogeny class.
+<form>
+<select name="url" width=30>
+<option value="None">Select a conductor range</option>
+<option value="allisog.00000-09999.gz">1-9999</option>
+<option value="allisog.10000-19999.gz">10000-19999</option>
+<option value="allisog.20000-29999.gz">20000-29999</option>
+<option value="allisog.30000-39999.gz">30000-39999</option>
+<option value="allisog.40000-49999.gz">40000-49999</option>
+<option value="allisog.50000-59999.gz">50000-59999</option>
+<option value="allisog.60000-69999.gz">60000-69999</option>
+<option value="allisog.70000-79999.gz">70000-79999</option>
+<option value="allisog.80000-89999.gz">80000-89999</option>
+<option value="allisog.90000-99999.gz">90000-99999</option>
+<option value="allisog.100000-109999.gz">100000-109999</option>
+<option value="allisog.110000-119999.gz">110000-119999</option>
+<option value="allisog.120000-129999.gz">120000-129999</option>
+<option value="allisog.130000-139999.gz">130000-139999</option>
+<option value="allisog.140000-149999.gz">140000-149999</option>
+<option value="allisog.150000-159999.gz">150000-159999</option>
+<option value="allisog.160000-169999.gz">160000-169999</option>
+<option value="allisog.170000-179999.gz">170000-179999</option>
+<option value="allisog.180000-189999.gz">180000-189999</option>
+<option value="allisog.190000-199999.gz">190000-199999</option>
+<option value="allisog.200000-209999.gz">200000-209999</option>
+<option value="allisog.210000-219999.gz">210000-219999</option>
+<option value="allisog.220000-229999.gz">220000-229999</option>
+</select>
+<input type=button value="Fetch" onClick="JumpToIt(this.form)">
+</form>
+A table giving the degrees of isogenies within each isogeny class.   One row
+for each isogeny class. 
 
 <br>
 Data format with sample line:
@@ -646,30 +705,35 @@ TABLE SEVEN: INTEGRAL POINTS
 
 <ul>
 <li>
-<a href="intpts.00000-09999.gz">1-9999</a>,
-<a href="intpts.10000-19999.gz">10000-19999</a>,
-<a href="intpts.20000-29999.gz">20000-29999</a>,
-<a href="intpts.30000-39999.gz">30000-39999</a>,
-<a href="intpts.40000-49999.gz">40000-49999</a>,
-<a href="intpts.50000-59999.gz">50000-59999</a>,
-<a href="intpts.60000-69999.gz">60000-69999</a>,
-<a href="intpts.70000-79999.gz">70000-79999</a>,
-<a href="intpts.80000-89999.gz">80000-89999</a>,
-<a href="intpts.90000-99999.gz">90000-99999</a>,
-<a href="intpts.100000-109999.gz">100000-109999</a>,
-<a href="intpts.110000-119999.gz">110000-119999</a>,
-<a href="intpts.120000-129999.gz">120000-129999</a>,
-<a href="intpts.130000-139999.gz">130000-139999</a>,
-<a href="intpts.140000-149999.gz">140000-149999</a>,
-<a href="intpts.150000-159999.gz">150000-159999</a>,
-<a href="intpts.160000-169999.gz">160000-169999</a>,
-<a href="intpts.170000-179999.gz">170000-179999</a>,
-<a href="intpts.180000-189999.gz">180000-189999</a>,
-<a href="intpts.190000-199999.gz">190000-199999</a>,
-<a href="intpts.200000-209999.gz">200000-209999</a>,
-<a href="intpts.210000-219999.gz">210000-219999</a>,
-<a href="intpts.220000-229999.gz">220000-229999</a>
-<br>
+<form>
+<select name="url" width=30>
+<option value="None">Select a conductor range</option>
+<option value="intpts.00000-09999.gz">1-9999</option>
+<option value="intpts.10000-19999.gz">10000-19999</option>
+<option value="intpts.20000-29999.gz">20000-29999</option>
+<option value="intpts.30000-39999.gz">30000-39999</option>
+<option value="intpts.40000-49999.gz">40000-49999</option>
+<option value="intpts.50000-59999.gz">50000-59999</option>
+<option value="intpts.60000-69999.gz">60000-69999</option>
+<option value="intpts.70000-79999.gz">70000-79999</option>
+<option value="intpts.80000-89999.gz">80000-89999</option>
+<option value="intpts.90000-99999.gz">90000-99999</option>
+<option value="intpts.100000-109999.gz">100000-109999</option>
+<option value="intpts.110000-119999.gz">110000-119999</option>
+<option value="intpts.120000-129999.gz">120000-129999</option>
+<option value="intpts.130000-139999.gz">130000-139999</option>
+<option value="intpts.140000-149999.gz">140000-149999</option>
+<option value="intpts.150000-159999.gz">150000-159999</option>
+<option value="intpts.160000-169999.gz">160000-169999</option>
+<option value="intpts.170000-179999.gz">170000-179999</option>
+<option value="intpts.180000-189999.gz">180000-189999</option>
+<option value="intpts.190000-199999.gz">190000-199999</option>
+<option value="intpts.200000-209999.gz">200000-209999</option>
+<option value="intpts.210000-219999.gz">210000-219999</option>
+<option value="intpts.220000-229999.gz">220000-229999</option>
+</select>
+<input type=button value="Fetch" onClick="JumpToIt(this.form)">
+</form>
 A table giving the x-coordinates of (almost) all integral points on all
 curves. <b>Corrected</b> 2009-01-01, but still incomplete.
 
@@ -719,24 +783,29 @@ Stevens's conjecture) that the optimal curve is indeed the first curve
 listed.
 </p>
 <p>
-<a href="optimal.06">60000-69999</a>,
-<a href="optimal.07">70000-79999</a>,
-<a href="optimal.08">80000-89999</a>,
-<a href="optimal.09">90000-99999</a>,
-<a href="optimal.10">100000-109999</a>,
-<a href="optimal.11">110000-119999</a>,
-<a href="optimal.12">120000-129999</a>,
-<a href="optimal.13">130000-139999</a>,
-<a href="optimal.14">140000-149999</a>,
-<a href="optimal.15">150000-159999</a>,
-<a href="optimal.16">160000-169999</a>,
-<a href="optimal.17">170000-179999</a>,
-<a href="optimal.18">180000-189999</a>,
-<a href="optimal.19">190000-199999</a>,
-<a href="optimal.20">200000-209999</a>,
-<a href="optimal.21">210000-219999</a>,
-<a href="optimal.22">220000-229999</a>
-<br>
+<form>
+<select name="url" width=30>
+<option value="None">Select a conductor range</option>
+<option value="optimal.06">60000-69999</option>
+<option value="optimal.07">70000-79999</option>
+<option value="optimal.08">80000-89999</option>
+<option value="optimal.09">90000-99999</option>
+<option value="optimal.10">100000-109999</option>
+<option value="optimal.11">110000-119999</option>
+<option value="optimal.12">120000-129999</option>
+<option value="optimal.13">130000-139999</option>
+<option value="optimal.14">140000-149999</option>
+<option value="optimal.15">150000-159999</option>
+<option value="optimal.16">160000-169999</option>
+<option value="optimal.17">170000-179999</option>
+<option value="optimal.18">180000-189999</option>
+<option value="optimal.19">190000-199999</option>
+<option value="optimal.20">200000-209999</option>
+<option value="optimal.21">210000-219999</option>
+<option value="optimal.22">220000-229999</option>
+</select>
+<input type=button value="Fetch" onClick="JumpToIt(this.form)">
+</form>
 Summary of results known regarding optimality of all classes with
 conductor greater than 600000 and size at least 2.
 <br>
