@@ -15,21 +15,17 @@ covering the range 60000-240000.
 # isogeny classes with only one curve:      544974
 # isogeny classes with more than one curve: 248577
 
-Of the latter, c=1 known for all but:       1 (236212b)
-[Work in progress should settle this case soon]
-
+Of the latter, c=1 known for:               248577
                optimality known for:        115411
-   [including 1 case in progress listed above]
                optimality not known for:    133166
-   [108147,22784,2023,97,115 classes have 2,3,4,5,6 possible candidates]
+[108147,22784,2023,97,115 classes have 2,3,4,5,6 possible candidates]
 
 For all 544974 classes with only one curve, obviously that curve is
 optimal, and we have shown that c=1.
 
-For all classes with more than one curve [except 236212b], we have
-proved that the optimal curve has c=1, but cannot yet say
-unconditionally which is the optimal curve in all cases (only in at
-least 83% of cases).
+For all classes with more than one curve, we have proved that the
+optimal curve has c=1, but cannot yet say unconditionally which is the
+optimal curve in all cases (only in at least 83% of cases).
 
 This is because in most cases for N>60000 we have only computed the +1
 modular symbols and therefore can only compare real periods, as
@@ -45,8 +41,8 @@ that c=3 is impossible unless N is a multiple of 3.
 
 In detail,  for the 248577 classes with more than one curve:
 
-In 115411 classes [probably including 236212b] the optimal curve is
-provably the first one listed, and c=1.
+In 115411 classes the optimal curve is provably the first one listed,
+and c=1.
 
 In 133166 classes the optimal curve is one of up to 6 possible curves
 in the class, but c=1 in any case.
@@ -73,11 +69,10 @@ These classes are: (13 listed in the appendix to the paper cited),
                    169808a, 171412c, 184916a, 188372a, 211664a,
                    217172b, 219088b, 220916b, 236212b.
 
-In all of the above cases [except 236212b still in progress] I have
-computed the full modular symbol space to eliminate the second
-possibility.  Hence, in this range all optimal curves are proved to
-have c=1, and in at least 83% of cases, the optimal curve is known
-(and is the first curve in the class).
+In all of the above cases I have computed the full modular symbol
+space to eliminate the second possibility.  Hence, in this range all
+optimal curves are proved to have c=1, and in at least 83% of cases,
+the optimal curve is known (and is the first curve in the class).
 
 I have also computed the modular degrees of all curves (not just the
 optimal ones) using Mark Watkins's sympow program, which confirms
@@ -94,5 +89,8 @@ class of size at least 2, with the following format:
 209990be: c=1; optimal curve is E1
 184916a: Neither c nor the optimal curve are uniquely determined.  Possibilities for (c,j0) are: (1,1) (2,2)
 
-The last of these is one of the 27 cases which was ambiguous before
-computing the full modular symbol space, but has now been settled.
+The last of these is one of the 27 cases which were ambiguous before
+computing the full modular symbol space, but have now been settled; so
+it should now read:
+
+184916a: c=1; optimal curve is E1
