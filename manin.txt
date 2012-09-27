@@ -9,18 +9,18 @@ Constant" by Amod Agashe, Ken Ribet and William Stein [Pure and
 Applied Mathematics Quarterly, Vol. 2 no.2 (2006), pp. 617-636.]
 
 Here we report on what is known for larger conductors, currently
-covering the range 60000-270000.
+covering the range 60000-280000.
 
-# isogeny classes:                          921905
-# isogeny classes with only one curve:      635046
-# isogeny classes with more than one curve: 286859
+# isogeny classes:                          964906
+# isogeny classes with only one curve:      665175
+# isogeny classes with more than one curve: 299731
 
-Of the latter, c=1 known for:               286828+31=286859
-               optimality known for:        133214+31=133245
-               optimality not known for:              153583
-[124862,26194,2283,116,128 classes have 2,3,4,5,6 possible candidates]
+Of the latter, c=1 known for:               299730+31=299731
+               optimality known for:        139232+31=139263
+               optimality not known for:              160437
+[130457,27353,2372,119,136 classes have 2,3,4,5,6 possible candidates]
 
-For all 635046 classes with only one curve, obviously that curve is
+For all 665175 classes with only one curve, obviously that curve is
 optimal, and we have shown that c=1.
 
 For all classes with more than one curve, we have proved that the
@@ -39,12 +39,12 @@ that c=3 is impossible unless N is a multiple of 3.
 
 -----------------------------------------------------------
 
-In detail,  for the 286859 classes with more than one curve:
+In detail,  for the 299731 classes with more than one curve:
 
-In 133245 classes the optimal curve is provably the first one listed,
+In 139263 classes the optimal curve is provably the first one listed,
 and c=1.
 
-In 153583 classes the optimal curve is one of up to 6 possible curves
+In 160437 classes the optimal curve is one of up to 6 possible curves
 in the class, but c=1 in any case.
 
 e.g. 130050em: class has 8 curves
@@ -82,7 +82,7 @@ conjecture that the Gamma_1(N)-optimal curve is the one with minimal
 Faltings Height (i.e. the one whose period lattice is a sublattice of
 all the others).
 
-The files optimality.06, ..., optimality.25 contain one line for each
+The files optimality.06, ..., optimality.27 contain one line for each
 class of size at least 2, with the following format:
 
 209990bb: c=1; 3 possible optimal curves: E1 E2 E3
@@ -90,7 +90,7 @@ class of size at least 2, with the following format:
 209990be: c=1; optimal curve is E1
 184916a: Neither c nor the optimal curve are uniquely determined.  Possibilities for (c,j0) are: (1,1) (2,2)
 
-The last of these is one of the 28 cases which were ambiguous before
+The last of these is one of the 31 cases which were ambiguous before
 computing the full modular symbol space, but have now been settled; so
 it should now read:
 
