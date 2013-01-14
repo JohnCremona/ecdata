@@ -1,4 +1,105 @@
-Last major update: 18/09/05
+Last major update: 22/10/2012
+
+14 January 2013 * Tidied up release notes
+                * Recomputed allbsd.* files < 130000
+
+22 October 2012 * Added all data for 290000-299999
+
+13 October 2012 * Added all data for 280000-289999
+
+27 September 2012 * Added all data for 270000-279999
+
+26 August 2012 * Added all data for 260000-269999
+
+20 August 2012 * Added all data for 250000-259999
+
+July 2012  * Added all data for 240000-249999
+
+June 2012  * Added all data for 230000-239999
+
+April 2012 * Added alllabels.* files and april2012 notes
+           * Added alldegphi files, updated release notes
+           * Switch 190096b1/2 since old b2 was optimal; updated release notes
+           * For 48 isogeny classes of size 2 between 130k and 230k,
+              swapped over curves #1 and #2
+           * Added optimality.?? files, extra sections to INDEX and manin.txt
+           * Remade allisog.* files for 0-12 to get correct order
+             and filled matrices
+
+27/03/12 * Changed all allgens files for non-cyclic torsion groups so
+           that the torsion generator orders match the group invariants.
+
+02/03/12 * Added all data for 220000-229999
+
+30/01/12 * Replaced corrupt paricurves.130000-139999
+
+13/01/12 * Added all data for 210000-219999
+
+01/12/11 * Corrected paricurves.180000-189999 (186120bk2 was wrong)
+
+21/11/11 * Added all data for 200000-209999
+
+26/10/11 * Added all data for 190000-199999
+
+15/09/11 * Added all data for 180000-189999
+         * Corrected allbsd data for 130725bc and 135346c
+           (thanks to R Andrew Ohana)
+
+09/08/11 * Added all data for 170000-179999
+
+26/07/11 * Added all data for 160000-169999
+
+08/07/11 * Added all data for 150000-159999
+
+28/06/11 * Added all data for 140000-149999
+         * corrected count.130000-139999 (N=135045 had 0 not 6)
+
+21/04/11 * Updated intpts.130000-139999 (data for 130416 was garbled),
+           thanks to Geoff bailey.
+
+15/04/11 * Updated allgens.n0000-n9999 for n in 0..12 to include
+	   torsion generators and rank 0 curves.  Updated INDEX to
+	   reflect this.
+
+12/04/11 * Corrected paricurves.130000-139999 (deleted extraneous
+           Pythonic Ls)
+         * Corrected L''(1) and |Sha| for 135014r1
+
+08/04/11 * Added all data for 130000-139999
+         * Changed allgens format to include torsion (so there is one
+         line in allgens* for each line in allcurves*).
+         NB I have not yet recreated the allgens files for N<130000.
+
+05/01/07 * Corrected aplist file entries for bad primes over 100, for
+           N divisible by more than one such prime (or by the square
+           of such a prime).
+	   Files affected: aplist.* (except aplist.00000-09999)
+
+15/12/06 * Corrected Sha(51522f3) from 4 to 9 (thanks to Tom Fisher)
+           Files affected: allbigsha.[05]0000-*, allbsd.50000*, shas.html
+
+24/09/06 * Conductors divisible by 216 between 90000 and 99999 were
+	   missing, now included.  All files *.90000-99999 affected.
+
+04/09/06 * Saturation of given generators now proved for all curves!
+
+04/09/06 * Corrected generators for 26 curves (52266d1, 124132a1 and
+	   24 of conductor 122010) which were unsaturated.  Files
+	   affected are allgens.{5,12}*, paricurves.{5,12}* but NOT
+	   the allbsd or allbigsha files which are unchanged (they
+	   already had the correct regulators).
+
+13/07/06 * Corrected 20 entries in allisog.[0-7]* (curves incorrectly shown
+	   as self-isogenous), thanks to Tom Boothby
+
+17/02/06 * Corrected files degphi.1[012]0000-1[012]9999 (wrong codes)
+16/02/06 * Corrected files count.40000-49999 and count.60000-69999.
+
+20/11/05 * Updated optimality claims to cover all N<50000
+
+07/11/05 * Minor corrections to {allbsd,allgens,paricurves}.120000-129999
+
+05/11/05 * Added all data for 120000-129999
 
 01/11/05 * Minor corrections to allbigsha* and shas.html
 
@@ -24,7 +125,7 @@ Last major update: 18/09/05
            each class
 
 	 * Removed curves.* and gens.*, as they are subsets of the
-	   allcurves.* and allgens.* files  
+	   allcurves.* and allgens.* files
 
 20/06/05 * Added all data for 60000-69999.
 
@@ -56,7 +157,7 @@ Last major update: 18/09/05
  1/3/05:  added data for N=15299 (one curve) previously omitted
 
  9/2/05:  added data for range 25001-30000 + certification of optimal
-	  curves extended from 8000 to 11000 (extended to 12000 on 13/02/05). 
+	  curves extended from 8000 to 11000 (extended to 12000 on 13/02/05).
 	  Swapped the two curves in classes 15180,15624,15744 as the
 	  conditionally optimal one was second not first.
 
