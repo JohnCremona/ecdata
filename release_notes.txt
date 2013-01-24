@@ -1,7 +1,10 @@
 Last major update: 22/10/2012
 
+24 January 2013 * Recomputed several allbigsha.* files and shas.html
+
 14 January 2013 * Tidied up release notes
                 * Recomputed allbsd.* files < 130000
+                * added scripts to recreate shas.html, table.html
 
 22 October 2012 * Added all data for 290000-299999
 
