@@ -22,8 +22,8 @@ def make_rankshatable(nmax=30, verbose=False):
         for L in infile.readlines():
             N, cl, num, ainvs, r, t, S = L.split()
             r = int(r)
-            S = int(round(float(S)))
-            s = int(round(isqrt(S)))
+            S = int(S)
+            s = int(isqrt(S))
             total_tab[s] = total_tab.get(s,0)+1
             rank_tab[r][s] = rank_tab[r].get(s,0)+1
             range_tab[n][s] = range_tab[n].get(s,0)+1
