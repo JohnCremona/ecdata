@@ -24,7 +24,7 @@ by J. E. Cremona<br>
 University of Warwick, U.K.</h2>
 <p>
 <i>
-Updated <a href="release_notes.txt">2013-01-24 (last major update 2012-10-22)</a>
+Updated <a href="release_notes.txt">2013-09-06 (last major update 2012-10-22)</a>
 </i>
 </p></center>
 
@@ -109,6 +109,10 @@ conductors up to 1000 we have checked that these agree with Magma
 (version V2.14-14). <b>N.B.</b> It is known that these lists are in
 some cases incomplete, due to bugs in the program mentioned; they need
 to be corrected.
+</p>
+<p>
+The images of the mod <i>p</i> Galois representations were computed by
+Andrew Sutherland.
 </p>
 
 <hr>
@@ -893,8 +897,85 @@ Sample lines:
 </li>
 </ul>
 
+<h3>
+TABLE NINE: IMAGES OF GALOIS REPRESENTATIONS
+</h3>
+
+<ul>
+<li>
+<form>
+<select name="url" width=30>
+<option value="None">Select a conductor range</option>
+<option value="galrep.00000-09999.gz">1-9999</option>
+<option value="galrep.10000-19999.gz">10000-19999</option>
+<option value="galrep.20000-29999.gz">20000-29999</option>
+<option value="galrep.30000-39999.gz">30000-39999</option>
+<option value="galrep.40000-49999.gz">40000-49999</option>
+<option value="galrep.50000-59999.gz">50000-59999</option>
+<option value="galrep.60000-69999.gz">60000-69999</option>
+<option value="galrep.70000-79999.gz">70000-79999</option>
+<option value="galrep.80000-89999.gz">80000-89999</option>
+<option value="galrep.90000-99999.gz">90000-99999</option>
+<option value="galrep.100000-109999.gz">100000-109999</option>
+<option value="galrep.110000-119999.gz">110000-119999</option>
+<option value="galrep.120000-129999.gz">120000-129999</option>
+<option value="galrep.130000-139999.gz">130000-139999</option>
+<option value="galrep.140000-149999.gz">140000-149999</option>
+<option value="galrep.150000-159999.gz">150000-159999</option>
+<option value="galrep.160000-169999.gz">160000-169999</option>
+<option value="galrep.170000-179999.gz">170000-179999</option>
+<option value="galrep.180000-189999.gz">180000-189999</option>
+<option value="galrep.190000-199999.gz">190000-199999</option>
+<option value="galrep.200000-209999.gz">200000-209999</option>
+<option value="galrep.210000-219999.gz">210000-219999</option>
+<option value="galrep.220000-229999.gz">220000-229999</option>
+<option value="galrep.230000-239999.gz">230000-239999</option>
+<option value="galrep.240000-249999.gz">240000-249999</option>
+<option value="galrep.250000-259999.gz">250000-259999</option>
+<option value="galrep.260000-269999.gz">260000-269999</option>
+<option value="galrep.270000-279999.gz">270000-279999</option>
+<option value="galrep.280000-289999.gz">280000-289999</option>
+<option value="galrep.290000-299999.gz">290000-299999</option>
+</select>
+<input type=button value="Fetch" onClick="JumpToIt(this.form)">
+</form>
+A table giving the for each elliptic curve the primes <i>p</i>&le;37
+for which the mod-<i>p</i> Galois representation is not surjective, as
+computed by Andrew Sutherland, together with a code identifying the
+image (as a subgroup of GL(2,<i>p</i>), up to conjugation).  For
+curves with CM the representation is never surjective but the image is
+only shown for <i>p</i>&le;37.  For curves without CM, the
+representation is surjective for all but finitely many primes (Serre)
+and is conjectured to be surjective for <i>p</i>&gt;37, but this was
+only checked for 37&lt<i>p</i>&lt80.
+
+<br>
+Data format with sample lines:
+<table cellspacing="10" border="1">
+<tbody><tr>
+<th>N</th> <th>class</th> <th>#</th> <th>[a1,a2,a3,a4,a6]</th>
+<th>rank</th><th>torsion</th>
+<th align="left">list of non-surjective images</th>
+</tr>
+<tr>
+<td>11</td></td><td>a</td><td>1</td><td>[0,-1,1,-10,-20]</td><td>0</td><td>5</td>
+<td>5Cs.1.1</td>
+</tr>
+<tr>
+<td>27</td><td>a</td><td>1</td><td>[0,0,1,0,-7]</td><td>0</td><td>3</td>
+<td>3Cs.1.1 5Nn 7Ns 11Nn 13Ns 17Nn 19Ns 23Nn 29Nn 31Ns 37Ns</td>
+</tr>
+<tr>
+<td>37</td><td>a</td><td>1</td><td>[0,0,1,-1,0]</td><td>1</td><td>1</td>
+<td>&nbsp;</td>
+</tr>
+</tbody></table>
+</li></ul>
+
+
+
 <hr>
-<p><b>Recent update notes</b>:&nbsp; <a href="release_notes.txt">24 January 2013</a>
+<p><b>Recent update notes</b>:&nbsp; <a href="release_notes.txt">6 September 2013</a>
 </p><hr>
 
 <tt>john dot cremona at gmail dot com</tt>

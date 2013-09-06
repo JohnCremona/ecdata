@@ -1,4 +1,6 @@
-Last major update: 22/10/2012
+Last major update: 22/10/2012 (data extended to 300000)
+
+06 September 2013 * Added galrep.* files (from Sutherland)
 
 24 January 2013 * Recomputed several allbigsha.* files and shas.html
 
