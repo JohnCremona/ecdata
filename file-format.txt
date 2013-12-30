@@ -1,0 +1,66 @@
+Format of elliptic curve database files
+
+Each file consists of lines, one per curve, with certain data fields
+on each line, separated by whitespace.
+
+Data fields (and metafields combining several fields):
+
+N           Conductor
+CLASSCODE   Letter code of isogeny class  (a, b, ..., z, ba, bb, ...)
+NCURVE      Number of curve in class (1,2,...)
+
+ID          N CLASSCODE NCURVE (separated by whitespace)  e.g. 11 a 1
+IDX         N CLASSCODE NCURVE (no whitespace separation) e.g. 11a1
+
+NNF         Number of newforms / isogeny classes
+
+AI          Reduced minimial Weierstrass coefficients
+                in format [a1,a2,a3,a4,a6] (no spaces)
+R           Rank
+T           Torsion order
+GEN1        1st generator of E(Q) in format [x:y:z] (no spaces)
+GEN2        2nd ditto
+GEN3        3rd ditto
+GENS        GEN1 or GEN1 GEN2 or GEN1 GEN2 GEN3 (separated by whitespace)
+
+AP          a2 a3 a5 a7 a11 (etc.) where ap is the p'th eigenvalue of the
+                newform.  When p divides N this is the W_p eigenvalue,
+                shown just as "+" or "-"; else the T_p eigenvalue.
+AP25        AP for all primes<100 (the first 25 primes).
+
+BQ          If there is a prime q>100 dividing N this string is either
+            +(q) or -(q) showing the eigenvalue of W_q.  Or Two such
+            strings separated by whitespace if there is more than one
+            such prime (e.g. N=50038, q=127 and q=197).  Else empty.
+
+CP          Product of Tamagawa numbers
+OM          Real period
+L1          L(r)(E,1)/r!
+REG         Regulator
+SHA         Analytic order of Sha
+DEG         Degree of modular parametrization
+PDEG        Set of primes dividing DEG
+CLASS       [E1,E2,...,En] where n=#isogeny class, Ei=AI for i'th curve.
+ISOGMAT     Matrix of isogeny degrees (primes only, else 0) between Ei
+            and Ej, as a list of lists with no spaces.
+            e.g. [[0,5,5],[5,0,0],[5,0,0]].
+XLIST       List of x-coordinates of integral points (no spaces).
+GAL_IM      Sutherland code for (non-surjective) Galois image
+GAL_IMS     Sequence of GAL_IM spearated by whitespace
+
+Files:
+
+1. curves:   ID AI R T (for curves with NCURVE=1 only)
+2. allcurves: ID AI R T
+3. allgens:   ID AI R GENS
+4. aplist:    N CLASSCODE AP25 BQ
+5. allbsd:    ID AI R T CP OM L1 REG SHA
+6. degphi:    ID AI DEG PDEG AI (for curves with NCURVE=1 only)
+7. alldegphi: ID AI DEG
+8. allisog:   ID AI CLASS ISOGMAT
+9. intpts:    IDX AI XLIST
+10. allbigsha: ID AI R T SHA
+11. count:     N NNF
+12. paricurves: ["ID", AI, GENS]
+13. alllabels: N CLASSCODE NCURVE N LMFDB_CLASSCODE LMFDB_NCURVE
+14. galrep: ID AI R T GAL_IMS

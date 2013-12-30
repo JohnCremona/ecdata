@@ -1,4 +1,6 @@
-Last major update: 22/10/2012 (data extended to 300000)
+Last major update: 30/12/2013 (data extended to 310000)
+
+30 December 2013 * Added all data for 300000-309999
 
 06 September 2013 * Added galrep.* files (from Sutherland)
 
