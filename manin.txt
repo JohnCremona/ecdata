@@ -1,4 +1,4 @@
-Manin constants and optimal curves: conductors 60000-310000
+Manin constants and optimal curves: conductors 60000-320000
 -----------------------------------------------------------
 
 For all conductors (levels) N up to 60000 we have computed the full
@@ -9,18 +9,18 @@ Constant" by Amod Agashe, Ken Ribet and William Stein [Pure and
 Applied Mathematics Quarterly, Vol. 2 no.2 (2006), pp. 617-636.]
 
 Here we report on what is known for larger conductors, currently
-covering the range 60000-310000.
+covering the range 60000-320000.
 
-# isogeny classes:                         1094258
-# isogeny classes with only one curve:      756625
-# isogeny classes with more than one curve: 337633
+# isogeny classes:                         1137351
+# isogeny classes with only one curve:      787030
+# isogeny classes with more than one curve: 350321
 
-Of the latter, c=1 known for:               337596+37=337633
-               optimality known for:        157132+37=157169
-               optimality not known for:              180464
-[146950,30611,2626,131,146 classes have 2,3,4,5,6 possible candidates]
+Of the latter, c=1 known for:               350284+37=350321
+               optimality known for:        162961+37=162998
+               optimality not known for:              187286
+[152573,31722,2702,134,155 classes have 2,3,4,5,6 possible candidates]
 
-For all 756625 classes with only one curve, obviously that curve is
+For all 787030 classes with only one curve, obviously that curve is
 optimal, and we have shown that c=1.
 
 For all classes with more than one curve, we have proved that the
@@ -39,12 +39,12 @@ that c=3 is impossible unless N is a multiple of 3.
 
 -----------------------------------------------------------
 
-In detail,  for the 337633 classes with more than one curve:
+In detail,  for the 350321 classes with more than one curve:
 
-In 157169 classes the optimal curve is provably the first one listed,
+In 162998 classes the optimal curve is provably the first one listed,
 and c=1.
 
-In 180464 classes the optimal curve is one of up to 6 possible curves
+In 187286 classes the optimal curve is one of up to 6 possible curves
 in the class, but c=1 in any case.
 
 e.g. 130050em: class has 8 curves
@@ -83,7 +83,7 @@ conjecture that the Gamma_1(N)-optimal curve is the one with minimal
 Faltings Height (i.e. the one whose period lattice is a sublattice of
 all the others).
 
-The files optimality.06, ..., optimality.30 contain one line for each
+The files optimality.06, ..., optimality.31 contain one line for each
 class of size at least 2, with the following format:
 
 209990bb: c=1; 3 possible optimal curves: E1 E2 E3
