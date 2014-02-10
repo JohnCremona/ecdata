@@ -1,4 +1,4 @@
-Manin constants and optimal curves: conductors 60000-320000
+Manin constants and optimal curves: conductors 60000-330000
 -----------------------------------------------------------
 
 For all conductors (levels) N up to 60000 we have computed the full
@@ -11,16 +11,16 @@ Applied Mathematics Quarterly, Vol. 2 no.2 (2006), pp. 617-636.]
 Here we report on what is known for larger conductors, currently
 covering the range 60000-320000.
 
-# isogeny classes:                         1137351
-# isogeny classes with only one curve:      787030
-# isogeny classes with more than one curve: 350321
+# isogeny classes:                         1180243
+# isogeny classes with only one curve:      817450
+# isogeny classes with more than one curve: 362793
 
-Of the latter, c=1 known for:               350284+37=350321
-               optimality known for:        162961+37=162998
-               optimality not known for:              187286
-[152573,31722,2702,134,155 classes have 2,3,4,5,6 possible candidates]
+Of the latter, c=1 known for:               362755+38=362793
+               optimality known for:        168918+38=168956
+               optimality not known for:              193837
+[158053,32731,2770,136,157 classes have 2,3,4,5,6 possible candidates]
 
-For all 787030 classes with only one curve, obviously that curve is
+For all 817450 classes with only one curve, obviously that curve is
 optimal, and we have shown that c=1.
 
 For all classes with more than one curve, we have proved that the
@@ -39,12 +39,12 @@ that c=3 is impossible unless N is a multiple of 3.
 
 -----------------------------------------------------------
 
-In detail,  for the 350321 classes with more than one curve:
+In detail,  for the 362793 classes with more than one curve:
 
-In 162998 classes the optimal curve is provably the first one listed,
+In 168956 classes the optimal curve is provably the first one listed,
 and c=1.
 
-In 187286 classes the optimal curve is one of up to 6 possible curves
+In 193837 classes the optimal curve is one of up to 6 possible curves
 in the class, but c=1 in any case.
 
 e.g. 130050em: class has 8 curves
@@ -53,7 +53,7 @@ e.g. 130050em: class has 8 curves
  -either the optimal curve has type 1 and is #1 or #3 with c=1 [c*aj=1]
  -or the optimal curve has type 2 and is #2, #4, #6, or #7 with c=1 [c*aj=2]
 
-Note that for 37 classes, there would be a possibility that c=2 and
+Note that for 38 classes, there would be a possibility that c=2 and
 that the optimal curve is the second one listed, if we relied only on
 the information given by modular symbols with sign +1.  These all have
 the same form: 2 curves in the class with types 1,2 and aj=1,1 so
@@ -69,7 +69,7 @@ These classes are: (13 listed in the appendix to the paper cited),
                    169808a, 171412c, 184916a, 188372a, 211664a,
                    217172b, 219088b, 220916b, 236212b, 240116a,
                    250064a, 256052a, 260116a, 280916a, 285172a,
-                   291664a, 300368a, 302516a, 306932a.
+                   291664a, 300368a, 302516a, 306932a, 329492a.
 
 In all of the above cases I have computed the full modular symbol
 space to eliminate the second possibility.  Hence, in this range all
@@ -83,7 +83,7 @@ conjecture that the Gamma_1(N)-optimal curve is the one with minimal
 Faltings Height (i.e. the one whose period lattice is a sublattice of
 all the others).
 
-The files optimality.06, ..., optimality.31 contain one line for each
+The files optimality.06, ..., optimality.32 contain one line for each
 class of size at least 2, with the following format:
 
 209990bb: c=1; 3 possible optimal curves: E1 E2 E3
@@ -91,7 +91,7 @@ class of size at least 2, with the following format:
 209990be: c=1; optimal curve is E1
 184916a: Neither c nor the optimal curve are uniquely determined.  Possibilities for (c,j0) are: (1,1) (2,2)
 
-The last of these is one of the 37 cases which were ambiguous before
+The last of these is one of the 38 cases which were ambiguous before
 computing the full modular symbol space, but have now been settled; so
 it could now read:
 
