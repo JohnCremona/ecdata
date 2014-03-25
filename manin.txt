@@ -11,16 +11,16 @@ Applied Mathematics Quarterly, Vol. 2 no.2 (2006), pp. 617-636.]
 Here we report on what is known for larger conductors, currently
 covering the range 60000-320000.
 
-# isogeny classes:                         1180243
-# isogeny classes with only one curve:      817450
-# isogeny classes with more than one curve: 362793
+# isogeny classes:                         1223283
+# isogeny classes with only one curve:      847925
+# isogeny classes with more than one curve: 375358
 
-Of the latter, c=1 known for:               362755+38=362793
-               optimality known for:        168918+38=168956
-               optimality not known for:              193837
-[158053,32731,2770,136,157 classes have 2,3,4,5,6 possible candidates]
+Of the latter, c=1 known for:               375320+38=375358
+               optimality known for:        174706+38=174742
+               optimality not known for:              200614
+[163651,33811,2846,140,166 classes have 2,3,4,5,6 possible candidates]
 
-For all 817450 classes with only one curve, obviously that curve is
+For all 847925 classes with only one curve, obviously that curve is
 optimal, and we have shown that c=1.
 
 For all classes with more than one curve, we have proved that the
@@ -39,12 +39,12 @@ that c=3 is impossible unless N is a multiple of 3.
 
 -----------------------------------------------------------
 
-In detail,  for the 362793 classes with more than one curve:
+In detail,  for the 375358 classes with more than one curve:
 
-In 168956 classes the optimal curve is provably the first one listed,
+In 174742 classes the optimal curve is provably the first one listed,
 and c=1.
 
-In 193837 classes the optimal curve is one of up to 6 possible curves
+In 200614 classes the optimal curve is one of up to 6 possible curves
 in the class, but c=1 in any case.
 
 e.g. 130050em: class has 8 curves
@@ -83,7 +83,7 @@ conjecture that the Gamma_1(N)-optimal curve is the one with minimal
 Faltings Height (i.e. the one whose period lattice is a sublattice of
 all the others).
 
-The files optimality.06, ..., optimality.32 contain one line for each
+The files optimality.06, ..., optimality.33 contain one line for each
 class of size at least 2, with the following format:
 
 209990bb: c=1; 3 possible optimal curves: E1 E2 E3
