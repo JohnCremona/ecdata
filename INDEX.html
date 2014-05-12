@@ -24,7 +24,7 @@ by J. E. Cremona<br>
 University of Warwick, U.K.</h2>
 <p>
 <i>
-Updated <a href="release_notes.txt">2014-03-25 (last major update 2014-03-25)</a>
+Updated <a href="release_notes.txt">2014-05-12 (last major update 2014-05-12)</a>
 </i>
 </p></center>
 
@@ -65,7 +65,7 @@ uncompress the files automatically for you to view them.
 </p>
 
 <p>
-The tables currently contain data for conductors up to <b>340000</b>.
+The tables currently contain data for conductors up to <b>350000</b>.
 </p>
 
 <p>
@@ -159,6 +159,7 @@ SUMMARY TABLES
 <option value="count.310000-319999.gz">310000-319999</option>
 <option value="count.320000-329999.gz">320000-329999</option>
 <option value="count.330000-339999.gz">330000-339999</option>
+<option value="count.340000-349999.gz">340000-349999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -216,6 +217,7 @@ TABLE ONE: CURVES
 <option value="allcurves.310000-319999.gz">310000-319999</option>
 <option value="allcurves.320000-329999.gz">320000-329999</option>
 <option value="allcurves.330000-339999.gz">330000-339999</option>
+<option value="allcurves.340000-349999.gz">340000-349999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -260,8 +262,7 @@ For example:
 <li>All curves with torsion of order 12:
 <p align="LEFT"><tt>&nbsp;&nbsp;&nbsp;awk '$6==12' allcurves.* | sort -n
 -k 1</tt></p>
-</li><li>All curves (so far only 210e2, 46410cn2, 82110bt2 and 110670cp2) with torsion
-of order 16:
+</li><li>All curves with torsion of order 16:
 <p align="LEFT"><tt>&nbsp;&nbsp;&nbsp;awk '$6==16' allcurves.*</tt></p>
 </li><li>All curves of rank 3:
 <p align="LEFT"><tt>&nbsp;&nbsp;&nbsp;awk '$5==3' allcurves.* | sort -n
@@ -324,6 +325,7 @@ TABLE TWO: GENERATORS
 <option value="allgens.310000-319999.gz">310000-319999</option>
 <option value="allgens.320000-329999.gz">320000-329999</option>
 <option value="allgens.330000-339999.gz">330000-339999</option>
+<option value="allgens.340000-349999.gz">340000-349999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -419,6 +421,7 @@ TABLE THREE: HECKE EIGENVALUES
 <option value="aplist.310000-319999.gz">310000-319999</option>
 <option value="aplist.320000-329999.gz">320000-329999</option>
 <option value="aplist.330000-339999.gz">330000-339999</option>
+<option value="aplist.340000-349999.gz">340000-349999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -512,6 +515,7 @@ computed to several places but to save space is just entered as
 <option value="allbsd.310000-319999.gz">310000-319999</option>
 <option value="allbsd.320000-329999.gz">320000-329999</option>
 <option value="allbsd.330000-339999.gz">330000-339999</option>
+<option value="allbsd.340000-349999.gz">340000-349999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -589,6 +593,7 @@ where:
 <option value="allbigsha.310000-319999.gz">310000-319999</option>
 <option value="allbigsha.320000-329999.gz">320000-329999</option>
 <option value="allbigsha.330000-339999.gz">330000-339999</option>
+<option value="allbigsha.340000-349999.gz">340000-349999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -600,9 +605,9 @@ for 165066d3.
 <br>
 <li>
 <a href="shas.html">shas.html</a><br>
-A summary table of large Shas.  Note that (up to conductor 340000)
-there are 160972 elliptic curves with non-trivial Sha, with ranks 0
-(148370 curves), 1 (12592 curves) and 2 (10 curves, all with
+A summary table of large Shas.  Note that (up to conductor 350000)
+there are 166258 elliptic curves with non-trivial Sha, with ranks 0
+(153206 curves), 1 (13040 curves) and 2 (12 curves, all with
 2-torsion).
 </li></ul>
 
@@ -651,6 +656,7 @@ Optimal curves:
 <option value="degphi.310000-319999.gz">310000-319999</option>
 <option value="degphi.320000-329999.gz">320000-329999</option>
 <option value="degphi.330000-339999.gz">330000-339999</option>
+<option value="degphi.340000-349999.gz">340000-349999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -706,6 +712,7 @@ All curves:
 <option value="alldegphi.310000-319999.gz">310000-319999</option>
 <option value="alldegphi.320000-329999.gz">320000-329999</option>
 <option value="alldegphi.330000-339999.gz">330000-339999</option>
+<option value="alldegphi.340000-349999.gz">340000-349999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -771,6 +778,7 @@ TABLE SIX: ISOGENY MATRICES
 <option value="allisog.310000-319999.gz">310000-319999</option>
 <option value="allisog.320000-329999.gz">320000-329999</option>
 <option value="allisog.330000-339999.gz">330000-339999</option>
+<option value="allisog.340000-349999.gz">340000-349999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -838,6 +846,7 @@ TABLE SEVEN: INTEGRAL POINTS
 <option value="intpts.310000-319999.gz">310000-319999</option>
 <option value="intpts.320000-329999.gz">320000-329999</option>
 <option value="intpts.330000-339999.gz">330000-339999</option>
+<option value="intpts.340000-349999.gz">340000-349999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -880,7 +889,7 @@ do for all remaining cases.  For more details on this, see my Appendix
 to the paper "The Manin Constant" by Amod Agashe, Ken Ribet and
 William Stein [Pure and Applied Mathematics Quarterly, Vol. 2 no.2
 (2006), pp. 617-636.] and <a href="manin.txt">these notes</a> updating
-the results for all conductors to 340000.  These updated results
+the results for all conductors to 350000.  These updated results
 include the verification that Manin's constant is 1 in all cases,
 together with a list of which curves in the class might be optimal,
 given the incomplete modular symbol computations carried out to date.
@@ -921,6 +930,7 @@ listed.
 <option value="optimality.31.gz">310000-319999</option>
 <option value="optimality.32.gz">320000-329999</option>
 <option value="optimality.33.gz">330000-339999</option>
+<option value="optimality.34.gz">340000-349999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -983,6 +993,7 @@ TABLE NINE: IMAGES OF GALOIS REPRESENTATIONS
 <option value="galrep.310000-319999.gz">310000-319999</option>
 <option value="galrep.320000-329999.gz">320000-329999</option>
 <option value="galrep.330000-339999.gz">330000-339999</option>
+<option value="galrep.340000-349999.gz">340000-349999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -1022,8 +1033,8 @@ Data format with sample lines:
 
 
 <hr>
-<p><b>Recent update notes</b>:&nbsp; <a href="release_notes.txt">25
-    March 2014</a>
+<p><b>Recent update notes</b>:&nbsp; <a href="release_notes.txt">12
+    May 2014</a>
 </p><hr>
 
 <tt>john dot cremona at gmail dot com</tt>

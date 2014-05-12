@@ -1,5 +1,6 @@
-Last major update: 25/03/2014 (data extended to 340000)
+Last major update: 12/05/2014 (data extended to 350000)
 
+12 May 2014 * Added all data for 340000-349999
 25 March 2014 * Added all data for 330000-339999
 10  January 2014 * Added all galdata for 320000-329999
 10 February 2014 * Added all data for 320000-329999
