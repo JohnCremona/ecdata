@@ -4,3 +4,6 @@ extra_tables/*
 ftpdir/*
 scripts/*
 .hg*
+ecdata-*.tgz
+src
+database_cremona_ellcurve*.bz2

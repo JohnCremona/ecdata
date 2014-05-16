@@ -1,0 +1,196 @@
+Notes on post-processing and merging data files
+
+In main g0n directory (~/g0n):
+
+1. Batches of 1000: when each batch of 1000 levels is running,  run
+
+./postproc nnn
+
+(e.g. ./postproc 349 for the range 349000-349999);  this will keep
+looping until all are done.
+
+2. Batches of 100 & 1000: when postproc has finished a batch of 1000,
+run
+
+for n in `seq 0 9`; do ./merge00 nnn; done
+
+and then (assuming no problems arise)
+
+./merge000 nnn
+
+to create 12 files of the form g0n/data/*.nnn000-nnn999 .
+
+3. Batches of 10000: when 10 batches of 1000 (nn0, ..., nn9) have thus
+been merged, run
+
+./merge0000 nn
+
+to create 12 files of the form g0n/data/*.nn0000-nn9999 .  Copy these
+into ~/ecdata and use "git add" to add them to the git repository.
+
+4.  Make alllabels file:
+sage: %runfile "labels.py"
+sage: make_alllabels("curves.340000-349999")
+(outputs a line to screen every 1000 input lines, takes about 40s per
+1000, so about 30 minutes)
+[quit sage]
+Check that outputfile (e.g. talllabels.340000-349999) & rename without
+the prefix "t". Add to git tracking (git add alllabels.340000-349999).
+
+From now on work in data directory (~/ecdata) which is a git
+repository linked to https://github.com/JohnCremona/ecdata
+
+5. Email Sutherland and ask him to run his script on any new
+allcurves file (e.g. allcurves.340000-349999) and rename his output
+galrep.* (e.g. galrep.340000-349999).
+
+6. Files to be edited are: table.html, shas.html, Makefile,
+INDEX.html, manin.txt, release_notes.txt.  The first two are now
+created automatically by Python scripts (sharanktable.py and
+summarytable.py), but in each case there is a preliminary manual check
+to see if new Sha values have occurred or new ranks (!) in which case
+the scripts will need to be edited.
+
+(6a): shas.html (using sharanktable.py)
+
+Check up on new Sha records using
+
+  sort  allbigsha.*9 -n -k 7 | tail
+
+to see if the script needs to provide extra columns for the
+table. Current range is s^2 for s in range(32)+[41,47,50,75].
+
+Use sharanktable.py to create a new version newshas.html:
+       sage: %runfile sharanktable.py
+       sage: make_rankshatable(35) # to go up to 349999
+If happy, replace shas.html with it.
+
+(6b): table.html (using summarytable.py)
+
+Check up on new rank records (!) using
+
+  sort curves.*9 -n -k 5 | tail -1
+
+to see if the script needs adjusting (record is now 4).
+
+Use summarytable.py to create a new version newtable.html:
+       sage: %runfile summarytable.py
+       sage: make_table(35)
+If happy, replace table.html with it.
+
+(6c): release_notes.txt: Add suitable section at the top.
+
+(6d): Makefile: nothing should need doing.
+
+(6e): INDEX.html:
+      2 changes in lines with "pdate";
+      change "up to ...";
+      change record Sha if necessary;
+      add an extra file in each section.
+      Edit the paragraph "...curves with nontrivial Sha..." using
+
+cat  allbigsha.*9 | wc -l
+cat  allbigsha.*9 | awk '$5==0' | wc -l
+cat  allbigsha.*9 | awk '$5==1' | wc -l
+cat  allbigsha.*9 | awk '$5==2' | wc -l
+cat  allbigsha.*9 | awk '$5==3' | wc -l
+cat  allbigsha.*9 | awk '$5==4' | wc -l
+
+(6f) manin.txt needs some real work:
+
+[In g0n working dir]
+N=34
+let 'Nminus1 = N-1'
+NCL=`awk '$3==1' data/allcurves.${N}0000-${N}9999 | wc -l`
+echo "$NCL isogeny classes in range ${N}0000-${N}9999"
+NCL2=`awk '$3==2' data/allcurves.${N}0000-${N}9999 | wc -l`
+let 'NCL1 = NCL-NCL2'
+echo "with ${NCL1} classes of size 1 and ${NCL2} of size at least 2"
+./h1pperiods < data/allcurves.${N}0000-${N}9999 > h1pp/h1pp.long.${N}
+grep optimal h1pp/h1pp.long.${N} > h1pp/h1pp.out.${N}
+wc -l h1pp/h1pp.out.${N} # should = $NCL2
+grep -c "c=1" h1pp/h1pp.out.${N}
+# $NCL2-this counts #classes with c=1 not known
+# create optimality record file:
+grep "opt" h1pp/h1pp.out.${N} > data/optimality.${N}
+cp data/optimality.${N} $HOME/ecdata/
+(cd $HOME/ecdata/; git add optimality.${N})
+# Display classes where c=1 not proved:
+grep -v "c=1" data/optimality.${N}
+cat h1pp/h1pp.conc.13-${Nminus1} data/optimality.${N} > h1pp/h1pp.conc.13-${N}
+cat h1pp/h1pp.conc.6-${Nminus1} data/optimality.${N} > h1pp/h1pp.conc.6-${N}
+# Numbers for lines 14-16 of manin.txt (edit the lines below):
+Nall=`cat ~/ecdata/curves.*9 | awk '($1>60000)&&($1<350000)' | wc -l`
+N2=`cat ~/ecdata/allcurves.*9 | awk '($3==2)&&($1>60000)&&($1<350000)' | wc -l`
+let 'N1=Nall-N2'
+echo $Nall $N1 $N2
+
+# Optimality counts
+# classes of size > 1:
+wc -l h1pp/h1pp.conc.6-${N}
+# classes where c=1 & optimal curve known:
+grep -c "optimal curve is " h1pp/h1pp.conc.6-${N}
+# classes where c=1 known but >1 possible optimal curve:
+grep -c " possible " h1pp/h1pp.conc.6-${N}
+# classes where c=1 not known without more work:
+grep -v  "curve is" h1pp/h1pp.conc.6-${N} | grep -v "possible" | wc -l
+# counts for numbers of possible optimal curves (2-6)
+for n in `seq 2 6`; do echo $n; grep -c "$n possible " h1pp/h1pp.conc.6-${N}; done
+
+--Now use the above numbers to manually edit manin.txt.
+
+git add manin.txt INDEX.html table.html shas.html release_notes.txt
+
+===============
+
+1. make tar ftp
+2. update home page
+3. delete older ~/public_html/ftp/ecdata-*.tgz
+
+Assuming that all looks ok & nothing has been forgotten:
+
+4. git commit -m "added data for 340000-349999"
+
+5. Use "git push origin master" to update github files
+
+6. Update mirror at sagemath:
+[ on host-56-150 or mimosa]
+rsync -avz /home/masgaj/public_html/ftp/data/ sagemath:ecdata-mirror/
+
+7. (a) email Bill Allombert to he can update pari's elldata
+   (b) email John Cannon so he can update Magma's database
+   (c) Update LMFDB.  On atkin:
+       (i) cd to ~/ecdata and git pull origin master
+       (ii) cd ~/lmfdb; ./warwick-sh &
+       (iii) sage
+       sage: %runfile lmfdb/elliptic_curves/import_ec_data.py
+       sage: upload_to_db("/home/jec/ecdata",340000,349999)
+   (d) Update Sage's optional spkg (this assumes that the old version
+       of the optional spkg is already installed):
+       cd SAGE_ROOT/local/share/cremona
+       mv cremona.db cremona.db.bak
+       sage
+       sage: time d = sage.databases.cremona.build('cremona','/home/jec/ecdata/ecdata-2014-05-12.tgz')
+       sage: CremonaDatabase().largest_conductor()
+       349998
+       sage: CremonaDatabase().number_of_curves()
+       2186808
+
+       cp SAGE_ROOT/local/share/cremona/cremona.db ~/ecdata/src
+       cd ~/ecdata
+       chmod -R 744 src
+       tar cvf database_cremona_ellcurve-20140512.tar src
+       bzip2 database_cremona_ellcurve-20140512.tar
+       chmod a+r database_cremona_ellcurve-20140512.tar.bz2
+       cp database_cremona_ellcurve-20140512.tar.bz2 SAGE_ROOT/upstream/
+       scp database_cremona_ellcurve-20140512.tar.bz2 sagemath:
+
+       and now make a trac ticket for the upgrade.  The only changes
+       to be made (make a new git branch off develop first!) are
+       (1)  edit manually the file
+       build/pkgs/database_cremona_ellcurve/package_version.txt
+            to contain (e.g.) 20140512
+       and
+       (2)  run ./sage -sh sage-fix-pkg-checksums
+       to change the file
+       build/pkgs/database_cremona_ellcurve/checksums.ini
