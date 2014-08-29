@@ -1,5 +1,7 @@
 Last major update: 12/05/2014 (data extended to 350000)
 
+29 August 2014 * Updated data for 240000-249999, 250000-259999 (both
+   ranges 246400-99 and 252800-99 had been omitted entirely)
 12 May 2014 * Added all data for 340000-349999
 25 March 2014 * Added all data for 330000-339999
 10  January 2014 * Added all galdata for 320000-329999

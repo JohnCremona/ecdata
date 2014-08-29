@@ -11,16 +11,16 @@ Applied Mathematics Quarterly, Vol. 2 no.2 (2006), pp. 617-636.]
 Here we report on what is known for larger conductors, currently
 covering the range 60000-350000.
 
-# isogeny classes:                         1267018
-# isogeny classes with only one curve:      878673
-# isogeny classes with more than one curve: 388345
+# isogeny classes:                         1267980
+# isogeny classes with only one curve:      879273
+# isogeny classes with more than one curve: 388707
 
-Of the latter, c=1 known for:               375320+38=388345
-               optimality known for:        180651+40=180691
-               optimality not known for:              207654
-[169472,34914,2950,146,172 classes have 2,3,4,5,6 possible candidates]
+Of the latter, c=1 known for:               388667+40=388707
+               optimality known for:        180805+40=180845
+               optimality not known for:              207862
+[169647,34943,2953,146,173 classes have 2,3,4,5,6 possible candidates]
 
-For all 878673 classes with only one curve, obviously that curve is
+For all 879273 classes with only one curve, obviously that curve is
 optimal, and we have shown that c=1.
 
 For all classes with more than one curve, we have proved that the
@@ -39,12 +39,12 @@ that c=3 is impossible unless N is a multiple of 3.
 
 -----------------------------------------------------------
 
-In detail,  for the 388345 classes with more than one curve:
+In detail,  for the 388707 classes with more than one curve:
 
-In 180691 classes the optimal curve is provably the first one listed,
+In 180845 classes the optimal curve is provably the first one listed,
 and c=1.
 
-In 207654 classes the optimal curve is one of up to 6 possible curves
+In 207862 classes the optimal curve is one of up to 6 possible curves
 in the class, but c=1 in any case.
 
 e.g. 130050em: class has 8 curves
