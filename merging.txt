@@ -176,7 +176,8 @@ rsync -avz /home/masgaj/public_html/ftp/data/ sagemath:ecdata-mirror/
 7. (a) email Bill Allombert to he can update pari's elldata
    (b) email John Cannon so he can update Magma's database
    (c) Update LMFDB.  On atkin:
-       (i) cd to ~/ecdata and git pull origin master
+       (i) [not needed if working on atkin anyway]
+            cd to ~/ecdata and git pull origin master
        (ii) cd ~/lmfdb; ./warwick-sh &
        (iii) sage
        sage: %runfile lmfdb/elliptic_curves/import_ec_data.py
@@ -186,7 +187,7 @@ rsync -avz /home/masgaj/public_html/ftp/data/ sagemath:ecdata-mirror/
        cd SAGE_ROOT/local/share/cremona
        mv cremona.db cremona.db.bak
        sage
-       sage: time d = sage.databases.cremona.build('cremona','/home/jec/ecdata/ecdata-2014-05-12.tgz')
+       sage: time d = sage.databases.cremona.build('cremona','/home/jec/ecdata/ecdata-2014-08-29.tgz')
        sage: CremonaDatabase().largest_conductor()
        349998
        sage: CremonaDatabase().number_of_curves()
