@@ -26,16 +26,20 @@ been merged, run
 ./merge0000 nn
 
 to create 12 files of the form g0n/data/*.nn0000-nn9999 .  Copy these
-into ~/ecdata and use "git add" to add them to the git repository.
+into ~/ecdata, move them into the appropriate subdirectories, and use
+"git add" to add them to the git repository.
 
 4.  Make alllabels file:
+
 sage: %runfile "labels.py"
 sage: make_alllabels("curves.340000-349999")
 (outputs a line to screen every 1000 input lines, takes about 40s per
 1000, so about 30 minutes)
 [quit sage]
+
 Check that outputfile (e.g. talllabels.340000-349999) & rename without
-the prefix "t". Add to git tracking (git add alllabels.340000-349999).
+the prefix "t", moving to the alllabels/ subdirectory.  Add to git
+tracking (git add alllabels.340000-349999).
 
 From now on work in data directory (~/ecdata) which is a git
 repository linked to https://github.com/JohnCremona/ecdata
@@ -55,7 +59,7 @@ the scripts will need to be edited.
 
 Check up on new Sha records using
 
-  sort  allbigsha.*9 -n -k 7 | tail
+  sort  allbigsha/*9 -n -k 7 | tail
 
 to see if the script needs to provide extra columns for the
 table. Current range is s^2 for s in range(32)+[41,47,50,75].

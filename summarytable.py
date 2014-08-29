@@ -33,12 +33,12 @@ def make_table(nmax=30, verbose=False):
     total_all = 0
 
     for n in range(nmax):
-        infilename = "allcurves."+str(n)+"0000-"+str(n)+"9999"
+        infilename = "allcurves/allcurves."+str(n)+"0000-"+str(n)+"9999"
         range_total_all[n] = len(file(infilename).readlines())
         total_all += range_total_all[n]
 
     for n in range(nmax):
-        infilename = "curves."+str(n)+"0000-"+str(n)+"9999"
+        infilename = "curves/curves."+str(n)+"0000-"+str(n)+"9999"
         if verbose:
             print "processing %s"%infilename
         infile = file(infilename)

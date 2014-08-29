@@ -21,7 +21,7 @@ def make_alllabels(infilename, mode='w', pref='t', verbose=False):
             print L
         N, cl, num, ainvs, r, tor, d = L.split()
         E = EllipticCurve(eval(ainvs))
-        curves = E.isogeny_class(use_tuple=False, order="sage")
+        curves = E.isogeny_class(order="sage").curves
         reordered_curves = sorted(curves, key = lambda E: E.a_invariants())
         lab1 = range(1,len(curves)+1)
         lab2 = [1+reordered_curves.index(EE) for EE in curves]

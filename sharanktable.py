@@ -15,7 +15,7 @@ def make_rankshatable(nmax=30, verbose=False):
     range_total = [0 for n in range(nmax)]
 
     for n in range(nmax):
-        infilename = "allbigsha."+str(n)+"0000-"+str(n)+"9999"
+        infilename = "allbigsha/allbigsha."+str(n)+"0000-"+str(n)+"9999"
         if verbose:
             print "processing %s"%infilename
         infile = file(infilename)
