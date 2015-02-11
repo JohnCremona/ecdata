@@ -20,6 +20,7 @@ BSD = allbsd/bsd.1-1000 allbsd/allbsd.?0000-?9999 allbsd/allbsd.??0000-??9999
 PARICURVES = paricurves/paricurves.?0000-?9999 paricurves/paricurves.??0000-??9999
 INTPTS = intpts/intpts.?0000-?9999 intpts/intpts.??0000-??9999
 GALREPS = galrep/galrep.?0000-?9999 galrep/galrep.??0000-??9999
+TWOADIC = 2adic/2adic.?0000-?9999 2adic/2adic.??0000-??9999
 OPTIMAL = optimality/optimality.??
 
 allcurves: $(ALLCURVES)
@@ -48,12 +49,14 @@ intpts: $(INTPTS)
 	@echo $(INTPTS)
 galreps: $(GALREPS)
 	@echo $(GALREPS)
+twoadic: $(TWOADIC)
+	@echo $(TWOADIC)
 optimal: $(OPTIMAL)
 	@echo $(OPTIMAL)
 
 HTMLDATAFILES = shas.html table.html curves.1-1000.html
 TEXTFILES = manin.txt INDEX.html release_notes.txt
-DATAFILES =  $(ALLCURVES) $(APLIST) $(BIGSHA) $(COUNT) $(DEGPHI) $(ALLDEGPHI) $(ALLGENS) $(BSD) $(ALLISOG) $(PARICURVES) $(INTPTS) $(GALREPS) $(OPTIMAL)
+DATAFILES =  $(ALLCURVES) $(APLIST) $(BIGSHA) $(COUNT) $(DEGPHI) $(ALLDEGPHI) $(ALLGENS) $(BSD) $(ALLISOG) $(PARICURVES) $(INTPTS) $(GALREPS) $(TWOADIC) $(OPTIMAL)
 FTPFILES = $(DATAFILES) $(TEXTFILES) $(HTMLDATAFILES)
 
 ftp:  $(FTPFILES)

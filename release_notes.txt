@@ -1,5 +1,6 @@
-Last major update: 12/05/2014 (data extended to 350000)
+Last major update: 11/02/2015 (added 2-adic images)
 
+11 February 2015 * Added 2adic data (from Rouse)
 29 August 2014 * Updated data for 240000-249999, 250000-259999 (both
    ranges 246400-99 and 252800-99 had been omitted entirely)
 12 May 2014 * Added all data for 340000-349999

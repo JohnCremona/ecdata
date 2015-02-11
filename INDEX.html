@@ -1030,6 +1030,86 @@ Data format with sample lines:
 </tbody></table>
 </li></ul>
 
+<h3>
+TABLE TEN: IMAGES OF TWO-ADIC GALOIS REPRESENTATION
+</h3>
+
+<ul>
+<li>
+<form>
+<select name="url" width=30>
+<option value="None">Select a conductor range</option>
+<option value="2adic/2adic.00000-09999.gz">1-9999</option>
+<option value="2adic/2adic.10000-19999.gz">10000-19999</option>
+<option value="2adic/2adic.20000-29999.gz">20000-29999</option>
+<option value="2adic/2adic.30000-39999.gz">30000-39999</option>
+<option value="2adic/2adic.40000-49999.gz">40000-49999</option>
+<option value="2adic/2adic.50000-59999.gz">50000-59999</option>
+<option value="2adic/2adic.60000-69999.gz">60000-69999</option>
+<option value="2adic/2adic.70000-79999.gz">70000-79999</option>
+<option value="2adic/2adic.80000-89999.gz">80000-89999</option>
+<option value="2adic/2adic.90000-99999.gz">90000-99999</option>
+<option value="2adic/2adic.100000-109999.gz">100000-109999</option>
+<option value="2adic/2adic.110000-119999.gz">110000-119999</option>
+<option value="2adic/2adic.120000-129999.gz">120000-129999</option>
+<option value="2adic/2adic.130000-139999.gz">130000-139999</option>
+<option value="2adic/2adic.140000-149999.gz">140000-149999</option>
+<option value="2adic/2adic.150000-159999.gz">150000-159999</option>
+<option value="2adic/2adic.160000-169999.gz">160000-169999</option>
+<option value="2adic/2adic.170000-179999.gz">170000-179999</option>
+<option value="2adic/2adic.180000-189999.gz">180000-189999</option>
+<option value="2adic/2adic.190000-199999.gz">190000-199999</option>
+<option value="2adic/2adic.200000-209999.gz">200000-209999</option>
+<option value="2adic/2adic.210000-219999.gz">210000-219999</option>
+<option value="2adic/2adic.220000-229999.gz">220000-229999</option>
+<option value="2adic/2adic.230000-239999.gz">230000-239999</option>
+<option value="2adic/2adic.240000-249999.gz">240000-249999</option>
+<option value="2adic/2adic.250000-259999.gz">250000-259999</option>
+<option value="2adic/2adic.260000-269999.gz">260000-269999</option>
+<option value="2adic/2adic.270000-279999.gz">270000-279999</option>
+<option value="2adic/2adic.280000-289999.gz">280000-289999</option>
+<option value="2adic/2adic.290000-299999.gz">290000-299999</option>
+<option value="2adic/2adic.300000-309999.gz">300000-309999</option>
+<option value="2adic/2adic.310000-319999.gz">310000-319999</option>
+<option value="2adic/2adic.320000-329999.gz">320000-329999</option>
+<option value="2adic/2adic.330000-339999.gz">330000-339999</option>
+<option value="2adic/2adic.340000-349999.gz">340000-349999</option>
+</select>
+<input type=button value="Fetch" onClick="JumpToIt(this.form)">
+</form>
+A table giving, for each elliptic curve without CM, the image of the
+2-adic Galois representation, as computed using a Magma program
+provided by Jeremy Rouse and David Zureick Brown.
+
+There are 1208 possible images.  The index is the index of the image
+in GL(2,Z_2).  The level is the largest n such that the image contains
+the kernel of reduction modulo 2^n.  The generators are generating
+matrices for the image modulo the level.  Note that the action of
+Galois is on the right, so points in E[2^r] are represented as row
+vectors v and if M is in GL_2(Z_2) the action of M is v |-> v*M.
+
+The label is a label for the associated modular
+curve. See <a href="http://users.wfu.edu/rouseja/2adic/index.html">Rouses's
+web page</a> for details.
+<br>
+Data format with sample lines:
+<table cellspacing="10" border="1">
+<tbody><tr>
+<th>N</th> <th>class</th> <th>#</th> <th>[a1,a2,a3,a4,a6]</th>
+<th>index</th><th>level</th>
+<th align="left">matrix generators</th>
+<th>label</th>
+</tr>
+<tr>
+<td>11</td></td><td>a</td><td>1</td><td>[0,-1,1,-10,-20]</td><td>1</td><td>1</td><td>[]</td><td>X1</td>
+</tr>
+<tr>
+<td>15</td><td>a</td><td>1</td><td>[1,1,1,-10,-10]</td><td>96</td><td>8</td>
+<td>[[5,4,2,3],[1,0,0,5],[1,4,0,5],[1,0,4,5]]</td><td>X187d</td>
+</tr>
+</tbody></table>
+</li></ul>
+
 
 
 <hr>
