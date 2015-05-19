@@ -6,7 +6,7 @@ In main g0n directory (~/g0n):
 
 ./postproc nnn
 
-(e.g. ./postproc 349 for the range 349000-349999);  this will keep
+(e.g. ./postproc 359 for the range 359000-359999);  this will keep
 looping until all are done.
 
 2. Batches of 100 & 1000: when postproc has finished a batch of 1000,
@@ -29,7 +29,7 @@ to create 12 files of the form g0n/data/*.nn0000-nn9999 .  Copy these
 into ~/ecdata, move them into the appropriate subdirectories, and use
 "git add" to add them to the git repository:
 
-nn=34
+nn=35
 NN=${nn}0000-${nn}9999
 cd ~/g0n/data
 for f in curves allcurves paricurves allbigsha allbsd alldegphi allgens allisog aplist count degphi intpts; do cp ${f}.${NN} ~/ecdata/${f}; done
@@ -40,23 +40,29 @@ git add *.${NN}
 4.  Make alllabels file:
 
 sage: %runfile "labels.py"
-sage: make_alllabels("curves/curves.340000-349999")
+sage: make_alllabels("curves/curves.350000-359999")
 (outputs a line to screen every 1000 input lines, takes about 40s per
 1000, so about 30 minutes)
 [quit sage]
 
-Check that outputfile (e.g. talllabels.340000-349999) & rename without
+Check that outputfile (e.g. talllabels.350000-359999) & rename without
 the prefix "t", moving to the alllabels/ subdirectory.  Add to git
 tracking:
-mv talllabels.340000-349999 alllabels/alllabels.340000-349999
-git add alllabels/alllabels.340000-349999
+mv talllabels.350000-359999 alllabels/alllabels.350000-359999
+git add alllabels/alllabels.350000-359999
 
 From now on work in data directory (~/ecdata) which is a git
 repository linked to https://github.com/JohnCremona/ecdata
 
 5. Email Sutherland and ask him to run his script on any new
-allcurves file (e.g. allcurves.340000-349999) and rename his output
-galrep.* (e.g. galrep.340000-349999).
+allcurves file (e.g. allcurves.350000-359999) and rename his output
+galrep.* (e.g. galrep.350000-359999), move to into galrep/ and
+git add galrep/galrep.350000-359999
+
+5a. Create 2adic images file and move to correct place:
+magma -b filename:=allcurves/allcurves.350000-359999 2adic.m
+mv 2adic.350000-359999 2adic/
+git add 2adic/2adic.350000-359999
 
 6. Files to be edited are: table.html, shas.html, Makefile,
 INDEX.html, manin.txt, release_notes.txt.  The first two are now
@@ -76,20 +82,20 @@ table. Current range is s^2 for s in range(32)+[41,47,50,75].
 
 Use sharanktable.py to create a new version newshas.html:
        sage: %runfile sharanktable.py
-       sage: make_rankshatable(35) # to go up to 349999
+       sage: make_rankshatable(36) # to go up to 359999
 If happy, replace shas.html with it.
 
 (6b): table.html (using summarytable.py)
 
 Check up on new rank records (!) using
 
-  sort curves.*9 -n -k 5 | tail -1
+  sort curves/curves.*9 -n -k 5 | tail -1
 
 to see if the script needs adjusting (record is now 4).
 
 Use summarytable.py to create a new version newtable.html:
        sage: %runfile summarytable.py
-       sage: make_table(35)
+       sage: make_table(36) # to go up to 359999
 If happy, replace table.html with it.
 
 (6c): release_notes.txt: Add suitable section at the top.
@@ -115,7 +121,7 @@ cd ..
 (6f) manin.txt needs some real work:
 
 [In g0n working dir]
-N=34
+N=35
 let 'Nminus1 = N-1'
 NCL=`awk '$3==1' data/allcurves.${N}0000-${N}9999 | wc -l`
 echo "$NCL isogeny classes in range ${N}0000-${N}9999"
@@ -136,8 +142,8 @@ grep -v "c=1" data/optimality.${N}
 cat h1pp/h1pp.conc.13-${Nminus1} data/optimality.${N} > h1pp/h1pp.conc.13-${N}
 cat h1pp/h1pp.conc.6-${Nminus1} data/optimality.${N} > h1pp/h1pp.conc.6-${N}
 # Numbers for lines 14-16 of manin.txt (edit the lines below):
-Nall=`cat ~/ecdata/curves/curves.*9 | awk '($1>60000)&&($1<350000)' | wc -l`
-N2=`cat ~/ecdata/allcurves/allcurves.*9 | awk '($3==2)&&($1>60000)&&($1<350000)' | wc -l`
+Nall=`cat ~/ecdata/curves/curves.*9 | awk '($1>60000)&&($1<360000)' | wc -l`
+N2=`cat ~/ecdata/allcurves/allcurves.*9 | awk '($3==2)&&($1>60000)&&($1<360000)' | wc -l`
 let 'N1=Nall-N2'
 echo $Nall $N1 $N2
 
@@ -165,7 +171,7 @@ git add manin.txt INDEX.html table.html shas.html release_notes.txt
 
 Assuming that all looks ok & nothing has been forgotten:
 
-4. git commit -m "added data for 340000-349999"
+4. git commit -m "added data for 350000-359999"
 
 5. Use "git push origin master" to update github files
 
@@ -181,7 +187,7 @@ rsync -avz /home/masgaj/public_html/ftp/data/ sagemath:ecdata-mirror/
        (ii) cd ~/lmfdb; ./warwick-sh &
        (iii) sage
        sage: %runfile lmfdb/elliptic_curves/import_ec_data.py
-       sage: upload_to_db("/home/jec/ecdata",340000,349999)
+       sage: upload_to_db("/home/jec/ecdata",350000,359999)
    (d) Update Sage's optional spkg (this assumes that the old version
        of the optional spkg is already installed):
        cd SAGE_ROOT/local/share/cremona
@@ -189,7 +195,7 @@ rsync -avz /home/masgaj/public_html/ftp/data/ sagemath:ecdata-mirror/
        sage
        sage: time d = sage.databases.cremona.build('cremona','/home/jec/ecdata/ecdata-2014-08-29.tgz')
        sage: CremonaDatabase().largest_conductor()
-       349998
+       359998
        sage: CremonaDatabase().number_of_curves()
        2186808
 

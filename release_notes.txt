@@ -1,13 +1,14 @@
-Last major update: 11/02/2015 (added 2-adic images)
+Last major update: 19/05/2015 (added data for 350000-359999)
 
+19 May 2015 * Added all data for 350000-359999
 11 February 2015 * Added 2adic data (from Rouse)
 29 August 2014 * Updated data for 240000-249999, 250000-259999 (both
    ranges 246400-99 and 252800-99 had been omitted entirely)
 12 May 2014 * Added all data for 340000-349999
 25 March 2014 * Added all data for 330000-339999
-10  January 2014 * Added all galdata for 320000-329999
+10 January 2014 * Added all galdata for 320000-329999
 10 February 2014 * Added all data for 320000-329999
-01  January 2014 * Added all galdata for 300000-319999
+01 January 2014 * Added all galdata for 300000-319999
 31 December 2013 * Added all data for 310000-319999
 30 December 2013 * Added all data for 300000-309999
 

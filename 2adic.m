@@ -5,13 +5,14 @@
 if (not assigned filename) then
   printf "This magma script should be called with filename as an argument.\n";
   printf "Something like:\n";
-  printf "magma -b filename:=allcurves.00000-09999 2adic.txt";
+  printf "magma -b filename:=allcurves.00000-09999 2adic.m";
 end if;
 
 // (Nicolas) Form the output file name from the input one
 // Assuming the input file is called allcurves.XXX
 // The output file will be called 2adic.XXX
 outputfilename := "2adic" cat Substring(filename,Position(filename,"."),#filename);
+SetColumns(0);
 
 // Each line of the output has 8 columns. 
 // N class # [a1,a2,a3,a4,a6] index level matrix list (possibly empty) label
