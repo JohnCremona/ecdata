@@ -249,12 +249,21 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
         cplist  = [F.tamagawa_product() for F in Elist]
         omlist  = [F.real_components()*F.period_lattice().real_period() for F in Elist]
 
+        Lr1 = E.pari_curve().ellanalyticrank()[1].sage()
+        print("computed L^(%s)(E,1) = %s" % (r,Lr1))
+        # LE = E.lseries()
+        # print("constructed LE")
+        # LEdok = LE.dokchitser(100) # bits precision (default is 53)
+        # print("constructed LEdok")
         if r==0:
             genlist = [[] for F in Elist]
             reglist = [1 for F in Elist]
-            Lr1 = E.lseries()(1)
+            # Lr1 = LEdok(1)
+            # print("computed L(E,1) = %s" % Lr1)
         else:
-            Lr1 = E.lseries().dokchitser().derivative(1,r)/factorial(r)
+            # Lr1 = LEdok.derivative(1,r) / factorial(r)
+            # print("computed L^(%s)(E,1) = %s" % (r,Lr1))
+            # #Lr1 = E.lseries().dokchitser().derivative(1,r)/factorial(r)
             if r==1:
                 Plist = E.point_search(15)
                 if len(Plist)==0:
