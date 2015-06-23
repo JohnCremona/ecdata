@@ -78,12 +78,13 @@ def magma_rank1_gen(E):
 def pari_rank1_gen(E, stacksize=1024000000):
     from os import system, getpid
     f = 'tempfile-'+str(getpid())
-    comm = "LD_LIBRARY_PATH=/usr/local/lib; echo `echo 'ellheegner(ellinit("+str(list(E.ainvs()))+"))' | %s -q -s %s` > %s;" % (GP,stacksize,f)
+    comm = "LD_LIBRARY_PATH=/usr/local/lib; echo `echo 'ellheegner(ellinit("+str(list(E.ainvs()))+"))' | %s -q -f -s %s` > %s;" % (GP,stacksize,f)
     system(comm)
-    P = file(f).read()
+    P = file(f).read().partition("[")[2].partition("]")[0]
     os.unlink(f)
-#    print "PARI computes P = ", P
-    P = E([QQ(c) for c in P[1:-1].replace('[','').replace(']','').split(',')])
+    #print("PARI computes P = [%s]" % P)
+    P = E([QQ(c) for c in P.split(',')])
+    #print(" ---> P = %s" % P)
     return P
 
 # Given a matrix of isogenies and a list of points on the initial
@@ -250,7 +251,7 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
         omlist  = [F.real_components()*F.period_lattice().real_period() for F in Elist]
 
         Lr1 = E.pari_curve().ellanalyticrank()[1].sage()
-        print("computed L^(%s)(E,1) = %s" % (r,Lr1))
+        #print("computed L^(%s)(E,1) = %s" % (r,Lr1))
         # LE = E.lseries()
         # print("constructed LE")
         # LEdok = LE.dokchitser(100) # bits precision (default is 53)
