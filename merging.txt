@@ -175,7 +175,7 @@ Assuming that all looks ok & nothing has been forgotten:
 
 5. Use "git push origin master" to update github files
 
-6. Update mirror at sagemath:
+6. [No more!] Update mirror at sagemath:
 [ on host-56-150 or mimosa]
 rsync -avz /home/masgaj/public_html/ftp/data/ sagemath:ecdata-mirror/
 
@@ -195,24 +195,24 @@ rsync -avz /home/masgaj/public_html/ftp/data/ sagemath:ecdata-mirror/
        sage
        sage: time d = sage.databases.cremona.build('cremona','/home/jec/ecdata/ecdata-2014-08-29.tgz')
        sage: CremonaDatabase().largest_conductor()
-       359998
+       359999
        sage: CremonaDatabase().number_of_curves()
-       2186808
+       2247187
 
        cp SAGE_ROOT/local/share/cremona/cremona.db ~/ecdata/src
        cd ~/ecdata
        chmod -R 744 src
-       tar cvf database_cremona_ellcurve-20140512.tar src
-       bzip2 database_cremona_ellcurve-20140512.tar
-       chmod a+r database_cremona_ellcurve-20140512.tar.bz2
-       cp database_cremona_ellcurve-20140512.tar.bz2 SAGE_ROOT/upstream/
-       scp database_cremona_ellcurve-20140512.tar.bz2 sagemath:
+       tar cvf database_cremona_ellcurve-20150519.tar src
+       bzip2 database_cremona_ellcurve-20150519.tar
+       chmod a+r database_cremona_ellcurve-20150519.tar.bz2
+       cp database_cremona_ellcurve-20150519.tar.bz2 SAGE_ROOT/upstream/
+       scp database_cremona_ellcurve-20150519.tar.bz2 warwick:public_html/ftp/
 
        and now make a trac ticket for the upgrade.  The only changes
        to be made (make a new git branch off develop first!) are
        (1)  edit manually the file
        build/pkgs/database_cremona_ellcurve/package_version.txt
-            to contain (e.g.) 20140512
+            to contain (e.g.) 20150519
        and
        (2)  run ./sage -sh sage-fix-pkg-checksums
        to change the file
