@@ -3,6 +3,7 @@ ecdata/*
 extra_tables/*
 ftpdir/*
 scripts/*
+tsat
 .hg*
 ecdata-*.tgz
 src
