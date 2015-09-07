@@ -2,8 +2,11 @@
 
 ## Last major update: 19/05/2015
 
+### 2015
 - 19 May 2015: Added all data for 350000-359999
 - 11 February 2015: Added 2adic data (from Rouse)
+
+### 2014
 - 29 August 2014: Updated data for 240000-249999, 250000-259999 (both
    ranges 246400-99 and 252800-99 had been omitted entirely)
 - 12 May 2014: Added all data for 340000-349999
@@ -11,6 +14,8 @@
 - 10 January 2014: Added all galdata for 320000-329999
 - 10 February 2014: Added all data for 320000-329999
 - 01 January 2014: Added all galdata for 300000-319999
+
+### 2013
 - 31 December 2013: Added all data for 310000-319999
 - 30 December 2013: Added all data for 300000-309999
 - 06 September 2013: Added galrep.* files (from Sutherland)
@@ -19,6 +24,8 @@
   - Tidied up release notes
   - Recomputed allbsd.* files < 130000
   - added scripts to recreate shas.html, table.html
+
+### 2012
 - 22 October 2012: Added all data for 290000-299999
 - 13 October 2012: Added all data for 280000-289999
 - 27 September 2012: Added all data for 270000-279999
@@ -37,6 +44,8 @@
 - 02/03/12: Added all data for 220000-229999
 - 30/01/12: Replaced corrupt paricurves.130000-139999
 - 13/01/12: Added all data for 210000-219999
+
+### 2011
 - 01/12/11: Corrected paricurves.180000-189999 (186120bk2 was wrong)
 - 21/11/11: Added all data for 200000-209999
 - 26/10/11: Added all data for 190000-199999
@@ -61,10 +70,14 @@
   - Added all data for 130000-139999
   - Changed allgens format to include torsion (so there is one
     line in allgens* for each line in allcurves*).
+
+### 2007
 - 05/01/07: Corrected aplist file entries for bad primes over 100, for
    N divisible by more than one such prime (or by the square
    of such a prime). Files affected: aplist.* (except
-   aplist.00000-09999) 
+   aplist.00000-09999)
+
+### 2006
 - 15/12/06: Corrected Sha(51522f3) from 4 to 9 (thanks to Tom Fisher).
    Files affected: allbigsha.[05]0000-*, allbsd.50000*, shas.html
 - 24/09/06: Conductors divisible by 216 between 90000 and 99999 were
@@ -79,6 +92,8 @@
    as self-isogenous), thanks to Tom Boothby
 - 17/02/06: Corrected files degphi.1[012]0000-1[012]9999 (wrong codes)
 - 16/02/06: Corrected files count.40000-49999 and count.60000-69999.
+
+### 2005
 - 20/11/05: Updated optimality claims to cover all N<50000
 - 07/11/05: Minor corrections to {allbsd,allgens,paricurves}.120000-129999
 - 05/11/05: Added all data for 120000-129999
@@ -123,13 +138,19 @@
  curves extended from 8000 to 11000 (extended to 12000 on 13/02/05).
  Swapped the two curves in classes 15180,15624,15744 as the
   conditionally optimal one was second not first.
+
+### 2004
 - 21/6/04:  added data for range 20001-25000 + certification of generators
   for all curves so far
 - 9/3/04:  corrections for 15810U3 -- previous generator was
   3*generator;  so |Sha|=9 not 1.
+
+### 2003
 - 4/4/03:  added data for range 17001-20000.
 - 12/2/03:  added data for range 16001-17000.
 - 17/1/03:  added data for range 15001-16000.
+
+### 2002
 - 25/10/02:  corrected torsion order for 4830N4 in allcurves.1-8000
   mention 2 new curves of rank 3 in INDEX file
 - 8/10/02: Added data for the range 12001-15000, with the same status as
@@ -144,6 +165,8 @@
   either proved optimal, or at least agrees with Mark Watkins's
   conditional list of optimal curves.  The former holds whenever the
   degree of the modular parametrization is given in the curves file.
+
+### 2001
 - 12/12/01: for around 10% of classes in the range 8201-9000 the
   ordering has been changed.  In the new order the first curve in each
   class is more likely (though not guaranteed) to be optimal.  This
