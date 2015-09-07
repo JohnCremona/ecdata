@@ -54,10 +54,26 @@ twoadic: $(TWOADIC)
 optimal: $(OPTIMAL)
 	@echo $(OPTIMAL)
 
-HTMLDATAFILES = shas.html table.html curves.1-1000.html
-TEXTFILES = manin.txt INDEX.html release_notes.txt
+HTMLFILES = html/index.html html/shas.html html/table.html html/curves.1-1000.html
+TEXTFILES = doc/manin.txt doc/file-format.txt doc/release_notes.md doc/merging.txt
 DATAFILES =  $(ALLCURVES) $(APLIST) $(BIGSHA) $(COUNT) $(DEGPHI) $(ALLDEGPHI) $(ALLGENS) $(BSD) $(ALLISOG) $(PARICURVES) $(INTPTS) $(GALREPS) $(TWOADIC) $(OPTIMAL)
-FTPFILES = $(DATAFILES) $(TEXTFILES) $(HTMLDATAFILES)
+FTPFILES = $(DATAFILES) $(TEXTFILES) $(HTMLFILES)
+
+commit: $(FTPFILES)
+	git add $(DATAFILES)
+	git commit -m "updated data files"
+	git add $(TEXTFILES)
+	git commit -m "updated text files (in master:./doc)"
+	git add $(HTMLFILES)
+	git commit -m "updated html files (in master:./html)"
+	git push
+	git checkout gh-pages
+	git checkout master:./html/ ./
+	git add *.html
+	git commit -m "updated html files in gh-pages branch"
+	git push
+	git checkout master
+
 
 ftp:  $(FTPFILES)
 	for f in $(DATAFILES); \
