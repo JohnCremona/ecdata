@@ -1,4 +1,6 @@
-# Last major update: 19/05/2015 (added data for 350000-359999)
+# ecdata release notes (since 2001)
+
+## Last major update: 19/05/2015
 
 - 19 May 2015: Added all data for 350000-359999
 - 11 February 2015: Added 2adic data (from Rouse)
