@@ -13,7 +13,7 @@
 - 30 December 2013: Added all data for 300000-309999
 - 06 September 2013: Added galrep.* files (from Sutherland)
 - 24 January 2013: Recomputed several allbigsha.* files and shas.html
-- 14 January 2013: 
+- 14 January 2013:
   - Tidied up release notes
   - Recomputed allbsd.* files < 130000
   - added scripts to recreate shas.html, table.html
@@ -31,7 +31,7 @@
   - Added optimality.?? files, extra sections to INDEX and manin.txt
   - Remade allisog.* files for 0-12 to get correct order and filled matrices
 - 27/03/12: Changed all allgens files for non-cyclic torsion groups so
-  that the torsion generator orders match the group invariants.
+ that the torsion generator orders match the group invariants.
 - 02/03/12: Added all data for 220000-229999
 - 30/01/12: Replaced corrupt paricurves.130000-139999
 - 13/01/12: Added all data for 210000-219999
