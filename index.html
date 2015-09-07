@@ -36,29 +36,36 @@ Updated <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc
 <hr width="100%">
 
 <p>
-This site contains various data files concerning modular elliptic
-curves, in a standard format to make them easily readable by other
-programs. For a typeset version of the same data (with some extra data
-about local reduction data) for conductors up to 1000, you can refer
-to the book <a href="http://www.warwick.ac.uk/staff/J.E.Cremona/book/amec.html">Algorithms for
-modular elliptic curves </a>, CUP 1992, second revised edition 1997.
-See the book's web site for more information, including errata for the
-current (2nd) edition, and errata to the first edition (not maintained
-since the appearance of the second edition). The errata
+This site is s front-end to the <tt>ecdata</tt> repository, hosted at
+<a href="https://github.com/JohnCremona/ecdata">GitHub</a>, which
+contains data files for (modular) elliptic curves over <b>Q</b>, in a
+standard format to make them easily readable by other programs. For a
+typeset version of the same data (with some extra data about local
+reduction data) for conductors up to 1000, you can refer to the
+book <a href="http://www.warwick.ac.uk/staff/J.E.Cremona/book/amec.html">Algorithms
+for modular elliptic curves </a>, CUP 1992, second revised edition
+1997.  See the book's web site for more information, including errata
+for the current (2nd) edition, and errata to the first edition (not
+maintained since the appearance of the second edition). The errata
 lists include errors and omissions in the tables. The files here have
-the corrected data in them.
-</p>
-
-<p>
-<b>Note:</b> As of 2000 the book is out of print, and CUP have no
-plans to reprint it.
+the corrected data in them.  As of 2000 the book is out of print, and
+CUP have no plans to reprint it.
 </p>
 
 <p>
 The files correspond to tables 1-5 in the book (Table 5 is not in the
-First Edition), with additional tables: Table 6 gives the isogeny
-matrices between curves in each isogeny class, and Table 7 lists the
-integral points on each curve.
+First Edition), with additional tables:
+<ul>
+<li>Table 6 gives the isogeny matrices between curves in each isogeny
+class;
+<li>Table 7 lists the integral points on each curve;
+<li>Table 8 gives information on which curve is optimal, and the Manin
+  constant;
+<li>Table 9 gives information on the mod-<i>p</i> Galois
+  representations attached to each curve;
+<li>Table 10 gives information on the 2-adic Galois
+  representations attached to each curve.
+</ul>
 </p>
 
 <p>
@@ -66,10 +73,10 @@ The tables currently contain data for conductors up to <b>360000</b>.
 </p>
 
 <p>
-From September 2005: New labelling scheme introduced for isogeny
+From September 2005, a new labelling scheme was introduced for isogeny
 classes.  The old scheme started
 A,B,...,Z,AA,BB,...,ZZ,AAA,BBB,... and had become unwieldy.  The new
-scheme is a straight base 26 encoding with a=0, b=1 etc.,  with the
+scheme is a straight base 26 encoding with a=0, b=1 etc., with the
 classes numbered from 0 amd leading a's deleted:
 a,b,...,z,ba,bb,...bz,ca,cb,... .  The change to lower case is to make
 codes such as bb unambiguous between the old and new systems.  For
@@ -86,31 +93,48 @@ on).  For conductors above 60000, see the
 section <a href="#optimality">"Optimality and the Manin constant"</a>
 below.
 </p>
+
 <p>
 Some of the data is common to all curves in the isogeny class.
 </p>
-<p>
-The modular degrees for conductors over 12000 were computed
-using Mark Watkins's programs <tt>ec</tt> and <tt>sympow</tt>.
-</p>
-<p>
+
+<h3>Acknowledgements</h3>
+<ul>
+<li>The curves were computed via modular symbols, using the C++
+library eclib (see https://github.com/JohnCremona/eclib), run on
+  machines in a variety of places, including clusters at Nottingham
+  (1999-2007) and Warwick (since 2011).  Additional data is computed
+  using a SageMath script to interface a variety of software,
+  including the following:
+</li>
+<li>
+The modular degrees for conductors over 12000 were computed using Mark
+Watkins's programs <tt>ec</tt> and <tt>sympow</tt>, via
+<tt>SageMath</tt>.
+</li>
+<li>
 Generators for many rank 1 curves were computed using either Magma's
 <tt>HeegnerPoint</tt> function (written by Mark Watkins) or
 GP's <tt>ellheegner</tt> function written by Christophe Delaunay and
 Bill Allombert, based on the same ideas of Delaunay and Watkins.
-</p>
-<p>
+</li>
+<li>
 The integral points for all curves were computed using Sage in a new
 implementation due to Michael Mardaus, Tobias Nagel and JEC.  For
 conductors up to 1000 we have checked that these agree with Magma
 (version V2.14-14). <b>N.B.</b> It is known that these lists are in
-some cases incomplete, due to bugs in the program mentioned; they need
-to be corrected.
-</p>
-<p>
+some cases incomplete, due to bugs in the program mentioned; they will
+be corrected in due course.
+</li>
+<li>
 The images of the mod <i>p</i> Galois representations were computed by
 Andrew Sutherland.
-</p>
+</li>
+<li>
+The images of the 2-adic Galois representations were computed using a
+Magma program provided by Jeremy Rouse.
+</li>
+</ul>
 
 <hr>
 
