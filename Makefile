@@ -4,7 +4,7 @@ CC = gcc
 
 FTP_HOST = warwick
 FTP_DIR = public_html/ftp/data
-# FTP_DIR = ./ftp/data
+DIST_DIR = /home/jec/ecdata-dist
 
 ALLCURVES = allcurves/allcurves.?0000-?9999 allcurves/allcurves.??0000-??9999
 APLIST = aplist/aplist.?0000-?9999 aplist/aplist.??0000-??9999
@@ -58,6 +58,7 @@ HTMLFILES = html/index.html html/shas.html html/table.html html/curves.1-1000.ht
 TEXTFILES = doc/manin.txt doc/file-format.txt doc/release_notes.md doc/merging.txt
 DATAFILES =  $(ALLCURVES) $(APLIST) $(BIGSHA) $(COUNT) $(DEGPHI) $(ALLDEGPHI) $(ALLGENS) $(BSD) $(ALLISOG) $(PARICURVES) $(INTPTS) $(GALREPS) $(TWOADIC) $(OPTIMAL)
 FTPFILES = $(DATAFILES) $(TEXTFILES) $(HTMLFILES)
+DATASUBDIRS = allcurves aplist allbigsha count curves degphi alldegphi allgens allisog allbsd paricurves intpts galrep 2adic optimality
 
 commit: $(FTPFILES)
 	git add $(DATAFILES)
@@ -75,34 +76,12 @@ commit: $(FTPFILES)
 	git checkout master
 
 
-ftp:  $(FTPFILES)
-	for f in $(DATAFILES); \
-	do \
-	     gzip -c $${f} > ftpdir/$${f}.gz; \
-	done;
-	for f in $(TEXTFILES) $(HTMLDATAFILES); \
-	do \
-	     rsync -av $${f} ftpdir/$${f}; \
-	done; \
-        echo Updating $(FTP_HOST):$(FTP_DIR); \
-        rsync -avz ftpdir/ $(FTP_HOST):$(FTP_DIR)/; \
-	ssh warwick chmod -R a+rX $(FTP_DIR)
-
-tar_old: $(FTPFILES)
-	rm -f ftpdata* ftpfiles
-	touch ftpfiles
-	for f in $(FTPFILES); \
-	do echo $${f} >> ftpfiles; done
-	tar -zcf ftpdata.tgz --files-from=ftpfiles
-	mv ftpdata.tgz $(FTP_DIR)/..
-	chmod 644 $(FTP_DIR)/../ftpdata.tgz
-
 DATE = $(shell date +%Y-%m-%d )
 tar: $(FTPFILES)
-	rm -f ecdata/*.txt
-	rm -f ecdata/*.html
-	rm -f ecdata/*/*
-	for f in $(FTPFILES); do ln -s $(PWD)/$${f} ecdata/$${f}; done
-	tar -zchf ecdata-$(DATE).tgz ecdata
+	rm -rf $(DIST_DIR)
+	mkdir -p $(DIST_DIR)
+	for d in $(DATASUBDIRS) html doc; do mkdir -p $(DIST_DIR)/$${d}; done
+	for f in $(FTPFILES); do ln -s $(PWD)/$${f} $(DIST_DIR)/$${f}; done
+	tar -zchf ecdata-$(DATE).tgz $(DIST_DIR)
 	scp ecdata-$(DATE).tgz $(FTP_HOST):$(FTP_DIR)/..
 	ssh $(FTP_HOST) chmod a+r $(FTP_DIR)/../ecdata-$(DATE).tgz

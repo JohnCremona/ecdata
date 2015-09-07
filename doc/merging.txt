@@ -34,12 +34,12 @@ NN=${nn}0000-${nn}9999
 cd ~/g0n/data
 for f in curves allcurves paricurves allbigsha allbsd alldegphi allgens allisog aplist count degphi intpts; do cp ${f}.${NN} ~/ecdata/${f}; done
 cd ~/ecdata
-git add *.${NN}
+for f in curves allcurves paricurves allbigsha allbsd alldegphi allgens allisog aplist count degphi intpts; do git add ${f}; done
 
 
 4.  Make alllabels file:
 
-sage: %runfile "labels.py"
+sage: %runfile "scripts/labels.py"
 sage: make_alllabels("curves/curves.350000-359999")
 (outputs a line to screen every 1000 input lines, takes about 40s per
 1000, so about 30 minutes)
@@ -49,29 +49,33 @@ Check that outputfile (e.g. talllabels.350000-359999) & rename without
 the prefix "t", moving to the alllabels/ subdirectory.  Add to git
 tracking:
 mv talllabels.350000-359999 alllabels/alllabels.350000-359999
-git add alllabels/alllabels.350000-359999
+git add alllabels/
 
 From now on work in data directory (~/ecdata) which is a git
-repository linked to https://github.com/JohnCremona/ecdata
+repository linked to https://github.com/JohnCremona/ecdata.  All files
+are in the master branch; there is a second branch called gh-pages
+which only contains the html files, from which GitHub automatically
+cretes the website at http://johncremona.github.io/ecdata/ .
 
 5. Email Sutherland and ask him to run his script on any new
 allcurves file (e.g. allcurves.350000-359999) and rename his output
 galrep.* (e.g. galrep.350000-359999), move to into galrep/ and
-git add galrep/galrep.350000-359999
+git add galrep/
 
 5a. Create 2adic images file and move to correct place:
 magma -b filename:=allcurves/allcurves.350000-359999 2adic.m
 mv 2adic.350000-359999 2adic/
-git add 2adic/2adic.350000-359999
+git add 2adic/
 
-6. Files to be edited are: table.html, shas.html, Makefile,
-INDEX.html, manin.txt, release_notes.txt.  The first two are now
-created automatically by Python scripts (sharanktable.py and
-summarytable.py), but in each case there is a preliminary manual check
-to see if new Sha values have occurred or new ranks (!) in which case
-the scripts will need to be edited.
+6. Files to be edited are: html/table.html, html/shas.html, Makefile,
+html/index.html, doc/manin.txt, doc/release_notes.md.  The first two
+are now created automatically by Python scripts
+(scripts/sharanktable.py and scripts/summarytable.py), but in each
+case there is a preliminary manual check to see if new Sha values have
+occurred or new ranks (!) in which case the scripts will need to be
+edited.
 
-(6a): shas.html (using sharanktable.py)
+(6a): html/shas.html (using scripts/sharanktable.py)
 
 Check up on new Sha records using
 
@@ -81,11 +85,12 @@ to see if the script needs to provide extra columns for the
 table. Current range is s^2 for s in range(32)+[41,47,50,75].
 
 Use sharanktable.py to create a new version newshas.html:
-       sage: %runfile sharanktable.py
+       sage: %runfile scripts/sharanktable.py
        sage: make_rankshatable(36) # to go up to 359999
-If happy, replace shas.html with it.
+If happy:
+   mv newshas.html html/shas.html
 
-(6b): table.html (using summarytable.py)
+(6b): html/table.html (using scripts/summarytable.py)
 
 Check up on new rank records (!) using
 
@@ -93,16 +98,17 @@ Check up on new rank records (!) using
 
 to see if the script needs adjusting (record is now 4).
 
-Use summarytable.py to create a new version newtable.html:
-       sage: %runfile summarytable.py
+Use scripts/summarytable.py to create a new version newtable.html:
+       sage: %runfile scripts/summarytable.py
        sage: make_table(36) # to go up to 359999
-If happy, replace table.html with it.
+If happy:
+  mv newtable.html html/table.html
 
-(6c): release_notes.txt: Add suitable section at the top.
+(6c): doc/release_notes.md: Add suitable section at the top.
 
 (6d): Makefile: nothing should need doing.
 
-(6e): INDEX.html:
+(6e): html/index.html:
       2 changes in lines with "pdate";
       change "up to ...";
       change record Sha if necessary;
@@ -118,7 +124,7 @@ cat  allbigsha.*9 | awk '$5==3' | wc -l
 cat  allbigsha.*9 | awk '$5==4' | wc -l
 cd ..
 
-(6f) manin.txt needs some real work:
+(6f) doc/manin.txt needs some real work:
 
 [In g0n working dir]
 N=35
@@ -159,35 +165,26 @@ grep -v  "curve is" h1pp/h1pp.conc.6-${N} | grep -v "possible" | wc -l
 # counts for numbers of possible optimal curves (2-6)
 for n in `seq 2 6`; do echo $n; grep -c "$n possible " h1pp/h1pp.conc.6-${N}; done
 
---Now use the above numbers to manually edit manin.txt.
-
-git add manin.txt INDEX.html table.html shas.html release_notes.txt
+--Now use the above numbers to manually edit doc/manin.txt.
 
 ===============
 
-1. make tar ftp
-2. update home page
-3. delete older ~/public_html/ftp/ecdata-*.tgz
+1. make commit
 
-Assuming that all looks ok & nothing has been forgotten:
+This commits all the changes, pushes to github, also updates the
+gh-pages branch and pushes that, so the website is updated too.
 
-4. git commit -m "added data for 350000-359999"
+2. (a) email Bill Allombert to he can update pari's elldata
 
-5. Use "git push origin master" to update github files
-
-6. [No more!] Update mirror at sagemath:
-[ on host-56-150 or mimosa]
-rsync -avz /home/masgaj/public_html/ftp/data/ sagemath:ecdata-mirror/
-
-7. (a) email Bill Allombert to he can update pari's elldata
    (b) email John Cannon so he can update Magma's database
-   (c) Update LMFDB.  On atkin:
-       (i) [not needed if working on atkin anyway]
-            cd to ~/ecdata and git pull origin master
-       (ii) cd ~/lmfdb; ./warwick-sh &
-       (iii) sage
+
+   (c) Update LMFDB.  On atkin, make sure that ~/lmfdb/warwick-sh is
+       running, then
+
+       %sage
        sage: %runfile lmfdb/elliptic_curves/import_ec_data.py
        sage: upload_to_db("/home/jec/ecdata",350000,359999)
+
    (d) Update Sage's optional spkg (this assumes that the old version
        of the optional spkg is already installed):
        cd SAGE_ROOT/local/share/cremona
