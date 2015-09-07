@@ -61,16 +61,16 @@ FTPFILES = $(DATAFILES) $(TEXTFILES) $(HTMLFILES)
 
 commit: $(FTPFILES)
 	git add $(DATAFILES)
-	git commit -m "updated data files"
+	-git commit -m "updated data files"
 	git add $(TEXTFILES)
-	git commit -m "updated text files (in master:./doc)"
+	-git commit -m "updated text files (in master:./doc)"
 	git add $(HTMLFILES)
-	git commit -m "updated html files (in master:./html)"
+	-git commit -m "updated html files (in master:./html)"
 	git push
 	git checkout gh-pages
 	git checkout master:./html/ ./
 	git add *.html
-	git commit -m "updated html files in gh-pages branch"
+	-git commit -m "updated html files in gh-pages branch"
 	git push
 	git checkout master
 
