@@ -1,4 +1,4 @@
-Manin constants and optimal curves: conductors 60000-360000
+Manin constants and optimal curves: conductors 60000-370000
 -----------------------------------------------------------
 
 For all conductors (levels) N up to 60000 we have computed the full
@@ -9,18 +9,18 @@ Constant" by Amod Agashe, Ken Ribet and William Stein [Pure and
 Applied Mathematics Quarterly, Vol. 2 no.2 (2006), pp. 617-636.]
 
 Here we report on what is known for larger conductors, currently
-covering the range 60000-360000.
+covering the range 60000-370000.
 
-# isogeny classes:                          1310624
-# isogeny classes with only one curve:       909549
-# isogeny classes with more than one curve:  401075
+# isogeny classes:                          1353737
+# isogeny classes with only one curve:       940532
+# isogeny classes with more than one curve:  413205
 
-Of the latter, c=1 known for:               401035+40=401075
-               optimality known for:        186614+40=186654
-               optimality not known for:              214421
-[175120,35955,3021,150,175 classes have 2,3,4,5,6 possible candidates]
+Of the latter, c=1 known for:               413164+41=413205
+               optimality known for:        192425+41=192466
+               optimality not known for:              220739
+[180277,37023,3101,154,184 classes have 2,3,4,5,6 possible candidates]
 
-For all 909549 classes with only one curve, obviously that curve is
+For all 940532 classes with only one curve, obviously that curve is
 optimal, and we have shown that c=1.
 
 For all classes with more than one curve, we have proved that the
@@ -39,12 +39,12 @@ that c=3 is impossible unless N is a multiple of 3.
 
 -----------------------------------------------------------
 
-In detail,  for the 401075 classes with more than one curve:
+In detail,  for the 413205 classes with more than one curve:
 
-In 186654 classes the optimal curve is provably the first one listed,
+In 192466 classes the optimal curve is provably the first one listed,
 and c=1.
 
-In 214421 classes the optimal curve is one of up to 6 possible curves
+In 220739 classes the optimal curve is one of up to 6 possible curves
 in the class, but c=1 in any case.
 
 e.g. 130050em: class has 8 curves
@@ -53,7 +53,7 @@ e.g. 130050em: class has 8 curves
  -either the optimal curve has type 1 and is #1 or #3 with c=1 [c*aj=1]
  -or the optimal curve has type 2 and is #2, #4, #6, or #7 with c=1 [c*aj=2]
 
-Note that for 40 classes, there would be a possibility that c=2 and
+Note that for 41 classes, there would be a possibility that c=2 and
 that the optimal curve is the second one listed, if we relied only on
 the information given by modular symbols with sign +1.  These all have
 the same form: 2 curves in the class with types 1,2 and aj=1,1 so
@@ -70,7 +70,7 @@ These classes are: the 13 listed in the appendix to the paper cited,
                    217172b, 219088b, 220916b, 236212b, 240116a,
                    250064a, 256052a, 260116a, 280916a, 285172a,
                    291664a, 300368a, 302516a, 306932a, 329492a,
-                   343412a, 345808a.
+                   343412a, 345808a, 367252a.
 
 In all of the above cases I have computed the full modular symbol
 space to eliminate the second possibility.  Hence, in this range all
