@@ -250,8 +250,8 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
         cplist  = [F.tamagawa_product() for F in Elist]
         omlist  = [F.real_components()*F.period_lattice().real_period() for F in Elist]
 
-        Lr1 = E.pari_curve().ellanalyticrank()[1].sage()
-        #print("computed L^(%s)(E,1) = %s" % (r,Lr1))
+        Lr1 = E.pari_curve().ellanalyticrank()[1].sage() / factorial(r)
+        #print("computed L^(%s)(E,1)/%s! = %s" % (r,r,Lr1))
         # LE = E.lseries()
         # print("constructed LE")
         # LEdok = LE.dokchitser(100) # bits precision (default is 53)
@@ -310,6 +310,16 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
             if verbose: print "genlist = ",genlist
             reglist = [Elist[i].regulator_of_points(genlist[i]) for i in range(ncurves)]
         shalist = [Lr1*torlist[i]**2/(cplist[i]*omlist[i]*reglist[i]) for i in range(ncurves)]
+        squares = [n*n for n in srange(1,100)]
+        for i,s in enumerate(shalist):
+            if not round(s) in squares:
+                print("bad sha value %s for %s" % (s,str(N)+cl+str(i+1)))
+                print("Lr1 = %s" % Lr1)
+                print("#t  = %s" % torlist[i])
+                print("cp  = %s" % cplist[i])
+                print("om  = %s" % omlist[i])
+                print("reg = %s" % reglist[i])
+                return Elist[i]
         if verbose: print "shalist = ",shalist
 
         # compute modular degrees
