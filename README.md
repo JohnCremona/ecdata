@@ -3,7 +3,7 @@ ecdata
 
 This is a repository of the data files containing the Cremona Database of all elliptic curves over Q of bounded conductor. 
 
-These files are behind the web pages at http://www.warwick.ac.uk/staff/J.E.Cremona/ftp/data/ and the elliptic curve pages at http://www.lmfdb.org . 
+These files provide the source data for the elliptic curve pages at http://www.lmfdb.org . 
 
 The current release is published as http://dx.doi.org/10.5281/zenodo.17085
 
