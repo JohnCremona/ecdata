@@ -6,7 +6,7 @@ In main g0n directory (~/g0n):
 
 ./postproc nnn
 
-(e.g. ./postproc 369 for the range 369000-369999);  this will keep
+(e.g. ./postproc 379 for the range 379000-379999);  this will keep
 looping until all are done.
 
 2. Batches of 100 & 1000: when postproc has finished a batch of 1000,
@@ -29,7 +29,7 @@ to create 12 files of the form g0n/data/*.nn0000-nn9999 .  Copy these
 into ~/ecdata, move them into the appropriate subdirectories, and use
 "git add" to add them to the git repository:
 
-nn=36
+nn=37
 NN=${nn}0000-${nn}9999
 cd ~/g0n/data
 for f in curves allcurves paricurves allbigsha allbsd alldegphi allgens allisog aplist count degphi intpts; do cp ${f}.${NN} ~/ecdata/${f}; done
@@ -40,15 +40,15 @@ for f in curves allcurves paricurves allbigsha allbsd alldegphi allgens allisog 
 4.  Make alllabels file:
 
 sage: %runfile "scripts/labels.py"
-sage: make_alllabels("curves/curves.360000-369999")
+sage: make_alllabels("curves/curves.370000-379999")
 (outputs a line to screen every 1000 input lines, takes about 40s per
 1000, so about 30 minutes)
 [quit sage]
 
-Check that outputfile (e.g. talllabels.360000-369999) & rename without
+Check that outputfile (e.g. talllabels.370000-379999) & rename without
 the prefix "t", moving to the alllabels/ subdirectory.  Add to git
 tracking:
-mv talllabels.360000-369999 alllabels/alllabels.360000-369999
+mv talllabels.370000-379999 alllabels/alllabels.370000-379999
 git add alllabels/
 
 From now on work in data directory (~/ecdata) which is a git
@@ -58,13 +58,13 @@ which only contains the html files, from which GitHub automatically
 cretes the website at http://johncremona.github.io/ecdata/ .
 
 5. Email Sutherland and ask him to run his script on any new
-allcurves file (e.g. allcurves.360000-369999) and rename his output
-galrep.* (e.g. galrep.360000-369999), move to into galrep/ and
+allcurves file (e.g. allcurves.370000-379999) and rename his output
+galrep.* (e.g. galrep.370000-379999), move to into galrep/ and
 git add galrep/
 
 5a. Create 2adic images file and move to correct place:
-magma -b filename:=allcurves/allcurves.360000-369999 2adic.m
-mv 2adic.360000-369999 2adic/
+magma -b filename:=allcurves/allcurves.370000-379999 scripts/2adic.m
+mv 2adic.370000-379999 2adic/
 git add 2adic/
 
 6. Files to be edited are: html/table.html, html/shas.html, Makefile,
@@ -86,7 +86,7 @@ table. Current range is s^2 for s in range(32)+[41,47,50,75].
 
 Use sharanktable.py to create a new version newshas.html:
        sage: %runfile scripts/sharanktable.py
-       sage: make_rankshatable(37) # to go up to 369999
+       sage: make_rankshatable(37) # to go up to 379999
 If happy:
    mv newshas.html html/shas.html
 
@@ -100,7 +100,7 @@ to see if the script needs adjusting (record is now 4).
 
 Use scripts/summarytable.py to create a new version newtable.html:
        sage: %runfile scripts/summarytable.py
-       sage: make_table(37) # to go up to 369999
+       sage: make_table(37) # to go up to 379999
 If happy:
   mv newtable.html html/table.html
 
@@ -127,7 +127,7 @@ cd ..
 (6f) doc/manin.txt needs some real work:
 
 [In g0n working dir]
-N=36
+N=37
 let 'Nminus1 = N-1'
 NCL=`awk '$3==1' data/allcurves.${N}0000-${N}9999 | wc -l`
 echo "$NCL isogeny classes in range ${N}0000-${N}9999"
@@ -183,7 +183,7 @@ gh-pages branch and pushes that, so the website is updated too.
 
        %sage
        sage: %runfile lmfdb/elliptic_curves/import_ec_data.py
-       sage: upload_to_db("/home/jec/ecdata",360000,369999)
+       sage: upload_to_db("/home/jec/ecdata",370000,379999)
 
    (d) Update Sage's optional spkg (this assumes that the old version
        of the optional spkg is already installed):
@@ -192,7 +192,7 @@ gh-pages branch and pushes that, so the website is updated too.
        sage
        sage: time d = sage.databases.cremona.build('cremona','/home/jec/ecdata/ecdata-2014-08-29.tgz')
        sage: CremonaDatabase().largest_conductor()
-       369999
+       379999
        sage: CremonaDatabase().number_of_curves()
        2247187
 
