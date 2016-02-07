@@ -86,7 +86,7 @@ table. Current range is s^2 for s in range(32)+[41,47,50,75].
 
 Use sharanktable.py to create a new version newshas.html:
        sage: %runfile scripts/sharanktable.py
-       sage: make_rankshatable(37) # to go up to 379999
+       sage: make_rankshatable(38) # to go up to 379999
 If happy:
    mv newshas.html html/shas.html
 
@@ -100,7 +100,7 @@ to see if the script needs adjusting (record is now 4).
 
 Use scripts/summarytable.py to create a new version newtable.html:
        sage: %runfile scripts/summarytable.py
-       sage: make_table(37) # to go up to 379999
+       sage: make_table(38) # to go up to 379999
 If happy:
   mv newtable.html html/table.html
 
@@ -148,8 +148,8 @@ grep -v "c=1" data/optimality.${N}
 cat h1pp/h1pp.conc.13-${Nminus1} data/optimality.${N} > h1pp/h1pp.conc.13-${N}
 cat h1pp/h1pp.conc.6-${Nminus1} data/optimality.${N} > h1pp/h1pp.conc.6-${N}
 # Numbers for lines 14-16 of manin.txt (edit the lines below):
-Nall=`cat ~/ecdata/curves/curves.*9 | awk '($1>60000)&&($1<370000)' | wc -l`
-N2=`cat ~/ecdata/allcurves/allcurves.*9 | awk '($3==2)&&($1>60000)&&($1<370000)' | wc -l`
+Nall=`cat ~/ecdata/curves/curves.*9 | awk '($1>60000)&&($1<380000)' | wc -l`
+N2=`cat ~/ecdata/allcurves/allcurves.*9 | awk '($3==2)&&($1>60000)&&($1<380000)' | wc -l`
 let 'N1=Nall-N2'
 echo $Nall $N1 $N2
 
