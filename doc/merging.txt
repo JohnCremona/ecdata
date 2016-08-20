@@ -29,7 +29,7 @@ to create 12 files of the form g0n/data/*.nn0000-nn9999 .  Copy these
 into ~/ecdata, move them into the appropriate subdirectories, and use
 "git add" to add them to the git repository:
 
-nn=37
+nn=38
 NN=${nn}0000-${nn}9999
 cd ~/g0n/data
 for f in curves allcurves paricurves allbigsha allbsd alldegphi allgens allisog aplist count degphi intpts; do cp ${f}.${NN} ~/ecdata/${f}; done
@@ -40,15 +40,15 @@ for f in curves allcurves paricurves allbigsha allbsd alldegphi allgens allisog 
 4.  Make alllabels file:
 
 sage: %runfile "scripts/labels.py"
-sage: make_alllabels("curves/curves.370000-379999")
+sage: make_alllabels("curves/curves.380000-389999")
 (outputs a line to screen every 1000 input lines, takes about 40s per
 1000, so about 30 minutes)
 [quit sage]
 
-Check that outputfile (e.g. talllabels.370000-379999) & rename without
+Check that outputfile (e.g. talllabels.380000-389999) & rename without
 the prefix "t", moving to the alllabels/ subdirectory.  Add to git
 tracking:
-mv talllabels.370000-379999 alllabels/alllabels.370000-379999
+mv talllabels.380000-389999 alllabels/alllabels.380000-389999
 git add alllabels/
 
 From now on work in data directory (~/ecdata) which is a git
@@ -58,13 +58,13 @@ which only contains the html files, from which GitHub automatically
 cretes the website at http://johncremona.github.io/ecdata/ .
 
 5. Email Sutherland and ask him to run his script on any new
-allcurves file (e.g. allcurves.370000-379999) and rename his output
-galrep.* (e.g. galrep.370000-379999), move to into galrep/ and
+allcurves file (e.g. allcurves.380000-389999) and rename his output
+galrep.* (e.g. galrep.380000-389999), move to into galrep/ and
 git add galrep/
 
 5a. Create 2adic images file and move to correct place:
-magma -b filename:=allcurves/allcurves.370000-379999 scripts/2adic.m
-mv 2adic.370000-379999 2adic/
+magma -b filename:=allcurves/allcurves.380000-389999 scripts/2adic.m
+mv 2adic.380000-389999 2adic/
 git add 2adic/
 
 6. Files to be edited are: html/table.html, html/shas.html, Makefile,
@@ -82,11 +82,11 @@ Check up on new Sha records using
   sort  allbigsha/*9 -n -k 7 | tail
 
 to see if the script needs to provide extra columns for the
-table. Current range is s^2 for s in range(32)+[41,47,50,75].
+table. Current range is s^2 for s in range(32)+[33,41,47,50,75].
 
 Use sharanktable.py to create a new version newshas.html:
        sage: %runfile scripts/sharanktable.py
-       sage: make_rankshatable(38) # to go up to 379999
+       sage: make_rankshatable(39) # to go up to 389999
 If happy:
    mv newshas.html html/shas.html
 
@@ -100,7 +100,7 @@ to see if the script needs adjusting (record is now 4).
 
 Use scripts/summarytable.py to create a new version newtable.html:
        sage: %runfile scripts/summarytable.py
-       sage: make_table(38) # to go up to 379999
+       sage: make_table(39) # to go up to 389999
 If happy:
   mv newtable.html html/table.html
 
@@ -127,7 +127,7 @@ cd ..
 (6f) doc/manin.txt needs some real work:
 
 [In g0n working dir]
-N=37
+N=38
 let 'Nminus1 = N-1'
 NCL=`awk '$3==1' data/allcurves.${N}0000-${N}9999 | wc -l`
 echo "$NCL isogeny classes in range ${N}0000-${N}9999"
@@ -148,8 +148,8 @@ grep -v "c=1" data/optimality.${N}
 cat h1pp/h1pp.conc.13-${Nminus1} data/optimality.${N} > h1pp/h1pp.conc.13-${N}
 cat h1pp/h1pp.conc.6-${Nminus1} data/optimality.${N} > h1pp/h1pp.conc.6-${N}
 # Numbers for lines 14-16 of manin.txt (edit the lines below):
-Nall=`cat ~/ecdata/curves/curves.*9 | awk '($1>60000)&&($1<380000)' | wc -l`
-N2=`cat ~/ecdata/allcurves/allcurves.*9 | awk '($3==2)&&($1>60000)&&($1<380000)' | wc -l`
+Nall=`cat ~/ecdata/curves/curves.*9 | awk '($1>60000)&&($1<390000)' | wc -l`
+N2=`cat ~/ecdata/allcurves/allcurves.*9 | awk '($3==2)&&($1>60000)&&($1<390000)' | wc -l`
 let 'N1=Nall-N2'
 echo $Nall $N1 $N2
 
@@ -185,7 +185,7 @@ gh-pages branch and pushes that, so the website is updated too.
 
        %sage
        sage: %runfile lmfdb/elliptic_curves/import_ec_data.py
-       sage: upload_to_db("/home/jec/ecdata",370000,379999)
+       sage: upload_to_db("/home/jec/ecdata",380000,389999)
 
    [done to 380000]
 
@@ -210,7 +210,7 @@ gh-pages branch and pushes that, so the website is updated too.
        sage
        sage: time d = sage.databases.cremona.build('cremona','/home/jec/ecdata/ecdata-2016-02-11.tgz')
        sage: CremonaDatabase().largest_conductor()
-       379998
+       389998
        sage: CremonaDatabase().number_of_curves()
        2365566
 

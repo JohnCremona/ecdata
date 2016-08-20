@@ -69,10 +69,11 @@ def make_rankshatable(nmax=30, verbose=False):
     outfile.write("<colgroup span=1>\n")
     outfile.write("<colgroup span=1>\n")
     outfile.write("<colgroup span=1>\n")
+    outfile.write("<colgroup span=1>\n")
     outfile.write("<thead>\n")
     outfile.write('<tr style="border: solid">\n')
     outfile.write("<th>N<th>all>1")
-    for s in range(2,32)+[41,47,50,75]:
+    for s in range(2,32)+[33,41,47,50,75]:
         outfile.write("<th>%s<sup>2</sup>"%s)
     outfile.write("\n</tr>\n")
     outfile.write("</thead>\n")
@@ -81,13 +82,13 @@ def make_rankshatable(nmax=30, verbose=False):
     outfile.write("<tr>\n")
     outfile.write("<th align=right>1-%s9999</th>\n"%str(nmax-1))
     outfile.write("<td align=right>%s</td>\n"%total)
-    for s in range(2,32)+[41,47,50,75]:
+    for s in range(2,32)+[33,41,47,50,75]:
         outfile.write("<td align=right>%s</td>\n"%total_tab.get(s,0))
     outfile.write("\n</tr>\n")
 
     outfile.write('<tr style="border: solid">\n')
     outfile.write("<th>N<th>all>1")
-    for s in range(2,32)+[41,47,50,75]:
+    for s in range(2,32)+[33,41,47,50,75]:
         outfile.write("<th>%s<sup>2</sup>"%s)
     outfile.write("\n</tr>\n")
     outfile.write("</tfoot>\n")
@@ -100,7 +101,7 @@ def make_rankshatable(nmax=30, verbose=False):
         else:
             outfile.write("<th align=right>%s0000-%s9999</th>\n"%(str(n),str(n)))
         outfile.write("<td align=right>%s</td>\n"%range_total[n])
-        for s in range(2,32)+[41,47,50,75]:
+        for s in range(2,32)+[33,41,47,50,75]:
             outfile.write("<td align=right>%s</td>\n"%range_tab[n].get(s,'&nbsp;'))
         outfile.write("</tr>\n")
 
@@ -121,10 +122,11 @@ def make_rankshatable(nmax=30, verbose=False):
     outfile.write("<colgroup span=1>\n")
     outfile.write("<colgroup span=1>\n")
     outfile.write("<colgroup span=1>\n")
+    outfile.write("<colgroup span=1>\n")
     outfile.write("<thead>\n")
     outfile.write('<tr style="border: solid">\n')
     outfile.write("<th>&nbsp;<th>all>1")
-    for s in range(2,32)+[41,47,50,75]:
+    for s in range(2,32)+[33,41,47,50,75]:
         outfile.write("<th>%s<sup>2</sup>"%s)
     outfile.write("\n</tr>\n")
     outfile.write("</thead>\n")
@@ -133,13 +135,13 @@ def make_rankshatable(nmax=30, verbose=False):
     outfile.write("<tr>\n")
     outfile.write("<th align=right>all ranks</th>\n")
     outfile.write("<td align=right>%s</td>\n"%total)
-    for s in range(2,32)+[41,47,50,75]:
+    for s in range(2,32)+[33,41,47,50,75]:
         outfile.write("<td align=right>%s</td>\n"%total_tab.get(s,0))
     outfile.write("\n</tr>\n")
 
     outfile.write('<tr style="border: solid">\n')
     outfile.write("<th>&nbsp;<th>all>1")
-    for s in range(2,32)+[41,47,50,75]:
+    for s in range(2,32)+[33,41,47,50,75]:
         outfile.write("<th>%s<sup>2</sup>"%s)
     outfile.write("\n</tr>\n")
     outfile.write("</tfoot>\n")
@@ -150,7 +152,7 @@ def make_rankshatable(nmax=30, verbose=False):
             outfile.write("<tr>\n")
             outfile.write("<th align=right>r=%s</th>\n"%str(r))
             outfile.write("<td align=right>%s</td>\n"%rank_total[r])
-            for s in range(2,32)+[41,47,50,75]:
+            for s in range(2,32)+[33,41,47,50,75]:
                 outfile.write("<td align=right>%s</td>\n"%rank_tab[r].get(s,'&nbsp;'))
             outfile.write("</tr>\n")
     outfile.write("</tbody>\n")
