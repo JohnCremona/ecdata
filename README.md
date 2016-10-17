@@ -5,7 +5,7 @@ This is a repository of the data files containing the Cremona Database of all el
 
 These files provide the source data for the elliptic curve pages at http://www.lmfdb.org . 
 
-The current release is published as http://dx.doi.org/10.5281/zenodo.17085
+The current release is published as http://dx.doi.org/10.5281/zenodo.161341
 
 For a description of how most of the data here was computed, see the ANTS 7 Procedings at 
 http://www.math.tu-berlin.de/~kant/ants/proceedings.html .  
