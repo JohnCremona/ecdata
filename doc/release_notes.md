@@ -1,9 +1,11 @@
 # ecdata release notes (since 2001)
 
-## Last major update: 2016-02-07
+## Last major update: 2016-10-17
 
 ### 2016
-- 7 February 2016: Added all data for 370000-379999
+- 17 October 2016: Added all data for 390000-399999
+- 20 August 2016: Added all data for 380000-389999
+-  7 February 2016: Added all data for 370000-379999
 
 ### 2015
 - 31 October 2015: Added all data for 360000-369999
