@@ -1,4 +1,8 @@
-from sage.databases.cremona import parse_cremona_label, cmp_code
+from sage.databases.cremona import parse_cremona_label
+try:
+    from sage.databases.cremona import cmp_code
+except:
+    pass
 
 mwrank_saturation_precision = 300
 mwrank_saturation_maxprime = 200000
