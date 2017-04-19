@@ -31,6 +31,9 @@ LMFDB_NCURVE: Number of the curve in its isogeny class (1,2,...) in
 ID: Concatenation of (N,CLASSCODE,NCURVE) separated by whitespace,
     e.g. 11 a 1
 
+IDX: Concatenation of (N,CLASSCODE,NCURVE) with no whitespace,
+    e.g. 11a1
+
 CREMONA_LABEL: Concatenation of (N,CLASSCODE,NCURVE) with no
             whitespace separation, e.g. 11a1. This is called the
             "Cremona label" of the elliptic curve.
