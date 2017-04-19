@@ -1079,35 +1079,31 @@ TABLE NINE: IMAGES OF GALOIS REPRESENTATIONS
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
-A table giving the for each elliptic curve the primes <i>p</i>&le;37
-for which the mod-<i>p</i> Galois representation is not surjective, as
+A table giving the for each elliptic curve the primes <i>p</i> for
+which the mod-<i>p</i> Galois representation is not maximal, as
 computed by Andrew Sutherland, together with a code identifying the
 image (as a subgroup of GL(2,<i>p</i>), up to conjugation).  For
-curves with CM the representation is never surjective but the image is
-only shown for <i>p</i>&le;37.  For curves without CM, the
-representation is surjective for all but finitely many primes (Serre)
-and is conjectured to be surjective for <i>p</i>&gt;37, but this was
-only checked for 37&lt<i>p</i>&lt80.
+curves with CM the representation is never surjective and the image is
+shown when it is not maximal, where maximal means as large as possible
+given the constraints imposed by the endomorphism ring of E.  For
+curves without CM, the representation is surjective for all but
+finitely many primes (Serre) and is conjectured to be surjective
+for <i>p</i>&gt;37, but this was only checked for 37&lt<i>p</i>&lt80.
 
 <br>
 Data format with sample lines:
 <table cellspacing="10" border="1">
 <tbody><tr>
-<th>N</th> <th>class</th> <th>#</th> <th>[a1,a2,a3,a4,a6]</th>
-<th>rank</th><th>torsion</th>
-<th align="left">list of non-surjective images</th>
+<th>Curve</th><th align="left">list of non-surjective images</th>
 </tr>
 <tr>
-<td>11</td></td><td>a</td><td>1</td><td>[0,-1,1,-10,-20]</td><td>0</td><td>5</td>
-<td>5Cs.1.1</td>
+<td>11a1</td><td>5Cs.1.1</td>
 </tr>
 <tr>
-<td>27</td><td>a</td><td>1</td><td>[0,0,1,0,-7]</td><td>0</td><td>3</td>
-<td>3Cs.1.1 5Nn 7Ns 11Nn 13Ns 17Nn 19Ns 23Nn 29Nn 31Ns 37Ns</td>
+<td>27a1</td><td>3Cs.1.1</td>
 </tr>
 <tr>
-<td>37</td><td>a</td><td>1</td><td>[0,0,1,-1,0]</td><td>1</td><td>1</td>
-<td>&nbsp;</td>
+<td>37a1</td><td>&nbsp;</td>
 </tr>
 </tbody></table>
 </li></ul>
