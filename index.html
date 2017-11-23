@@ -66,6 +66,8 @@ class;
   representations attached to each curve;
 <li>Table 10 gives information on the 2-adic Galois
   representations attached to each curve.
+<li>Table 11 gives information on the growth of torsion in number
+fields of small degree, for each curve.
 </ul>
 </p>
 
@@ -1213,15 +1215,15 @@ TABLE ELEVEN: TORSION GROWTH
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
-For $2\le d\le7$ we give for every curve $E$ a list of the number
-fields $K$ of degree $d$ such that $E(K)_{\rm tors}$ is strictly
-larger than $E(\mathbb{Q})_{\rm tors}$ (and in case $d$ is composite,
-strinctly larger than $E(K')_{\rm tors}$ for all subfields $K'\subset
-K$).
+For 2&le; <i>d</i>&le;7$ we give for every curve <i>E</i> a list of the number
+fields <i>K</i> of degree <i>d</i> (if any) such that $<i>E</i>(<i>K</i>)<sub>tors</sub> is strictly
+larger than <i>E</i>(<b>Q</b>)<sub>tors</sub> (and in case <i>d</i>$ is composite,
+strictly larger than <i>E</i>(<i>K'</i>)<sub>tors</sub> for all subfields <i>K'</i>&sub;
+</i>K</i>).
 
 Fields are indicated either by their LMFDB label, or (for fields not
 currently in the LMFDB) by the coefficients of a defining polynomial.
-Torsion structure is shown as $[n]$ or $[m,n]$ with $m\mid n$.
+Torsion structure is shown as [n] or [m,n] with m dividing n.
 
 Data format with sample lines:
 <table cellspacing="10" border="1">
@@ -1229,7 +1231,7 @@ Data format with sample lines:
 <th>Curve label</th> <th>Torsion:field</th> <th>Torsion:field</th> <th>Torsion:field</th>
 </tr>
 <tr>
-<td>15a2</td> <td>[2,4]:2.0.4.1</td><td> [2,4]:2.0.20.1</td><td> [2,4]:2.2.5.1</td><td>
+<td>15a2</td> <td>[2,4]:2.0.4.1</td><td> [2,4]:2.0.20.1</td><td> [2,4]:2.2.5.1</td>
 </tr>
 <tr>
 <td>651e3</td> <td>[3]:-651,0,0,1</td> <td>[2]:3.1.2604.1</td>
