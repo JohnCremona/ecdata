@@ -22,6 +22,7 @@ INTPTS = intpts/intpts.?0000-?9999 intpts/intpts.??0000-??9999
 GALREPS = galrep/galrep.?0000-?9999 galrep/galrep.??0000-??9999
 TWOADIC = 2adic/2adic.?0000-?9999 2adic/2adic.??0000-??9999
 OPTIMAL = optimality/optimality.??
+GROWTH = growth/growth?d.*000-*999
 
 allcurves: $(ALLCURVES)
 	@echo $(ALLCURVES)
@@ -53,10 +54,12 @@ twoadic: $(TWOADIC)
 	@echo $(TWOADIC)
 optimal: $(OPTIMAL)
 	@echo $(OPTIMAL)
+growth: $(GROWTH)
+	@echo $(GROWTH)
 
 HTMLFILES = html/index.html html/shas.html html/table.html html/curves.1-1000.html
 TEXTFILES = doc/manin.txt doc/file-format.txt doc/release_notes.md doc/merging.txt
-DATAFILES =  $(ALLCURVES) $(APLIST) $(BIGSHA) $(COUNT) $(DEGPHI) $(ALLDEGPHI) $(ALLGENS) $(BSD) $(ALLISOG) $(PARICURVES) $(INTPTS) $(GALREPS) $(TWOADIC) $(OPTIMAL)
+DATAFILES =  $(ALLCURVES) $(APLIST) $(BIGSHA) $(COUNT) $(DEGPHI) $(ALLDEGPHI) $(ALLGENS) $(BSD) $(ALLISOG) $(PARICURVES) $(INTPTS) $(GALREPS) $(TWOADIC) $(OPTIMAL) $(GROWTH)
 FTPFILES = $(DATAFILES) $(TEXTFILES) $(HTMLFILES)
 DATASUBDIRS = allcurves aplist allbigsha count curves degphi alldegphi allgens allisog allbsd paricurves intpts galrep 2adic optimality
 
