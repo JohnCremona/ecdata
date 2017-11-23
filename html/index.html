@@ -24,7 +24,7 @@ by J. E. Cremona<br>
 University of Warwick, U.K.</h2>
 <p>
 <i>
-Updated <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc/release_notes.md">2016-10-17</a> (last major update 2016-10-17)
+Updated <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc/release_notes.md">2017-11-23</a> (last major update 2016-10-17)
 </i>
 </p>
 </center>
@@ -132,6 +132,9 @@ Andrew Sutherland.
 <li>
 The images of the 2-adic Galois representations were computed using a
 Magma program provided by Jeremy Rouse.
+</li>
+<li>
+The torsion growth data was computed by Enrique Gonzalez-Jimenez.
 </li>
 </ul>
 
@@ -1193,12 +1196,54 @@ Data format with sample lines:
 </tbody></table>
 </li></ul>
 
+<h3>
+TABLE ELEVEN: TORSION GROWTH
+</h3>
+<ul>
+<li>
+<form>
+<select name="url" width=10>
+<option value="None">Select a degree</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/growth/growth2d.0000000-999999">2</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/growth/growth3d.0000000-999999">3</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/growth/growth4d.0000000-999999">4</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/growth/growth5d.0000000-999999">5</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/growth/growth6d.0000000-999999">6</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/growth/growth7d.0000000-999999">7</option>
+</select>
+<input type=button value="Fetch" onClick="JumpToIt(this.form)">
+</form>
+For $2\le d\le7$ we give for every curve $E$ a list of the number
+fields $K$ of degree $d$ such that $E(K)_{\rm tors}$ is strictly
+larger than $E(\mathbb{Q})_{\rm tors}$ (and in case $d$ is composite,
+strinctly larger than $E(K')_{\rm tors}$ for all subfields $K'\subset
+K$).
+
+Fields are indicated either by their LMFDB label, or (for fields not
+currently in the LMFDB) by the coefficients of a defining polynomial.
+Torsion structure is shown as $[n]$ or $[m,n]$ with $m\mid n$.
+
+Data format with sample lines:
+<table cellspacing="10" border="1">
+<tbody><tr>
+<th>Curve label</th> <th>Torsion:field</th> <th>Torsion:field</th> <th>Torsion:field</th>
+</tr>
+<tr>
+<td>15a2</td> <td>[2,4]:2.0.4.1</td><td> [2,4]:2.0.20.1</td><td> [2,4]:2.2.5.1</td><td>
+</tr>
+<tr>
+<td>651e3</td> <td>[3]:-651,0,0,1</td> <td>[2]:3.1.2604.1</td>
+</tr>
+<tr>
+<td>26b2</td> <td>[7]:7.1.52706752.1</td>
+</tr>
+</tbody></table>
 
 
 <hr>
 <p><b>Recent update
-    notes</b>:&nbsp; <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc/release_notes.md">17
-    October 2016</a>
+    notes</b>:&nbsp; <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc/release_notes.md">23
+    November 2017</a>
 </p><hr>
 
 <tt>john dot cremona at gmail dot com</tt>
