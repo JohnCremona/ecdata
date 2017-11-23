@@ -2,6 +2,9 @@
 
 ## Last major update: 2016-10-17
 
+### 2017
+- 23 November 2017: Added torsion growth data for 000000-399999
+
 ### 2016
 - 17 October 2016: Added all data for 390000-399999
 - 20 August 2016: Added all data for 380000-389999
