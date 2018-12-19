@@ -2,6 +2,9 @@
 
 ## Last major update: 2016-10-17
 
+### 2018
+- 19 December 2017: Updated intpts for 207 curves
+
 ### 2017
 - 23 November 2017: Added torsion growth data for 000000-399999
 
