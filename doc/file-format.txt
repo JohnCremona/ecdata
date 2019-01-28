@@ -31,6 +31,9 @@ LMFDB_NCURVE: Number of the curve in its isogeny class (1,2,...) in
 ID: Concatenation of (N,CLASSCODE,NCURVE) separated by whitespace,
     e.g. 11 a 1
 
+IDX: Concatenation of (N,CLASSCODE,NCURVE) with no whitespace,
+    e.g. 11a1
+
 CREMONA_LABEL: Concatenation of (N,CLASSCODE,NCURVE) with no
             whitespace separation, e.g. 11a1. This is called the
             "Cremona label" of the elliptic curve.
@@ -86,7 +89,7 @@ ISOGMAT:     Matrix of isogeny degrees between Ei and Ej, as a list of
             lists with no spaces.  e.g. [[1,5,5],[5,1,25],[5,25,1]].
 XLIST:       List of x-coordinates of integral points (integers, no spaces).
 
-GAL_IM:      Sutherland code for (non-surjective) Galois image
+GAL_IM:      Sutherland code for (non-maximal) Galois image
              (string, starting with a prime, e.g. 5Cs.1.1)
 GAL_IMS:     Sequence of 0 or more GAL_IM separated by whitespace
 
@@ -112,5 +115,5 @@ Files:
 11. count:     N NNF
 12. paricurves: ["ID", AI, AGENS]
 13. alllabels: N CLASSCODE NCURVE N LMFDB_CLASSCODE LMFDB_NCURVE
-14. galrep: ID AI R T GAL_IMS
+14. galrep: IDX GAL_IMS
 15. 2adic: ID AI 2IND 2LEVEL 2MATGENS 2LAB

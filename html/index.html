@@ -24,7 +24,7 @@ by J. E. Cremona<br>
 University of Warwick, U.K.</h2>
 <p>
 <i>
-Updated <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc/release_notes.md">2016-10-17</a> (last major update 2016-10-17)
+Updated <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc/release_notes.md">2018-12-19</a> (last major update 2016-10-17)
 </i>
 </p>
 </center>
@@ -66,6 +66,8 @@ class;
   representations attached to each curve;
 <li>Table 10 gives information on the 2-adic Galois
   representations attached to each curve.
+<li>Table 11 gives information on the growth of torsion in number
+fields of small degree, for each curve.
 </ul>
 </p>
 
@@ -117,13 +119,11 @@ GP's <tt>ellheegner</tt> function written by Christophe Delaunay and
 Bill Allombert, based on the same ideas of Delaunay and Watkins.
 </li>
 <li>
-The integral points for all curves were computed using Sage in a new
-implementation due to Michael Mardaus, Tobias Nagel and JEC.  For
-conductors up to 1000 we have checked that these agree with Magma
-(version V2.14-14).
-<br><b>N.B.</b> It is known that these lists are in some cases
-incomplete, due to bugs in the program mentioned; they will be
-corrected in due course.
+The integral points for all curves were first computed using Sage in
+an implementation due to Michael Mardaus, Tobias Nagel and JEC.  For
+all curves we checked on 2018-12-19 whether these agree with Magma
+(version V2.24-1): in 207 cases Magma found more integral points
+(never fewer), and the larger lists which is hoped to be complete are here.
 </li>
 <li>
 The images of the mod <i>p</i> Galois representations were computed by
@@ -132,6 +132,9 @@ Andrew Sutherland.
 <li>
 The images of the 2-adic Galois representations were computed using a
 Magma program provided by Jeremy Rouse.
+</li>
+<li>
+The torsion growth data was computed by Enrique Gonzalez-Jimenez.
 </li>
 </ul>
 
@@ -921,8 +924,7 @@ TABLE SEVEN: INTEGRAL POINTS
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
-A table giving the x-coordinates of (almost) all integral points on all
-curves. <b>Corrected</b> 2009-01-01, but still incomplete.
+A table giving the x-coordinates of all integral points on all curves.
 
 <br>
 Data format with sample line:
@@ -1079,35 +1081,31 @@ TABLE NINE: IMAGES OF GALOIS REPRESENTATIONS
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
-A table giving the for each elliptic curve the primes <i>p</i>&le;37
-for which the mod-<i>p</i> Galois representation is not surjective, as
+A table giving the for each elliptic curve the primes <i>p</i> for
+which the mod-<i>p</i> Galois representation is not maximal, as
 computed by Andrew Sutherland, together with a code identifying the
 image (as a subgroup of GL(2,<i>p</i>), up to conjugation).  For
-curves with CM the representation is never surjective but the image is
-only shown for <i>p</i>&le;37.  For curves without CM, the
-representation is surjective for all but finitely many primes (Serre)
-and is conjectured to be surjective for <i>p</i>&gt;37, but this was
-only checked for 37&lt<i>p</i>&lt80.
+curves with CM the representation is never surjective and the image is
+shown when it is not maximal, where maximal means as large as possible
+given the constraints imposed by the endomorphism ring of E.  For
+curves without CM, the representation is surjective for all but
+finitely many primes (Serre) and is conjectured to be surjective
+for <i>p</i>&gt;37, but this was only checked for 37&lt<i>p</i>&lt80.
 
 <br>
 Data format with sample lines:
 <table cellspacing="10" border="1">
 <tbody><tr>
-<th>N</th> <th>class</th> <th>#</th> <th>[a1,a2,a3,a4,a6]</th>
-<th>rank</th><th>torsion</th>
-<th align="left">list of non-surjective images</th>
+<th>Curve</th><th align="left">list of non-surjective images</th>
 </tr>
 <tr>
-<td>11</td></td><td>a</td><td>1</td><td>[0,-1,1,-10,-20]</td><td>0</td><td>5</td>
-<td>5Cs.1.1</td>
+<td>11a1</td><td>5Cs.1.1</td>
 </tr>
 <tr>
-<td>27</td><td>a</td><td>1</td><td>[0,0,1,0,-7]</td><td>0</td><td>3</td>
-<td>3Cs.1.1 5Nn 7Ns 11Nn 13Ns 17Nn 19Ns 23Nn 29Nn 31Ns 37Ns</td>
+<td>27a1</td><td>3Cs.1.1</td>
 </tr>
 <tr>
-<td>37</td><td>a</td><td>1</td><td>[0,0,1,-1,0]</td><td>1</td><td>1</td>
-<td>&nbsp;</td>
+<td>37a1</td><td>&nbsp;</td>
 </tr>
 </tbody></table>
 </li></ul>
@@ -1197,12 +1195,57 @@ Data format with sample lines:
 </tbody></table>
 </li></ul>
 
-
+<h3>
+TABLE ELEVEN: TORSION GROWTH
+</h3>
+<ul>
+<li>
+<form>
+<select name="url" width=10>
+<option value="None">Select a degree</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/growth/growth2d.000000-399999">2</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/growth/growth3d.000000-399999">3</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/growth/growth4d.000000-399999">4</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/growth/growth5d.000000-399999">5</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/growth/growth6d.000000-399999">6</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/growth/growth7d.000000-399999">7</option>
+</select>
+<input type=button value="Fetch" onClick="JumpToIt(this.form)">
+</form>
+<p>
+For 2&le; <i>d</i>&le;7 we give for every curve <i>E</i> a list of the number
+fields <i>K</i> of degree <i>d</i> (if any) such that <i>E</i>(<i>K</i>)<sub>tors</sub> is strictly
+larger than <i>E</i>(<b>Q</b>)<sub>tors</sub> (and in case <i>d</i> is composite,
+strictly larger than <i>E</i>(<i>K'</i>)<sub>tors</sub> for all subfields <i>K'</i>&sub;
+</i>K</i>).
+</p>
+<p>
+Fields are indicated either by their LMFDB label, or (for fields not
+currently in the LMFDB) by the coefficients of a defining polynomial.
+Torsion structure is shown as [n] or [m,n] with m dividing n.
+</p>
+<p>
+Data format with sample lines:
+<table cellspacing="10" border="1">
+<tbody><tr>
+<th>Curve label</th> <th>Torsion:field</th> <th>Torsion:field</th> <th>Torsion:field</th>
+</tr>
+<tr>
+<td>15a2</td> <td>[2,4]:2.0.4.1</td><td> [2,4]:2.0.20.1</td><td> [2,4]:2.2.5.1</td>
+</tr>
+<tr>
+<td>651e3</td> <td>[3]:-651,0,0,1</td> <td>[2]:3.1.2604.1</td>
+</tr>
+<tr>
+<td>26b2</td> <td>[7]:7.1.52706752.1</td>
+</tr>
+</tbody></table>
+</p>
 
 <hr>
 <p><b>Recent update
-    notes</b>:&nbsp; <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc/release_notes.md">17
-    October 2016</a>
+    notes</b>:&nbsp; <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc/release_notes.md">23
+    November 2017</a>
 </p><hr>
 
 <tt>john dot cremona at gmail dot com</tt>
