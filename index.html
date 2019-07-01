@@ -24,7 +24,7 @@ by J. E. Cremona<br>
 University of Warwick, U.K.</h2>
 <p>
 <i>
-Updated <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc/release_notes.md">2018-12-19</a> (last major update 2016-10-17)
+Updated <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc/release_notes.md">2019-07-01</a> (last major update 2019-07-01)
 </i>
 </p>
 </center>
@@ -94,7 +94,7 @@ below.  Some of the data is common to all curves in the isogeny class.
 </p>
 
 <p>
-The tables currently contain data for conductors up to <b>400000</b>.
+The tables currently contain data for conductors up to <b>410000</b>.
 </p>
 
 
@@ -123,7 +123,7 @@ The integral points for all curves were first computed using Sage in
 an implementation due to Michael Mardaus, Tobias Nagel and JEC.  For
 all curves we checked on 2018-12-19 whether these agree with Magma
 (version V2.24-1): in 207 cases Magma found more integral points
-(never fewer), and the larger lists which is hoped to be complete are here.
+(never fewer), and the lists here are now hoped to be complete.
 </li>
 <li>
 The images of the mod <i>p</i> Galois representations were computed by
@@ -189,6 +189,7 @@ https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.00000-09
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.370000-379999">370000-379999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.380000-389999">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.390000-399999">390000-399999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.400000-409999">400000-409999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -252,6 +253,7 @@ TABLE ONE: CURVES
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.370000-379999">370000-379999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.380000-389999">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.390000-399999">390000-399999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.400000-409999">400000-409999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -365,6 +367,7 @@ TABLE TWO: GENERATORS
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.370000-379999">370000-379999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.380000-389999">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.390000-399999">390000-399999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.400000-409999">400000-409999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -466,6 +469,7 @@ TABLE THREE: HECKE EIGENVALUES
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.370000-379999">370000-379999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.380000-389999">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.390000-399999">390000-399999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.400000-409999">400000-409999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -565,6 +569,7 @@ computed to several places but to save space is just entered as
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.370000-379999">370000-379999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.380000-389999">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.390000-399999">390000-399999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.400000-409999">400000-409999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -648,20 +653,21 @@ where:
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.370000-379999">370000-379999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.380000-389999">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.390000-399999">390000-399999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.400000-409999">400000-409999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
 Lists of the curves with non-trivial Tate-Shafarevich group, according
 to the BSD conjecture; i.e., curves whose "analytic order of Sha" is
-greater than 1.  The record (to conductor 390000) is 5625=75<sup>2</sup>
+greater than 1.  The record (to conductor 410000) is 5625=75<sup>2</sup>
 for 165066d3.
 </li>
 <br>
 <li>
 <a href="shas.html">shas.html</a><br>
 A summary table of large Shas.  Note that up to conductor 400000
-there are 192161 elliptic curves with non-trivial Sha, with ranks 0
-(176631 curves), 1 (15509 curves), 2 (21 curves, all with
+there are 196082 elliptic curves with non-trivial Sha, with ranks 0
+(180162 curves), 1 (15898 curves), 2 (22 curves, all with
 2-torsion).
 </li></ul>
 
@@ -716,6 +722,7 @@ Optimal curves:
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.370000-379999">370000-379999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.380000-389999">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.390000-399999">390000-399999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.400000-409999">400000-409999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -777,6 +784,7 @@ All curves:
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.370000-379999">370000-379999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.380000-389999">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.390000-399999">390000-399999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.400000-409999">400000-409999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -848,6 +856,7 @@ TABLE SIX: ISOGENY MATRICES
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.370000-379999">370000-379999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.380000-389999">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.390000-399999">390000-399999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.400000-409999">400000-409999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -921,6 +930,7 @@ TABLE SEVEN: INTEGRAL POINTS
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.370000-379999">370000-379999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.380000-389999">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.390000-399999">390000-399999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.400000-409999">400000-409999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -963,7 +973,7 @@ to the paper "The Manin Constant" by Amod Agashe, Ken Ribet and
 William Stein [Pure and Applied Mathematics Quarterly, Vol. 2 no.2
 (2006), pp. 617-636.]
 and <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc/manin.txt">these
-notes</a> updating the results for all conductors to 400000.  These
+notes</a> updating the results for all conductors to 410000.  These
 updated results include the proof that Manin's constant is 1 in all
 cases, together with a list of which curves in the class might be
 optimal, given the incomplete modular symbol computations carried out
@@ -1010,6 +1020,7 @@ the first curve listed.
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.37">370000-379999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.38">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.39">390000-399999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.40">400000-409999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -1078,6 +1089,7 @@ TABLE NINE: IMAGES OF GALOIS REPRESENTATIONS
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.370000-379999">370000-379999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.380000-389999">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.390000-399999">390000-399999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.400000-409999">400000-409999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -1159,6 +1171,7 @@ TABLE TEN: IMAGES OF TWO-ADIC GALOIS REPRESENTATION
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.370000-379999">370000-379999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.380000-389999">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.390000-399999">390000-399999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.400000-409999">400000-409999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -1198,6 +1211,8 @@ Data format with sample lines:
 <h3>
 TABLE ELEVEN: TORSION GROWTH
 </h3>
+Torsion growth data has been computed so far for curve of conductor up
+to 400000, for extensions of degree up to 7.
 <ul>
 <li>
 <form>
@@ -1244,8 +1259,8 @@ Data format with sample lines:
 
 <hr>
 <p><b>Recent update
-    notes</b>:&nbsp; <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc/release_notes.md">23
-    November 2017</a>
+    notes</b>:&nbsp; <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc/release_notes.md">1
+    July 2019</a>
 </p><hr>
 
 <tt>john dot cremona at gmail dot com</tt>
