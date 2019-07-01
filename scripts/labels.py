@@ -10,15 +10,17 @@
 # each case.  This is ONLY intended for ranges where the classes
 # themselves are in the correct order.
 #
+from sage.all import EllipticCurve
+
 def make_alllabels(infilename, mode='w', pref='t', verbose=False):
-    infile = file(infilename)
+    infile = open(infilename)
     pre, suf = infilename.split(".")
-    alllabelsfile = file(pref+"alllabels."+suf, mode=mode)
+    alllabelsfile = open(pref+"alllabels."+suf, mode=mode)
     count=0
-    for L in file(infilename).readlines():
+    for L in open(infilename).readlines():
         count +=1
         if count%1000==0:
-            print L
+            print(L)
         N, cl, num, ainvs, r, tor, d = L.split()
         E = EllipticCurve(eval(ainvs))
         curves = E.isogeny_class(order="sage").curves
@@ -29,6 +31,6 @@ def make_alllabels(infilename, mode='w', pref='t', verbose=False):
             line = ' '.join([N,cl,str(lab1[j]),N,cl,str(lab2[j])])
             alllabelsfile.write(line+'\n')
             if verbose:
-                print "alllabelsfile:  ",line
+                print("alllabelsfile:  "+line)
     infile.close()
     alllabelsfile.close()

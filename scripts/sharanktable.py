@@ -7,6 +7,8 @@ HTML_FILENAME = "newshas.html"
 MAX_RANK = 4
 SHA_LIST = range(2,34)+[41,47,50,75]
 
+from sage.all import isqrt
+
 def make_rankshatable(nmax=30, verbose=False):
     total_tab = {}
     rank_tab = [{} for r in range(MAX_RANK+1)]
@@ -18,8 +20,8 @@ def make_rankshatable(nmax=30, verbose=False):
     for n in range(nmax):
         infilename = "allbigsha/allbigsha."+str(n)+"0000-"+str(n)+"9999"
         if verbose:
-            print "processing %s"%infilename
-        infile = file(infilename)
+            print("processing "+infilename)
+        infile = open(infilename)
         for L in infile.readlines():
             N, cl, num, ainvs, r, t, S = L.split()
             r = int(r)
@@ -34,15 +36,15 @@ def make_rankshatable(nmax=30, verbose=False):
         infile.close()
 
         if verbose:
-            print "Totals for range %s0000-%s9999: %s (total %s)"%(n,n,range_tab[n],range_total)
+            print("Totals for range {}0000-{}9999: {} (total {})".format(n,n,range_tab[n],range_total))
 
     if verbose:
         print
-        print "Totals for all ranks: %s (total %s)"%(total_tab,total)
+        print("Totals for all ranks: {} (total {})".format(total_tab,total))
         print
 
     outfilename = HTML_FILENAME
-    outfile = file(outfilename, mode='w')
+    outfile = open(outfilename, mode='w')
 
 # header info for html file
 
@@ -172,7 +174,7 @@ def make_rankshatable(nmax=30, verbose=False):
     if verbose:
         for r in range(MAX_RANK+1):
             if rank_total[r]>0:
-                print "Totals for rank %s: %s (total %s)"%(r,rank_tab[r],rank_total[r])
+                print("Totals for rank {}: {} (total {})".format(r,rank_tab[r],rank_total[r]))
 
 
 

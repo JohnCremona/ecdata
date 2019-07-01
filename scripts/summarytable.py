@@ -24,7 +24,6 @@ MAX_RANK = 4
 
 def make_table(nmax=30, verbose=False):
     total_tab = {}
-    rank_tab = [{} for r in range(MAX_RANK+1)]
     range_tab = [{} for n in range(nmax)]
     total = 0
     rank_total = [0 for r in range(MAX_RANK+1)]
@@ -34,14 +33,14 @@ def make_table(nmax=30, verbose=False):
 
     for n in range(nmax):
         infilename = "allcurves/allcurves."+str(n)+"0000-"+str(n)+"9999"
-        range_total_all[n] = len(file(infilename).readlines())
+        range_total_all[n] = len(open(infilename).readlines())
         total_all += range_total_all[n]
 
     for n in range(nmax):
         infilename = "curves/curves."+str(n)+"0000-"+str(n)+"9999"
         if verbose:
-            print "processing %s"%infilename
-        infile = file(infilename)
+            print("processing {}".format(infilename))
+        infile = open(infilename)
         for L in infile.readlines():
             N, cl, num, ainvs, r, t, d = L.split()
             r = int(r)
@@ -53,15 +52,15 @@ def make_table(nmax=30, verbose=False):
         infile.close()
 
         if verbose:
-            print "Totals for range %s0000-%s9999: %s (total %s)"%(n,n,range_tab[n],range_total)
+            print("Totals for range {}0000-{}9999: {} (total {})".format(n,n,range_tab[n],range_total))
 
     if verbose:
         print
-        print "Totals for all: %s (total %s)"%(total_tab,total)
+        print("Totals for all: {} (total {})".format(total_tab,total))
         print
 
     outfilename = HTML_FILENAME
-    outfile = file(outfilename, mode='w')
+    outfile = open(outfilename, mode='w')
 
 # header info for html file
 

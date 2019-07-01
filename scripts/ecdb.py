@@ -1,5 +1,5 @@
-import os
-from sage.all import QQ, EllipticCurve, mwrank_get_precision, mwrank_set_precision, Integer, srange, factorial, prime_range, magma, Set
+from sage.all import EllipticCurve, Integer, QQ, Set, magma, prime_range, factorial, mwrank_get_precision, mwrank_set_precision, srange
+
 from sage.databases.cremona import parse_cremona_label
 try:
     from sage.databases.cremona import cmp_code
@@ -18,8 +18,6 @@ def print_data(outfile, code, ainvs, r, t):
 
 def put_allcurves_line(outfile, N, cl, num, ainvs, r, t):
     line = ' '.join([str(N),cl,str(num),str(ainvs).replace(' ',''),str(r),str(t)])
-#    print line
-#    print N, cl, num, ainvs, r, t
     outfile.write(line+'\n')
 
 def make_allcurves_lines(outfile, code, ainvs, r, t):
@@ -33,7 +31,6 @@ def process_curve_file(infilename, outfilename, use):
     infile = open(infilename)
     outfile = open(outfilename, mode='a')
     for L in infile.readlines():
-        #print L
         N, iso, num, ainvs, r, tor, d = L.split()
         code = N+iso+num
         N = int(N)
@@ -63,7 +60,6 @@ def pointstr(P):
 
 # convert '[x:y:z]' to '[x/z,y/z]'
 def pointPtoA(P):
-    #print P
     x,y,z = [Integer(c) for c in P[1:-1].split(":")]
     return [x/z,y/z]
 
@@ -75,22 +71,19 @@ def matstr(m):
 # computed by Magma's HeegnerPoint command
 def magma_rank1_gen(E):
     mP = magma(E).HeegnerPoint(nvals=2)[1]
-#    print "Magma computes P = ", mP
     P = E([mP[i].sage() for i in [1,2,3]])
     return P
 
 # Assuming that E is known to have rank 1, returns a point on E
 # computed by GP's ellheegner() command
 def pari_rank1_gen(E, stacksize=1024000000):
-    from os import system, getpid
+    from os import system, getpid, unlink
     f = 'tempfile-'+str(getpid())
     comm = "LD_LIBRARY_PATH=/usr/local/lib; echo `echo 'ellheegner(ellinit("+str(list(E.ainvs()))+"))' | %s -q -f -s %s` > %s;" % (GP,stacksize,f)
     system(comm)
     P = open(f).read().partition("[")[2].partition("]")[0]
-    os.unlink(f)
-    #print("PARI computes P = [%s]" % P)
+    unlink(f)
     P = E([QQ(c) for c in P.split(',')])
-    #print(" ---> P = %s" % P)
     return P
 
 # Given a matrix of isogenies and a list of points on the initial
@@ -165,7 +158,6 @@ def make_allcurves_and_allisog(infilename, mode='w'):
     allcurvefile = open("tallcurves."+suf, mode=mode)
     allisogfile = open("tallisog."+suf, mode=mode)
     for L in infile.readlines():
-        #print L
         N, cl, num, ainvs, r, tor, d = L.split()
         E = EllipticCurve(eval(ainvs))
         Cl = E.isogeny_class()
@@ -234,7 +226,6 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
     intptsfile = open(prefix+"intpts."+suf, mode=mode)
     for L in infile.readlines():
         if verbose: print("="*72)
-        #print(L)
         N, cl, num, ainvs, r, tor, d = L.split()
         E = EllipticCurve(eval(ainvs))
         r=int(r)
@@ -257,34 +248,26 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
         omlist  = [F.real_components()*F.period_lattice().real_period() for F in Elist]
 
         Lr1 = E.pari_curve().ellanalyticrank()[1].sage() / factorial(r)
-        #print("computed L^(%s)(E,1)/%s! = %s" % (r,r,Lr1))
         # LE = E.lseries()
-        # print("constructed LE")
         # LEdok = LE.dokchitser(100) # bits precision (default is 53)
-        # print("constructed LEdok")
         if r==0:
             genlist = [[] for F in Elist]
             reglist = [1 for F in Elist]
             # Lr1 = LEdok(1)
-            # print("computed L(E,1) = %s" % Lr1)
         else:
             # Lr1 = LEdok.derivative(1,r) / factorial(r)
-            # print("computed L^(%s)(E,1) = %s" % (r,Lr1))
             # #Lr1 = E.lseries().dokchitser().derivative(1,r)/factorial(r)
             if r==1:
                 Plist = E.point_search(15)
                 if len(Plist)==0:
                     try:
-                        #print "using Magma's HeegnerPoint to find generator"
                         #Plist = [magma_rank1_gen(E)]
-                        #print "P = ",Plist[0]
                         print("using GP's ellheegner() to find generator")
                         Plist = [pari_rank1_gen(E)]
                         print("P = {}".format(Plist[0]))
                     except:  # Magma/pari bug or something
                         Plist = E.gens()
             else:
-                #print("torsion order = {}".format(torlist[0]))
                 if torlist[0]%2==1:
                     if N+cl=="322074i":
                         P1 = E(QQ(95209997)/361, QQ(-796563345544)/6859)
@@ -295,18 +278,12 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
                     else:
                         try:
                             s = E.simon_two_descent(lim3=5000)
-                            #print "using simon_two_descent: ",s
                             Plist = E.gens()
-                            #print "gens: ",Plist
                         except:
                             print("Simon failed, using mwrank: ")
                             Plist = E.gens()
-                            #print "gens: ",Plist
                 else:
-                    #print "using mwrank: "
                     Plist = E.gens()
-                    #print "gens: ",Plist
- #           print "gens: ",Plist
             genlist = map_points(maps,Plist)
             prec0=mwrank_get_precision()
             mwrank_set_precision(mwrank_saturation_precision)
@@ -341,8 +318,6 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
             degphi = 0
         degphilist1 = [degphi*mat[0,j] for j in range(ncurves)]
         degphilist = degphilist1
-        # if degphilist!=degphilist1:
-        #     print "Problem with modular degrees for class %s: perhaps curve #1 is not optimal?"%(N+cl)
         if verbose: print("degphilist = {}".format(degphilist))
 
         # compute aplist for optimal curve only
@@ -413,7 +388,6 @@ def make_rank0_torsion(infilename, mode='w', verbose=False, prefix="t"):
     pre, suf = infilename.split(".")
     allgensfile = open(prefix+"allgens0."+suf, mode=mode)
     for L in infile.readlines():
-        #print L
         N, cl, num, ainvs, r, tor = L.split()
         if int(r)==0:
             E = EllipticCurve(eval(ainvs))
@@ -445,7 +419,6 @@ def add_torsion(infilename, mode='w', verbose=False, prefix="t"):
     pre, suf = infilename.split(".")
     allgensfile = open(prefix+"allgens."+suf, mode=mode)
     for L in infile.readlines():
-        #print L
         N, cl, num, ainvs, r, gens = L.split(' ',5)
         gens = gens.split()
         E = EllipticCurve(eval(ainvs))
@@ -461,6 +434,9 @@ def add_torsion(infilename, mode='w', verbose=False, prefix="t"):
                         )
         if verbose: print(line)
         allgensfile.write(line+'\n')
+
+    infile.close()
+    allgensfile.close()
 
 # Read allgens file and for curves with non-cyclic torsion, make sure
 # that the gens are in the same order as the group structure
@@ -505,6 +481,9 @@ def fix_torsion(infilename, mode='w', verbose=False, prefix="t"):
                 print(line)
             allgensfile.write(line+'\n')
 
+    infile.close()
+    allgensfile.close()
+
 def fix_all_torsion():
     for n in range(23):
         ns=str(n)
@@ -520,29 +499,25 @@ def make_paricurves(infilename, mode='w', verbose=False, prefix="t"):
     pre, suf = infilename.split(".")
     paricurvesfile = open(prefix+"paricurves."+suf, mode=mode)
     for L in infile.readlines():
-        #print L
         N, cl, num, ainvs, r, gens = L.split(' ',5)
         if int(r)==0:
             gens = []
-        else:            
+        else:
             gens = gens.split()[1:1+int(r)] # ignore torsion struct and gens
             gens = [pointPtoA(P) for P in gens]
-        
+
         line = '[' + ', '.join(['"'+N+cl+num+'"',ainvs,str(gens).replace(' ','')]) + ']'
-        #print line
         paricurvesfile.write(line+'\n')
+    infile.close()
+    paricurvesfile.close()
 
 def compare(Ncc1,Ncc2):
-#    print "Comparing %s and %s"%(Ncc1,Ncc2)
     d = Integer(Ncc1[0])-Integer(Ncc2[0])
     if d!=0: 
-#        print "d=%s"%d
         return d
     code1 = Ncc1[1]+Ncc1[2]
     code2 = Ncc2[1]+Ncc2[2]
-#    print "code1=%s, code2=%s"%(code1,code2)
     d = cmp_code(code1,code2)
-#    print "d=%s"%d
     return d
 
 def merge_gens(infile1, infile2):
@@ -553,16 +528,12 @@ def merge_gens(infile1, infile2):
     L1 = infile1.readline()
     L2 = infile2.readline()
     while len(L1)>0 and len(L2)>0:
-        #print "Line 1: %s"%L1
-        #print "Line 2: %s"%L2
         N1,cl1,cu1,rest = L1.split(' ',3)
         N2,cl2,cu2,rest = L2.split(' ',3)
         if compare([N1,cl1,cu1],[N2,cl2,cu2])<0:
-            #print "Outputting Line 1"
             allgensfile.write(L1)
             L1 = infile1.readline()
         else:
-            #print "Outputting Line 2"
             allgensfile.write(L2)
             L2 = infile2.readline()
     while len(L1)>0:
@@ -613,3 +584,4 @@ def check_degphi(infilename):
                 pass
             else:
                 print("%s: d=%s but d1=%s (ratio %s)"%(N+cl+str(num),d,d1,d1//d))
+    infile.close()
