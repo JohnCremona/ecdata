@@ -187,7 +187,7 @@ gh-pages branch and pushes that, so the website is updated too.
        sage: %runfile scripts/elliptic_curves/import_ec_data.py
        sage: upload_to_db("/home/jec/ecdata",380000,389999)
 
-   [done to 380000]
+   [done to 400000]
 
    (d) Update Sage's optional spkg (this assumes that the old version
        of the optional spkg is already installed):
@@ -233,4 +233,4 @@ gh-pages branch and pushes that, so the website is updated too.
        to change the file
        build/pkgs/database_cremona_ellcurve/checksums.ini
 
-   [done to 380000]
+   [done to 400000]
