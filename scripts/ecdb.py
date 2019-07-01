@@ -1,3 +1,5 @@
+import os
+from sage.all import QQ, EllipticCurve, mwrank_get_precision, mwrank_set_precision, Integer, srange, factorial, prime_range, magma, Set
 from sage.databases.cremona import parse_cremona_label
 try:
     from sage.databases.cremona import cmp_code
@@ -6,13 +8,13 @@ except:
 
 mwrank_saturation_precision = 300
 mwrank_saturation_maxprime = 200000
-GP = '/home/jec/bin/gp'
+GP = '/usr/local/bin/gp'
 
 def print_data(outfile, code, ainvs, r, t):
-    print "Code = ",code
-    print "Curve = ",EllipticCurve(ainvs)
-    print "rank = ",r
-    print "torsion = ",t
+    print("Code = {}".format(code))
+    print("Curve = {}".format(EllipticCurve(ainvs)))
+    print("rank = {}".format(r))
+    print("torsion = {}".format(t))
 
 def put_allcurves_line(outfile, N, cl, num, ainvs, r, t):
     line = ' '.join([str(N),cl,str(num),str(ainvs).replace(' ',''),str(r),str(t)])
@@ -28,9 +30,9 @@ def make_allcurves_lines(outfile, code, ainvs, r, t):
     outfile.flush()
 
 def process_curve_file(infilename, outfilename, use):
-    infile = file(infilename)
-    outfile = file(outfilename, mode='a')
-    for L in file(infilename).readlines():
+    infile = open(infilename)
+    outfile = open(outfilename, mode='a')
+    for L in infile.readlines():
         #print L
         N, iso, num, ainvs, r, tor, d = L.split()
         code = N+iso+num
@@ -84,7 +86,7 @@ def pari_rank1_gen(E, stacksize=1024000000):
     f = 'tempfile-'+str(getpid())
     comm = "LD_LIBRARY_PATH=/usr/local/lib; echo `echo 'ellheegner(ellinit("+str(list(E.ainvs()))+"))' | %s -q -f -s %s` > %s;" % (GP,stacksize,f)
     system(comm)
-    P = file(f).read().partition("[")[2].partition("]")[0]
+    P = open(f).read().partition("[")[2].partition("]")[0]
     os.unlink(f)
     #print("PARI computes P = [%s]" % P)
     P = E([QQ(c) for c in P.split(',')])
@@ -158,11 +160,11 @@ def my_aplist(E):
 # allcurves.000-999, (2) allisog.000-999 (with the same suffix).
 
 def make_allcurves_and_allisog(infilename, mode='w'):
-    infile = file(infilename)
+    infile = open(infilename)
     pre, suf = infilename.split(".")
-    allcurvefile = file("tallcurves."+suf, mode=mode)
-    allisogfile = file("tallisog."+suf, mode=mode)
-    for L in file(infilename).readlines():
+    allcurvefile = open("tallcurves."+suf, mode=mode)
+    allisogfile = open("tallisog."+suf, mode=mode)
+    for L in infile.readlines():
         #print L
         N, cl, num, ainvs, r, tor, d = L.split()
         E = EllipticCurve(eval(ainvs))
@@ -173,25 +175,25 @@ def make_allcurves_and_allisog(infilename, mode='w'):
         for i in range(len(Elist)):
             line = ' '.join([N,cl,str(i+1),shortstr(Elist[i]),r,str(torlist[i])])
             allcurvefile.write(line+'\n')
-            print "allcurvefile: ",line
+            print("allcurvefile: {}".format(line))
         line = ' '.join([str(N),cl,str(1),ainvs,shortstrlist(Elist),matstr(mat)])
         allisogfile.write(line+'\n')
-        print "allisogfile:  ",line
+        print("allisogfile:  {}".format(line))
     infile.close()
     allcurvefile.close()
     allisogfile.close()
     
 # Version using David Roe's new Isogeny Class class (trac #12768)
 def make_allcurves_and_allisog_new(infilename, mode='w', verbose=False):
-    infile = file(infilename)
+    infile = open(infilename)
     pre, suf = infilename.split(".")
-    allcurvefile = file("tallcurves."+suf, mode=mode)
-    allisogfile = file("tallisog."+suf, mode=mode)
+    allcurvefile = open("tallcurves."+suf, mode=mode)
+    allisogfile = open("tallisog."+suf, mode=mode)
     count=0
-    for L in file(infilename).readlines():
+    for L in infile.readlines():
         count +=1
         if count%1000==0:
-            print L
+            print(L)
         N, cl, num, ainvs, r, tor, d = L.split()
         E = EllipticCurve(eval(ainvs))
         Cl = E.isogeny_class(order="database")
@@ -201,12 +203,12 @@ def make_allcurves_and_allisog_new(infilename, mode='w', verbose=False):
             line = ' '.join([N,cl,str(i+1),shortstr(Elist[i]),r,str(torlist[i])])
             allcurvefile.write(line+'\n')
             if verbose:
-                print "allcurvefile: ",line
+                print("allcurvefile: {}".format(line))
         mat = Cl.matrix()
         line = ' '.join([str(N),cl,str(1),ainvs,shortstrlist(Elist),matstr(mat)])
         allisogfile.write(line+'\n')
         if verbose:
-            print "allisogfile:  ",line
+            print("allisogfile: {}".format(line))
     infile.close()
     allcurvefile.close()
     allisogfile.close()
@@ -220,19 +222,19 @@ def make_allcurves_and_allisog_new(infilename, mode='w', verbose=False):
 
 # Version to compute gens & torsion gens too
 def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
-    infile = file(infilename)
+    infile = open(infilename)
     pre, suf = infilename.split(".")
-    allcurvefile = file(prefix+"allcurves."+suf, mode=mode)
-    allisogfile = file(prefix+"allisog."+suf, mode=mode)
-    allbsdfile = file(prefix+"allbsd."+suf, mode=mode)
-    allgensfile = file(prefix+"allgens."+suf, mode=mode)
-    degphifile = file(prefix+"degphi."+suf, mode=mode)
-    alldegphifile = file(prefix+"alldegphi."+suf, mode=mode)
-    apfile = file(prefix+"aplist."+suf, mode=mode)
-    intptsfile = file(prefix+"intpts."+suf, mode=mode)
-    for L in file(infilename).readlines():
-        if verbose: print "="*72
-        #print L
+    allcurvefile = open(prefix+"allcurves."+suf, mode=mode)
+    allisogfile = open(prefix+"allisog."+suf, mode=mode)
+    allbsdfile = open(prefix+"allbsd."+suf, mode=mode)
+    allgensfile = open(prefix+"allgens."+suf, mode=mode)
+    degphifile = open(prefix+"degphi."+suf, mode=mode)
+    alldegphifile = open(prefix+"alldegphi."+suf, mode=mode)
+    apfile = open(prefix+"aplist."+suf, mode=mode)
+    intptsfile = open(prefix+"intpts."+suf, mode=mode)
+    for L in infile.readlines():
+        if verbose: print("="*72)
+        #print(L)
         N, cl, num, ainvs, r, tor, d = L.split()
         E = EllipticCurve(eval(ainvs))
         r=int(r)
@@ -242,10 +244,10 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
         mat = Cl.matrix()
         maps = Cl.isogenies()
         ncurves = len(Elist)
-        print "class ",N+cl," (rank ",r, ") has ",ncurves," curve(s)"
+        print("class {} (rank {}) has {} curve(s)".format(N+cl,r,ncurves))
         line = ' '.join([str(N),cl,str(1),ainvs,shortstrlist(Elist),matstr(mat)])
         allisogfile.write(line+'\n')
-        if verbose: print "allisogfile:  ",line
+        if verbose: print("allisogfile: {}".format(line))
         # compute BSD data for each curve
         torgroups = [F.torsion_subgroup() for F in Elist]
         torlist = [G.order() for G in torgroups]
@@ -276,20 +278,20 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
                         #print "using Magma's HeegnerPoint to find generator"
                         #Plist = [magma_rank1_gen(E)]
                         #print "P = ",Plist[0]
-                        print "using GP's ellheegner() to find generator"
+                        print("using GP's ellheegner() to find generator")
                         Plist = [pari_rank1_gen(E)]
-                        print "P = ",Plist[0]
+                        print("P = {}".format(Plist[0]))
                     except:  # Magma/pari bug or something
                         Plist = E.gens()
             else:
-                #print "torsion order = ",torlist[0]
+                #print("torsion order = {}".format(torlist[0]))
                 if torlist[0]%2==1:
                     if N+cl=="322074i":
                         P1 = E(QQ(95209997)/361, QQ(-796563345544)/6859)
                         P2 = E(QQ(67511363092960062552491477869533612821)/167548532744324594465910917052304,
                                QQ(-546962755962107290021339666753477014846325372323086316509)/2168757247628325524167944948382918905481652710592)
                         Plist = [P1,P2]
-                        print "Special case gens for "+N+cl+": ",Plist
+                        print("Special case gens for {}{}: {}".format(N,cl,Plist))
                     else:
                         try:
                             s = E.simon_two_descent(lim3=5000)
@@ -297,7 +299,7 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
                             Plist = E.gens()
                             #print "gens: ",Plist
                         except:
-                            print "Simon failed, using mwrank: "
+                            print("Simon failed, using mwrank: ")
                             Plist = E.gens()
                             #print "gens: ",Plist
                 else:
@@ -309,9 +311,12 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
             prec0=mwrank_get_precision()
             mwrank_set_precision(mwrank_saturation_precision)
 #            genlist = [Elist[i].saturation(genlist[i], max_prime=mwrank_saturation_maxprime)[0] for i in range(ncurves)]
-            genlist = [Elist[i].saturation(genlist[i], verbose=False)[0] for i in range(ncurves)]
+            if verbose: print("genlist (before saturation) = {}".format(genlist))
+            genlist = [Elist[i].saturation(genlist[i])[0] for i in range(ncurves)]
+            if verbose: print("genlist (before reduction) = {}".format(genlist))
+            genlist = [Elist[i].lll_reduce(genlist[i])[0] for i in range(ncurves)]
             mwrank_set_precision(prec0)
-            if verbose: print "genlist = ",genlist
+            if verbose: print("genlist  (after reduction)= {}".format(genlist))
             reglist = [Elist[i].regulator_of_points(genlist[i]) for i in range(ncurves)]
         shalist = [Lr1*torlist[i]**2/(cplist[i]*omlist[i]*reglist[i]) for i in range(ncurves)]
         squares = [n*n for n in srange(1,100)]
@@ -324,40 +329,40 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
                 print("om  = %s" % omlist[i])
                 print("reg = %s" % reglist[i])
                 return Elist[i]
-        if verbose: print "shalist = ",shalist
+        if verbose: print("shalist = {}".format(shalist))
 
         # compute modular degrees
         # degphilist = [e.modular_degree(algorithm='magma') for e in Elist]
         # degphi = degphilist[0]
         # NB The correctness of the following relies on E being optimal!
         try:
-            degphi = E.modular_degree()
+            degphi = E.modular_degree(algorithm='magma')
         except RuntimeError:
             degphi = 0
         degphilist1 = [degphi*mat[0,j] for j in range(ncurves)]
         degphilist = degphilist1
         # if degphilist!=degphilist1:
         #     print "Problem with modular degrees for class %s: perhaps curve #1 is not optimal?"%(N+cl)
-        if verbose: print "degphilist = ",degphilist
+        if verbose: print("degphilist = {}".format(degphilist))
 
         # compute aplist for optimal curve only
         aplist = my_aplist(E)
-        if verbose: print "aplist = ",aplist
+        if verbose: print("aplist = {}".format(aplist))
 
         # Compute integral points (x-coordinates)
         intpts = [[P[0] for P in Elist[i].integral_points(mw_base=genlist[i])] for i in range(ncurves)]
-        if verbose: print "intpts = ",intpts
+        if verbose: print("intpts = {}".format(intpts))
 
         # Output data for optimal curves
 
         # aplist
         line = ' '.join([N,cl,aplist])
-        if verbose: print "aplist: ",line
+        if verbose: print("aplist: {}".format(line))
         apfile.write(line+'\n')
 
         # degphi
         line = ' '.join([N,cl,'1',str(degphi),str(Set(degphi.prime_factors())).replace(' ',''),shortstr(E)])
-        if verbose: print "degphifile: ",line
+        if verbose: print("degphifile: {}".format(line))
         degphifile.write(line+'\n')
 
         # Output data for each curve
@@ -365,12 +370,12 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
             # allcurves
             line = ' '.join([N,cl,str(i+1),shortstr(Elist[i]),str(r),str(torlist[i])])
             allcurvefile.write(line+'\n')
-            if verbose: print "allcurvefile: ",line
+            if verbose: print("allcurvefile: {}".format(line))
 
             # allbsd
             line = ' '.join([N,cl,str(i+1),shortstr(Elist[i]),str(r),str(torlist[i]),str(cplist[i]),str(omlist[i]),str(Lr1),str(reglist[i]),str(shalist[i])])
             allbsdfile.write(line+'\n')
-            if verbose: print "allbsdfile: ",line
+            if verbose: print("allbsdfile: {}".format(line))
 
             # allgens (including torsion gens, listed last)
             line = ' '.join([str(N),cl,str(i+1),shortstr(Elist[i]),str(r)]
@@ -380,16 +385,16 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
                             )
             allgensfile.write(line+'\n')
             if verbose: 
-                print "allgensfile:  ",line
+                print("allgensfile: {}".format(line))
             # intpts
             line = ''.join([str(N),cl,str(i+1)]) + ' ' + shortstr(Elist[i]) + ' ' + liststr(intpts[i])
             intptsfile.write(line+'\n')
-            if verbose: print "intptsfile: ",line
+            if verbose: print("intptsfile: {}".format(line))
 
             # alldegphi
             line = ' '.join([str(N),cl,str(i+1),shortstr(Elist[i]),liststr(degphilist[i])])
             alldegphifile.write(line+'\n')
-            if verbose: print "alldegphifile: ",line
+            if verbose: print("alldegphifile: {}".format(line))
 
     infile.close()
     allbsdfile.close()
@@ -404,10 +409,10 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
 # Compute torsion gens only from allcurves file
 #
 def make_rank0_torsion(infilename, mode='w', verbose=False, prefix="t"):
-    infile = file(infilename)
+    infile = open(infilename)
     pre, suf = infilename.split(".")
-    allgensfile = file(prefix+"allgens0."+suf, mode=mode)
-    for L in file(infilename).readlines():
+    allgensfile = open(prefix+"allgens0."+suf, mode=mode)
+    for L in infile.readlines():
         #print L
         N, cl, num, ainvs, r, tor = L.split()
         if int(r)==0:
@@ -415,11 +420,9 @@ def make_rank0_torsion(infilename, mode='w', verbose=False, prefix="t"):
 
         # compute torsion data
             T = E.torsion_subgroup()
-            ntor = T.order()
             torstruct = list(T.invariants())
             torgens = [P.element() for P in T.gens()]
             gens = []
-            reg = 1
 
         # Output data
             line = ' '.join([str(N),cl,num,ainvs,r]
@@ -429,7 +432,7 @@ def make_rank0_torsion(infilename, mode='w', verbose=False, prefix="t"):
                             )
             allgensfile.write(line+'\n')
             if verbose: 
-                print "allgensfile:  ",line
+                print("allgensfile: {}".format(line))
 
     infile.close()
     allgensfile.close()
@@ -438,10 +441,10 @@ def make_rank0_torsion(infilename, mode='w', verbose=False, prefix="t"):
 #
 
 def add_torsion(infilename, mode='w', verbose=False, prefix="t"):
-    infile = file(infilename)
+    infile = open(infilename)
     pre, suf = infilename.split(".")
-    allgensfile = file(prefix+"allgens."+suf, mode=mode)
-    for L in file(infilename).readlines():
+    allgensfile = open(prefix+"allgens."+suf, mode=mode)
+    for L in infile.readlines():
         #print L
         N, cl, num, ainvs, r, gens = L.split(' ',5)
         gens = gens.split()
@@ -456,7 +459,7 @@ def add_torsion(infilename, mode='w', verbose=False, prefix="t"):
                         + gens #[pointstr(P) for P in gens]
                         + [pointstr(P) for P in torgens]
                         )
-        if verbose: print line
+        if verbose: print(line)
         allgensfile.write(line+'\n')
 
 # Read allgens file and for curves with non-cyclic torsion, make sure
@@ -464,27 +467,27 @@ def add_torsion(infilename, mode='w', verbose=False, prefix="t"):
 # invariants:
 
 def fix_torsion(infilename, mode='w', verbose=False, prefix="t"):
-    infile = file(infilename)
+    infile = open(infilename)
     pre, suf = infilename.split(".")
-    allgensfile = file(prefix+"allgens."+suf, mode=mode)
-    for L in file(infilename).readlines():
+    allgensfile = open(prefix+"allgens."+suf, mode=mode)
+    for L in infile.readlines():
         if verbose: 
-            print "old line"
-            print L
+            print("old line")
+            print(L)
         N, cl, num, ainvs, r, gens = L.split(' ',5)
         gens = gens.split()
         tor_invs = gens[0]
         inf_gens = gens[1:int(r)+1]
         tor_gens = gens[int(r)+1:]
         if verbose: 
-            print "old line rank = %s, gens=%s"%(r,gens)
-            print tor_invs, inf_gens, tor_gens
+            print("old line rank = %s, gens=%s"%(r,gens))
+            print(tor_invs, inf_gens, tor_gens)
         if len(tor_gens)<2:
             allgensfile.write(L)
         else:
             if verbose: 
-                print "old line"
-                print L
+                print("old line")
+                print(L)
             E = EllipticCurve(eval(ainvs))
             T = E.torsion_subgroup()
             tor_struct = list(T.invariants())
@@ -498,25 +501,25 @@ def fix_torsion(infilename, mode='w', verbose=False, prefix="t"):
                         + [pointstr(P) for P in tor_gens]
                         )
             if verbose: 
-                print "new line"
-                print line
+                print("new line")
+                print(line)
             allgensfile.write(line+'\n')
 
 def fix_all_torsion():
     for n in range(23):
         ns=str(n)
         filename = "allgens."+ns+"0000-"+ns+"9999"
-        print filename
+        print(filename)
         fix_torsion(filename)
 
 
 # Read allgens file (with torsion) and output paricurves file
 #
 def make_paricurves(infilename, mode='w', verbose=False, prefix="t"):
-    infile = file(infilename)
+    infile = open(infilename)
     pre, suf = infilename.split(".")
-    paricurvesfile = file(prefix+"paricurves."+suf, mode=mode)
-    for L in file(infilename).readlines():
+    paricurvesfile = open(prefix+"paricurves."+suf, mode=mode)
+    for L in infile.readlines():
         #print L
         N, cl, num, ainvs, r, gens = L.split(' ',5)
         if int(r)==0:
@@ -544,9 +547,9 @@ def compare(Ncc1,Ncc2):
 
 def merge_gens(infile1, infile2):
     pre, suf = infile1.split(".")
-    infile1 = file(infile1)
-    infile2 = file(infile2)
-    allgensfile = file("mallgens."+suf, mode='w')
+    infile1 = open(infile1)
+    infile2 = open(infile2)
+    allgensfile = open("mallgens."+suf, mode='w')
     L1 = infile1.readline()
     L2 = infile2.readline()
     while len(L1)>0 and len(L2)>0:
@@ -576,13 +579,13 @@ def merge_gens(infile1, infile2):
 # Create alldegphi files from allcurves files:
 
 def make_alldegphi(infilename, mode='w', verbose=False, prefix="t"):
-    infile = file(infilename)
+    infile = open(infilename)
     pre, suf = infilename.split(".")
-    alldegphifile = file(prefix+"alldegphi."+suf, mode=mode)
-    for L in file(infilename).readlines():
-        if verbose: print L
+    alldegphifile = open(prefix+"alldegphi."+suf, mode=mode)
+    for L in infile.readlines():
+        if verbose: print(L)
         N, cl, num, ainvs, rest = L.split(' ',4)
-        if verbose: print ainvs
+        if verbose: print(ainvs)
         E = EllipticCurve(eval(ainvs))
         try:
             degphi = E.modular_degree()
@@ -592,13 +595,13 @@ def make_alldegphi(infilename, mode='w', verbose=False, prefix="t"):
         # alldegphi
         line = ' '.join([str(N),cl,str(num),shortstr(E),liststr(degphi)])
         alldegphifile.write(line+'\n')
-        if verbose: print "alldegphifile: ",line
+        if verbose: print("alldegphifile: {}".format(line))
     infile.close()
     alldegphifile.close()
 
 def check_degphi(infilename):
-    infile = file(infilename)
-    for L in file(infilename).readlines():
+    infile = open(infilename)
+    for L in infile.readlines():
         N, cl, num, ainvs, d = L.split()
         if int(N)==990 and cl=='h':
             continue
@@ -609,4 +612,4 @@ def check_degphi(infilename):
             if d1<d:
                 pass
             else:
-                print "%s: d=%s but d1=%s (ratio %s)"%(N+cl+str(num),d,d1,d1//d)
+                print("%s: d=%s but d1=%s (ratio %s)"%(N+cl+str(num),d,d1,d1//d))
