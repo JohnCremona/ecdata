@@ -5,7 +5,7 @@
 HTML_FILENAME = "newshas.html"
 
 MAX_RANK = 4
-SHA_LIST = range(2,34)+[41,47,50,75]
+SHA_LIST = range(2,35)+[37,41,43,47,50,75]
 
 from sage.all import isqrt
 
@@ -68,7 +68,9 @@ def make_rankshatable(nmax=30, verbose=False):
     outfile.write("<table border=2 align=center cellpadding=3 rules=groups>\n")
     outfile.write("<colgroup span=1>\n")
     outfile.write("<colgroup span=1>\n")
-    outfile.write("<colgroup span=32>\n")
+    outfile.write("<colgroup span=33>\n")
+    outfile.write("<colgroup span=1>\n")
+    outfile.write("<colgroup span=1>\n")
     outfile.write("<colgroup span=1>\n")
     outfile.write("<colgroup span=1>\n")
     outfile.write("<colgroup span=1>\n")
@@ -120,7 +122,9 @@ def make_rankshatable(nmax=30, verbose=False):
     outfile.write("<table border=2 align=center cellpadding=3 rules=groups>\n")
     outfile.write("<colgroup span=1>\n")
     outfile.write("<colgroup span=1>\n")
-    outfile.write("<colgroup span=32>\n")
+    outfile.write("<colgroup span=33>\n")
+    outfile.write("<colgroup span=1>\n")
+    outfile.write("<colgroup span=1>\n")
     outfile.write("<colgroup span=1>\n")
     outfile.write("<colgroup span=1>\n")
     outfile.write("<colgroup span=1>\n")

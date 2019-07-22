@@ -1,9 +1,11 @@
 # ecdata release notes (since 2001)
 
-## Last major update: 2019-07-01
+## Last major update: 2019-07-22
 
 ### 2019
-- 1 July 2019: Added all data for 400000-409999
+- 22 July 2019: Added all data for 410000-499999
+                added missing data for 406000-407999
+-  1 July 2019: Added all data for 400000-409999
 
 ### 2018
 - 19 December 2017: Updated intpts for 207 curves

@@ -76,15 +76,23 @@ def magma_rank1_gen(E):
 
 # Assuming that E is known to have rank 1, returns a point on E
 # computed by GP's ellheegner() command
-def pari_rank1_gen(E, stacksize=1024000000):
+def pari_rank1_gen_old(E, stacksize=1024000000):
     from os import system, getpid, unlink
     f = 'tempfile-'+str(getpid())
     comm = "LD_LIBRARY_PATH=/usr/local/lib; echo `echo 'ellheegner(ellinit("+str(list(E.ainvs()))+"))' | %s -q -f -s %s` > %s;" % (GP,stacksize,f)
     system(comm)
+    P = open(f).read()
+    #print(P)
     P = open(f).read().partition("[")[2].partition("]")[0]
+    P = P.replace("\xb1","") # needed for 497805u1
+    #print(P)
     unlink(f)
     P = E([QQ(c) for c in P.split(',')])
+    #print(P)
     return P
+
+def pari_rank1_gen(E):
+    return E(pari(E).ellheegner().sage())
 
 # Given a matrix of isogenies and a list of points on the initial
 # curve returns a# list of their images on each other curve.  The
@@ -105,6 +113,33 @@ def map_points(maps, Plist):
             if not (maps[i][j] == 0) and Qlists[j]==[]:
                 Qlists[j] = [maps[i][j](P) for P in Qlists[i]]
                 nfill += 1
+
+
+# Find integral points in a fail-safe way uing both Sage and Magma,
+# comparing, returning the union in all cases and outputting a warning
+# message if they disagree.
+def get_integral_points_with_sage(E, gens):
+    return [P[0] for P in E.integral_points(mw_base=gens)]
+
+def get_integral_points_with_magma(E, gens):
+    magma.eval('E:=EllipticCurve({});'.format(list(E.ainvs())))
+    magma.eval('pts:=[];')
+    for P in gens:
+        magma.eval('Append(~pts,E!{});'.format(list(P)))
+    res = magma.eval('IntegralPoints(E : FBasis:=pts);')
+    return [p[0] for p in eval(res.split("\n")[0].replace(":",","))]
+
+def get_integral_points(E, gens, verbose=True):
+    x_list_magma = get_integral_points_with_magma(E, gens)
+    x_list_sage = get_integral_points_with_sage(E, gens)
+    if x_list_magma != x_list_sage:
+        if verbose:
+            print("Curve {} = {}: \n".format(E.ainvs))
+            print("Integral points via Magma: {}".format(x_list_magma))
+            print("Integral points via Sage: {}".format(x_list_sage))
+    x_list = list(Set(x_list_sage)+Set(x_list_magma))
+    x_list.sort()
+    return x_list
 
 # Sage's E.aplist(100) returns a list of the Fourier coefficients for
 # p<100.  We want to replace the coefficient for p|N with the
@@ -325,8 +360,10 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
         if verbose: print("aplist = {}".format(aplist))
 
         # Compute integral points (x-coordinates)
-        intpts = [[P[0] for P in Elist[i].integral_points(mw_base=genlist[i])] for i in range(ncurves)]
-        if verbose: print("intpts = {}".format(intpts))
+        intpts = [get_integral_points(Elist[i],genlist[i]) for i in range(ncurves)]
+        #if verbose: print("intpts = {}".format(intpts))
+        for i, Ei, xs in zip(range(ncurves),Elist,intpts):
+            print("{}{}{} = {}: intpts = {}".format(N,cl,(i+1),Ei.ainvs(),xs))
 
         # Output data for optimal curves
 
@@ -359,7 +396,7 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
                             + [pointstr(P) for P in torgens[i]]
                             )
             allgensfile.write(line+'\n')
-            if verbose: 
+            if verbose:
                 print("allgensfile: {}".format(line))
             # intpts
             line = ''.join([str(N),cl,str(i+1)]) + ' ' + shortstr(Elist[i]) + ' ' + liststr(intpts[i])
@@ -585,3 +622,56 @@ def check_degphi(infilename):
             else:
                 print("%s: d=%s but d1=%s (ratio %s)"%(N+cl+str(num),d,d1,d1//d))
     infile.close()
+
+# Create manin constant files from allcurves files:
+#
+# NB We assume that curve 1 in each class is optimal with constant 1
+
+def make_manin(infilename, mode='w', verbose=False, prefix="t"):
+    infile = open(infilename)
+    pre, suf = infilename.split(".")
+    allmaninfile = open(prefix+"manin."+suf, mode=mode)
+    allisogfile = open("allisog/allisog."+suf)
+    last_class = ""
+    manins = []
+    for L in infile.readlines():
+        N, cl, num, ainvs, rest = L.split(' ',4)
+        this_class = N+cl
+        E = EllipticCurve(eval(ainvs))
+        if this_class == last_class:
+            #deg = E0.isogeny_degree(E)
+            deg = degrees[int(num)-1]
+            #assert ideg==deg
+            area = E.period_lattice().complex_area()
+            mc = round((deg*area/area0).sqrt())
+            # print("{}: ".format(N+cl+num))
+            # print("degree =     {}".format(deg))
+            # print("area   =     {}".format(area))
+            # print("area ratio = {}".format(area/area0))
+            # print("c^2 =        {}".format(deg*area/area0))
+            manins.append(mc)
+        else: # start a new class
+            if manins: # else we're at the start
+                print("class {} has Manin constants {}".format(last_class,manins))
+            isogmat = allisogfile.readline().split()[-1]
+            isogmat = eval(isogmat)
+            degrees = isogmat[0]
+            if verbose:
+                print("class {}".format(this_class))
+                print("isogmat: {}".format(isogmat))
+                print("degrees: {}".format(isogmat))
+            E0 = E
+            area0 = E.period_lattice().complex_area()
+            manins = [1]
+            last_class = this_class
+
+        # alldegphi
+        line = ' '.join([str(N),cl,str(num),shortstr(E),str(manins[-1])])
+        allmaninfile.write(line+'\n')
+        if verbose: print("allmaninfile: {}".format(line))
+        # if int(N)>100:
+        #     break
+    if manins: # else we're at the start
+        print("class {} has Manin constants {}".format(last_class,manins))
+    infile.close()
+    allmaninfile.close()

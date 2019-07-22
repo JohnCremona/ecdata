@@ -12,7 +12,7 @@ looping until all are done.
 2. Batches of 100 & 1000: when postproc has finished a batch of 1000,
 run
 
-for i in `seq 0 9`; do ./merge00 nnn${i}; done
+nnn=492; for i in `seq 0 9`; do ./merge00 ${nnn}${i}; done
 
 and then (assuming no problems arise)
 
@@ -29,13 +29,12 @@ to create 12 files of the form g0n/data/*.nn0000-nn9999 .  Copy these
 into ~/ecdata, move them into the appropriate subdirectories, and use
 "git add" to add them to the git repository:
 
-nn=40
+nn=49
 NN=${nn}0000-${nn}9999
 cd ~/g0n/data
 for f in curves allcurves paricurves allbigsha allbsd alldegphi allgens allisog aplist count degphi intpts; do cp ${f}.${NN} ~/ecdata/${f}; done
 cd ~/ecdata
 for f in curves allcurves paricurves allbigsha allbsd alldegphi allgens allisog aplist count degphi intpts; do git add ${f}; done
-
 
 4.  Make alllabels file:
 
@@ -82,11 +81,11 @@ Check up on new Sha records using
   sort  allbigsha/*9 -n -k 7 | tail
 
 to see if the script needs to provide extra columns for the
-table. Current range is s^2 for s in range(34)+[41,47,50,75].
+table. Current range is s^2 for s in range(34)+[41,43,47,50,75].
 
 Use sharanktable.py to create a new version newshas.html:
        sage: %runfile scripts/sharanktable.py
-       sage: make_rankshatable(41) # to go up to 409999
+       sage: make_rankshatable(50) # to go up to 499999
 If happy:
    mv newshas.html html/shas.html
 
@@ -100,7 +99,7 @@ to see if the script needs adjusting (record is now 4).
 
 Use scripts/summarytable.py to create a new version newtable.html:
        sage: %runfile scripts/summarytable.py
-       sage: make_table(41) # to go up to 409999
+       sage: make_table(50) # to go up to 409999
 If happy:
   mv newtable.html html/table.html
 
@@ -127,7 +126,7 @@ cd ..
 (6f) doc/manin.txt needs some real work:
 
 [In g0n working dir]
-N=40
+N=49
 let 'Nminus1 = N-1'
 NCL=`awk '$3==1' data/allcurves.${N}0000-${N}9999 | wc -l`
 echo "$NCL isogeny classes in range ${N}0000-${N}9999"
@@ -145,25 +144,26 @@ cp data/optimality.${N} $HOME/ecdata/optimality/
 (cd $HOME/ecdata/; git add optimality/optimality.${N})
 # Display classes where c=1 not proved:
 grep -v "c=1" data/optimality.${N}
+cat h1pp/h1pp.conc.20-${Nminus1} data/optimality.${N} > h1pp/h1pp.conc.20-${N}
 cat h1pp/h1pp.conc.13-${Nminus1} data/optimality.${N} > h1pp/h1pp.conc.13-${N}
 cat h1pp/h1pp.conc.6-${Nminus1} data/optimality.${N} > h1pp/h1pp.conc.6-${N}
 # Numbers for lines 14-16 of manin.txt (edit the lines below):
-Nall=`cat ~/ecdata/curves/curves.*9 | awk '($1>60000)&&($1<410000)' | wc -l`
-N2=`cat ~/ecdata/allcurves/allcurves.*9 | awk '($3==2)&&($1>60000)&&($1<410000)' | wc -l`
+Nall=`cat ~/ecdata/curves/curves.*9 | awk '($1>200000)&&($1<500000)' | wc -l`
+N2=`cat ~/ecdata/allcurves/allcurves.*9 | awk '($3==2)&&($1>200000)&&($1<500000)' | wc -l`
 let 'N1=Nall-N2'
 echo $Nall $N1 $N2
 
 # Optimality counts
 # classes of size > 1:
-wc -l h1pp/h1pp.conc.6-${N}
+wc -l h1pp/h1pp.conc.20-${N}
 # classes where c=1 & optimal curve known:
-grep -c "optimal curve is " h1pp/h1pp.conc.6-${N}
+grep -c "optimal curve is " h1pp/h1pp.conc.20-${N}
 # classes where c=1 known but >1 possible optimal curve:
-grep -c " possible " h1pp/h1pp.conc.6-${N}
+grep -c " possible " h1pp/h1pp.conc.20-${N}
 # classes where c=1 not known without more work:
-grep -v  "curve is" h1pp/h1pp.conc.6-${N} | grep -v "possible" | wc -l
+grep -v  "curve is" h1pp/h1pp.conc.20-${N} | grep -v "possible" | wc -l
 # counts for numbers of possible optimal curves (2-6)
-for n in `seq 2 6`; do echo $n; grep -c "$n possible " h1pp/h1pp.conc.6-${N}; done
+for n in `seq 2 6`; do echo $n; grep -c "$n possible " h1pp/h1pp.conc.20-${N}; done
 
 --Now use the above numbers to manually edit doc/manin.txt.
 
