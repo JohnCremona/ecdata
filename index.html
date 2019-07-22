@@ -24,7 +24,7 @@ by J. E. Cremona<br>
 University of Warwick, U.K.</h2>
 <p>
 <i>
-Updated <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc/release_notes.md">2019-07-01</a> (last major update 2019-07-01)
+Updated <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc/release_notes.md">2019-07-22</a> (last major update 2019-07-22)
 </i>
 </p>
 </center>
@@ -85,16 +85,16 @@ and the only change is from upper to lower case.
 
 <p>
 We give all curves in each isogeny class.  For all classes of curves
-of conductor less than 60000, and many others, the first one listed in
+of conductor less than 200000, and many others, the first one listed in
 each class is proved to be the so-called "optimal" or "strong Weil"
 curve attached to each newform (referred to as optimal curves from now
-on).  For conductors above 60000, see the
+on).  For conductors above 200000, see the
 section <a href="#optimality">"Optimality and the Manin constant"</a>
 below.  Some of the data is common to all curves in the isogeny class.
 </p>
 
 <p>
-The tables currently contain data for conductors up to <b>410000</b>.
+The tables currently contain data for conductors up to <b>500000</b>.
 </p>
 
 
@@ -102,10 +102,14 @@ The tables currently contain data for conductors up to <b>410000</b>.
 <ul>
 <li>The curves were computed via modular symbols, using the C++
 library eclib (see https://github.com/JohnCremona/eclib), run on
-  machines in a variety of places, including clusters at Nottingham
-  (1999-2007) and Warwick (since 2011).  Additional data is computed
-  using a SageMath script to interface a variety of software,
-  including the following:
+machines in a variety of places, including clusters at Nottingham
+(1999-2007, conductors up to 130000); Warwick (2011-2016, conductors
+130000 to 400000); and the Google Computing Platform (15-22 July 2019,
+conductors 400000-500000).  Thanks to the universities of Nttingham
+and Warwick, and to the Simons Foundation for the GCP runs.
+
+  Additional data is computed using a SageMath script to interface a
+variety of software, including the following:
 </li>
 <li>
 The modular degrees for conductors over 12000 were computed using Mark
@@ -190,6 +194,15 @@ https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.00000-09
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.380000-389999">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.390000-399999">390000-399999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.400000-409999">400000-409999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.410000-419999">410000-419999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.420000-429999">420000-429999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.430000-439999">430000-439999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.440000-449999">440000-449999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.450000-459999">450000-459999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.460000-469999">460000-469999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.470000-479999">470000-479999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.480000-489999">480000-489999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -254,6 +267,15 @@ TABLE ONE: CURVES
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.380000-389999">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.390000-399999">390000-399999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.400000-409999">400000-409999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.410000-419999">410000-419999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.420000-429999">420000-429999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.430000-439999">430000-439999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.440000-449999">440000-449999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.450000-459999">450000-459999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.460000-469999">460000-469999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.470000-479999">470000-479999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.480000-489999">480000-489999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -261,9 +283,9 @@ TABLE ONE: CURVES
 One entry for each isomorphism class of curves, giving conductor N,
 letter id for isogeny class, number of the curve in the class,
 coefficients of minimal Weierstrass equation, rank r, order of torsion
-subgroup |T|.  For all N up to 60000 the optimal
+subgroup |T|.  For all N up to 200000 the optimal
 &Gamma;<sub>0</sub>(N) curve is the one labelled 1 (except for class
-990h when it is the curve labelled 3). For N&gt;60000, this is
+990h when it is the curve labelled 3). For N&gt;200000, this is
 probably also true, but in some cases remains conditional on Stevens'
 Conjecture (see the section <a href="#optimality">"Optimality and the
 Manin constant"</a> below).
@@ -368,6 +390,15 @@ TABLE TWO: GENERATORS
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.380000-389999">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.390000-399999">390000-399999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.400000-409999">400000-409999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.410000-419999">410000-419999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.420000-429999">420000-429999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.430000-439999">430000-439999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.440000-449999">440000-449999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.450000-459999">450000-459999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.460000-469999">460000-469999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.470000-479999">470000-479999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.480000-489999">480000-489999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -470,6 +501,15 @@ TABLE THREE: HECKE EIGENVALUES
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.380000-389999">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.390000-399999">390000-399999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.400000-409999">400000-409999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.410000-419999">410000-419999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.420000-429999">420000-429999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.430000-439999">430000-439999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.440000-449999">440000-449999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.450000-459999">450000-459999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.460000-469999">460000-469999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.470000-479999">470000-479999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.480000-489999">480000-489999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -570,6 +610,15 @@ computed to several places but to save space is just entered as
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.380000-389999">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.390000-399999">390000-399999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.400000-409999">400000-409999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.410000-419999">410000-419999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.420000-429999">420000-429999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.430000-439999">430000-439999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.440000-449999">440000-449999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.450000-459999">450000-459999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.460000-469999">460000-469999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.470000-479999">470000-479999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.480000-489999">480000-489999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -654,6 +703,15 @@ where:
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.380000-389999">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.390000-399999">390000-399999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.400000-409999">400000-409999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.410000-419999">410000-419999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.420000-429999">420000-429999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.430000-439999">430000-439999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.440000-449999">440000-449999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.450000-459999">450000-459999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.460000-469999">460000-469999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.470000-479999">470000-479999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.480000-489999">480000-489999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -665,9 +723,9 @@ for 165066d3.
 <br>
 <li>
 <a href="shas.html">shas.html</a><br>
-A summary table of large Shas.  Note that up to conductor 400000
-there are 196082 elliptic curves with non-trivial Sha, with ranks 0
-(180162 curves), 1 (15898 curves), 2 (22 curves, all with
+A summary table of large Shas.  Note that up to conductor 500000
+there are 243527 elliptic curves with non-trivial Sha, with ranks 0
+(222922 curves), 1 (20563 curves), 2 (42 curves, all with
 2-torsion).
 </li></ul>
 
@@ -723,6 +781,15 @@ Optimal curves:
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.380000-389999">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.390000-399999">390000-399999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.400000-409999">400000-409999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.410000-419999">410000-419999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.420000-429999">420000-429999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.430000-439999">430000-439999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.440000-449999">440000-449999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.450000-459999">450000-459999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.460000-469999">460000-469999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.470000-479999">470000-479999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.480000-489999">480000-489999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -785,6 +852,15 @@ All curves:
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.380000-389999">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.390000-399999">390000-399999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.400000-409999">400000-409999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.410000-419999">410000-419999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.420000-429999">420000-429999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.430000-439999">430000-439999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.440000-449999">440000-449999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.450000-459999">450000-459999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.460000-469999">460000-469999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.470000-479999">470000-479999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.480000-489999">480000-489999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -857,6 +933,15 @@ TABLE SIX: ISOGENY MATRICES
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.380000-389999">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.390000-399999">390000-399999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.400000-409999">400000-409999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.410000-419999">410000-419999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.420000-429999">420000-429999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.430000-439999">430000-439999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.440000-449999">440000-449999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.450000-459999">450000-459999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.460000-469999">460000-469999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.470000-479999">470000-479999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.480000-489999">480000-489999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -931,6 +1016,15 @@ TABLE SEVEN: INTEGRAL POINTS
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.380000-389999">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.390000-399999">390000-399999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.400000-409999">400000-409999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.410000-419999">410000-419999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.420000-429999">420000-429999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.430000-439999">430000-439999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.440000-449999">440000-449999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.450000-459999">450000-459999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.460000-469999">460000-469999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.470000-479999">470000-479999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.480000-489999">480000-489999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -958,7 +1052,7 @@ Data format with sample line:
 <ul>
 <li>
 <p>
-For isogeny classes of curves of conductor greater than 60000, we have
+For isogeny classes of curves of conductor greater than 200000, we have
 not yet determined in all cases which curve in each class is optimal.
 However, in all cases we have verified that the Manin constant of the
 optimal curve is equal to 1 (as it is conjectured to be for every
@@ -966,14 +1060,14 @@ optimal curve), even in cases where we do not know for sure which
 curve is optimal.
 </p>
 <p>
-While we could (using our modular symbols programs) determine the
-optimal curve in any individual case, this would take a long time to
-do for all remaining cases.  For more details on this, see my Appendix
-to the paper "The Manin Constant" by Amod Agashe, Ken Ribet and
-William Stein [Pure and Applied Mathematics Quarterly, Vol. 2 no.2
-(2006), pp. 617-636.]
+While we can (using our modular symbols programs) determine the
+optimal curve in any individual case, this takes a long time to do for
+all remaining cases; this is ongoing.  For more details on this, see
+my Appendix to the paper "The Manin Constant" by Amod Agashe, Ken
+Ribet and William Stein [Pure and Applied Mathematics Quarterly,
+Vol. 2 no.2 (2006), pp. 617-636.]
 and <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc/manin.txt">these
-notes</a> updating the results for all conductors to 410000.  These
+notes</a> updating the results for all conductors to 500000.  These
 updated results include the proof that Manin's constant is 1 in all
 cases, together with a list of which curves in the class might be
 optimal, given the incomplete modular symbol computations carried out
@@ -986,20 +1080,6 @@ the first curve listed.
 <form>
 <select name="url" width=30>
 <option value="None">Select a conductor range</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.06">60000-69999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.07">70000-79999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.08">80000-89999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.09">90000-99999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.10">100000-109999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.11">110000-119999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.12">120000-129999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.13">130000-139999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.14">140000-149999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.15">150000-159999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.16">160000-169999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.17">170000-179999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.18">180000-189999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.19">190000-199999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.20">200000-209999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.21">210000-219999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.22">220000-229999</option>
@@ -1021,6 +1101,15 @@ the first curve listed.
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.38">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.39">390000-399999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.40">400000-409999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.41">410000-419999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.42">420000-429999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.43">430000-439999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.44">440000-449999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.45">450000-459999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.46">460000-469999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.47">470000-479999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.48">480000-489999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.49">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -1090,6 +1179,15 @@ TABLE NINE: IMAGES OF GALOIS REPRESENTATIONS
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.380000-389999">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.390000-399999">390000-399999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.400000-409999">400000-409999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.410000-419999">410000-419999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.420000-429999">420000-429999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.430000-439999">430000-439999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.440000-449999">440000-449999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.450000-459999">450000-459999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.460000-469999">460000-469999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.470000-479999">470000-479999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.480000-489999">480000-489999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -1172,6 +1270,15 @@ TABLE TEN: IMAGES OF TWO-ADIC GALOIS REPRESENTATION
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.380000-389999">380000-389999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.390000-399999">390000-399999</option>
 <option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.400000-409999">400000-409999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.410000-419999">410000-419999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.420000-429999">420000-429999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.430000-439999">430000-439999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.440000-449999">440000-449999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.450000-459999">450000-459999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.460000-469999">460000-469999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.470000-479999">470000-479999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.480000-489999">480000-489999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -1259,7 +1366,7 @@ Data format with sample lines:
 
 <hr>
 <p><b>Recent update
-    notes</b>:&nbsp; <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc/release_notes.md">1
+    notes</b>:&nbsp; <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc/release_notes.md">22
     July 2019</a>
 </p><hr>
 
