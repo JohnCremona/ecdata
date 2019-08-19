@@ -3,6 +3,12 @@
 ## Last major update: 2019-07-22
 
 ### 2019
+
+- 19 August 2019: switched labels of 10 pairs of curves in classes of
+  two 2-isogenous curves for which the optimal curves was #2 (and now
+  is #1).  Classes: 235470bb, 235746u, 258482a, 265706a, 333270bu,
+  359282a, 369194a, 375410g, 377034t, 389774b
+
 - 22 July 2019: Added all data for 410000-499999
                 added missing data for 406000-407999
 -  1 July 2019: Added all data for 400000-409999
