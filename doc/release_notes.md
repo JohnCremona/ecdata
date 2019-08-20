@@ -4,6 +4,10 @@
 
 ### 2019
 
+- 20 August 2019: switched labels of 3 pairs of curves in classes of
+  two 2-isogenous curves for which the optimal curves was #2 (and now
+  is #1).  Classes: 457226e, 461342l, 463834b
+
 - 19 August 2019: switched labels of 10 pairs of curves in classes of
   two 2-isogenous curves for which the optimal curves was #2 (and now
   is #1).  Classes: 235470bb, 235746u, 258482a, 265706a, 333270bu,
