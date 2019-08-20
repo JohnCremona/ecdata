@@ -637,21 +637,29 @@ def make_manin(infilename, mode='w', verbose=False, prefix="t"):
     for L in infile.readlines():
         N, cl, num, ainvs, rest = L.split(' ',4)
         this_class = N+cl
+        num = int(num)
         E = EllipticCurve(eval(ainvs))
+        lattice1 = None
         if this_class == last_class:
             #deg = E0.isogeny_degree(E)
             deg = degrees[int(num)-1]
             #assert ideg==deg
             area = E.period_lattice().complex_area()
             mc = round((deg*area/area0).sqrt())
-            # print("{}: ".format(N+cl+num))
+            # print("{}{}{}: ".format(N,cl,num))
             # print("degree =     {}".format(deg))
             # print("area   =     {}".format(area))
             # print("area ratio = {}".format(area/area0))
             # print("c^2 =        {}".format(deg*area/area0))
             manins.append(mc)
+            if num==3:
+                lattice1 = None
+            elif not (num==2 and deg==2 and mc==2):
+                lattice1 = None
+            if lattice1:
+                print("Class {}".format(lattice1))
         else: # start a new class
-            if manins: # else we're at the start
+            if manins and verbose: # else we're at the start
                 print("class {} has Manin constants {}".format(last_class,manins))
             isogmat = allisogfile.readline().split()[-1]
             isogmat = eval(isogmat)
@@ -663,6 +671,8 @@ def make_manin(infilename, mode='w', verbose=False, prefix="t"):
             E0 = E
             area0 = E.period_lattice().complex_area()
             manins = [1]
+            if num==1  and len(isogmat)==2 and isogmat[0][1]==2 and E.discriminant()>0:
+                lattice1 = this_class
             last_class = this_class
 
         # alldegphi
@@ -671,7 +681,7 @@ def make_manin(infilename, mode='w', verbose=False, prefix="t"):
         if verbose: print("allmaninfile: {}".format(line))
         # if int(N)>100:
         #     break
-    if manins: # else we're at the start
+    if manins and verbose: # else we're at the start
         print("class {} has Manin constants {}".format(last_class,manins))
     infile.close()
     allmaninfile.close()
