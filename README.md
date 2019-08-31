@@ -7,7 +7,7 @@ These files provide the source data for the elliptic curve pages at http://www.l
 
 The current release is published as http://dx.doi.org/10.5281/zenodo.161341
 
-For a description of how most of the data here was computed, see the ANTS 7 Procedings at 
+For a description of how most of the data here was computed, see the ANTS 7 Proceedings at 
 http://www.math.tu-berlin.de/~kant/ants/proceedings.html .  
 For a description of the algorithms used, see the book Algorithms for Modular Elliptic Curves, published by CUP in 1992 
 (second edition 1997) and available online here: 
