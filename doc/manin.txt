@@ -1,75 +1,114 @@
-Manin constants and optimal curves: conductors 60000-400000
------------------------------------------------------------
+Manin constants and optimal curves
+----------------------------------
 
 For all conductors (levels) N up to 60000, and for specific levels up
-to 200000, we have computed the full modular symbol space for
-Gamma_0(N), and not only the plus space. For every isogeny class of
-elliptic curves of conductor up to 200000, and about 80% of those
-between 200000 and 500000, that the first curve in the class is the
-Gamma_0(N)-optimal one.  In all cases up to conductor 500000, we also
-know that the Manin constant c is equal to 1, as stated in my Appendix
-to "The Manin Constant" by Amod Agashe, Ken Ribet and William Stein
-[Pure and Applied Mathematics Quarterly, Vol. 2 no.2 (2006),
-pp. 617-636.]  Note that it is possible to verify that c=1 without
-knowing which curve i nthe class is optimal, as explained in that
-paper.
+to 500000, we have computed the full modular symbol space for
+Gamma_0(N), and not only the plus space, in order to determine which
+curve in the isogeny class is the Gamma_0(N)-optimal one and to
+determine the Manin constants.  Note that in many cases, including
+isogeny classes of size 1 but only these, it is possible to rigorously
+show which curve is optimal using only the information coming from the
+plus space, and in almost all cases (see below for the exceptions) it
+is possible to deduce that the Manin constant for the optimal curve is
+1 even when there is more than one possible optimal curve.  The
+justification for these claims is in the Appendix (written by me) to
+"The Manin Constant" by Amod Agashe, Ken Ribet and William Stein [Pure
+and Applied Mathematics Quarterly, Vol. 2 no.2 (2006), pp. 617-636.]
 
-Here we report on what is known for larger conductors, currently
-covering the range 200000-500000.
+In the "Cremona labels" of the curves in each isogeny class, curve
+number 1 is the Gamma_0(N)-optimal curve, with the following provisos:
 
-# isogeny classes:                           1287345
-# isogeny classes with only one curve:        913198
-# isogeny classes with more than one curve:   374147
+  - in class 990h the optimal curve is 990h3 (and not 990h1).  This is
+    due to an error in preparation of the data published in the first
+    (1992) edition of the tables in Algorithms for Modular Elliptic
+    Curves (CUP, see
+    http://homepages.warwick.ac.uk/staff/J.E.Cremona/book/amec.html)
+    which I decided not to change later, when the discrepancy was
+    discovered.
 
-Of the latter, c=1 known for:               374121+26=374147
-               optimality known for:        174775+26=174801
-               optimality not known for:              199346
-[164493,32111,2485,113,144 classes have 2,3,4,5,6 possible candidates]
+  - for about 42000 conductors above 260000 (as of 2 September 2019),
+    the optimal curve has not yet been determined and is one of n
+    curves in the class for some n between 2 and 6 inclusive.  Work is
+    in progress to reduce this number of ambiguous cases, by doing
+    more modular symbol computations.  Note that the heuristics used
+    to guess which curve is optimal from the information from the plus
+    space only are such that I do not expect to find any isogeny
+    classes where the optimal curve is not number 1.  This was not
+    quite true before August 2019, when for 10 isogeny classes of size
+    2 linked by 2-isogenies the heuristics had given the wrong result;
+    the labels for these classes (235470bb, 235746u, 258482a, 265706a,
+    333270bu, 359282a, 369194a, 375410g, 377034t, 389774b) were
+    switched on 19 August 2019.
 
-For all 1287345 classes with only one curve, obviously that curve is
-optimal, and we have shown that c=1.
+    Of the 2164259 isogeny classes of conductor up to 500000, there
+    are 157427 (all of conductor >260000) in which the optimal curve
+    has not yet been determined, and 1999986 in which the optimal curve
+    is certainly curve number 1:
 
-For all classes with more than one curve, we have proved that the
-optimal curve has c=1, but cannot yet say unconditionally which is the
-optimal curve in all cases (only in at least about 5/6 of cases).
+          2 possibly optimal curves in 135845 classes
+          3 possibly optimal curves in  26227 classes
+          4 possibly optimal curves in   1991 classes
+          5 possibly optimal curves in     92 classes
+          6 possibly optimal curves in    118 classes
 
-This is because in most cases for N>200000 we have only computed the
-+1 modular symbols and therefore can only compare real periods, as
-described in the Appendix to Agashe-Ribet-Stein for the range
-60000-130000; and this is not always sufficient to single out the
-optimal curve in the class.
+Concerning the Manin constant, the methods described in the paper
+(op.cit.)  have been used to show that the Manin constant is 1 for
+every optimal curve.  The theoretical results on the Manin constant c
+which we have used are: that c is an integer, that c=2 is impossible
+when N is odd, and that c=3 is impossible unless N is a multiple of 3.
 
-The theoretical results on the Manin constant c which we have used
-are: that c is an integer, that c=2 is impossible when N is odd, and
-that c=3 is impossible unless N is a multiple of 3.
+On the assumption that the optimal curve is number 1 in all isogeny
+classes, the Manin constants of all curves in the database have been
+computed.  They are almost all 1, even for non-optimal curves, and are
+rarely greater than 3:
 
------------------------------------------------------------
+            Manin constant      Number of curves        Curves
 
-In detail,  for the  374147 classes with more than one curve:
+                  1             3064435
+                  2                 225
+                  3                  41                 14a4, 14a6, ...
+                  4                   2                 15a8, 17a4
+                  5                   1                 11a3
 
-In 174801 classes the optimal curve is provably the first one listed,
-and c=1.
+The curves with Manin constant 2 and 3 are distributed by conductor as
+follows:
+             range        #{c=3}  #{c=2}
 
-In 199346 classes the optimal curve is one of up to 6 possible curves
-in the class, but c=1 in any case.
+           1  < N <10^2:   11     24
+          10^2< N <10^3:    5     17
+          10^3< N <10^4:    6     29
+          10^4< N <10^5:    9     60
+          10^5< N <2*10^5:  7     34
+        2*10^5< N <3*10^5:  1     27
+        3*10^5< N <4*10^5:  1     22
+        4*10^5< N <5*10^5:  1     12
 
-e.g. 130050em: class has 8 curves
-               types: 1 2 1 2 2 2 2 2
-               a_j:   1 2 1 2 4 2 2 4
- -either the optimal curve has type 1 and is #1 or #3 with c=1 [c*aj=1]
- -or the optimal curve has type 2 and is #2, #4, #6, or #7 with c=1 [c*aj=2]
+Data files
+----------
 
-Note that for 26 classes (in the range 200000<=N<=500000), there would
-be a possibility that c=2 and that the optimal curve is the second one
+The data files in opt_man/ have one line for each curve where the last
+two fields contain an "optimality code" and the Manin constant
+(conditional on curve number 1 being optimal).  The optimality code is
+0 for "certainly not optimal", 1 for "certainly optimal", and n>1 for
+"one of n possibly optimal curves in its isogeny class".
+
+Additional remarks
+--------------------
+
+1. For 48 classes (in the range N<=500000), there would be a
+possibility that c=2 and that the optimal curve is the second one
 listed, if we relied only on the information given by modular symbols
 with sign +1.  These all have the same form: 2 curves in the class
 with types 1,2 and aj=1,1 so either E1 is optimal with c=1 or E2 is
 optimal with c=2.  The minimal period lattices of E1, E2 have the form
 [2x,x+yi], [2x,2yi] with x,y positive real, and from the +1 modular
 symbols we can only say that the projection of the period lattice of
-the normalised newform onto the real line is generated by x; so the
+the normalized newform onto the real line is generated by x; so the
 optimal curve might conceivably have lattice [x,yi], implying that E2
-is optimal with c=2.
+is optimal with c=2.  But (in all these cases) we find that the
+projection to the imaginary axis is generated by yi, and the lattice
+type is 1 (non-rectangular) so the optimal curve's period lattice is
+[2x,x+yi], while the other curve has Manin constant 2.
 
 These classes are (including the 13 listed in the appendix to the
 paper cited):
@@ -87,27 +126,12 @@ paper cited):
             391892a, 401972a, 425168b, 446288a, 481652a.
 
 In all of the above cases I have computed the full modular symbol
-space to eliminate the second possibility.  Hence, in this range all
-optimal curves are proved to have c=1, and in at least 83% of cases,
-the optimal curve is known (and is the first curve in the class).
+space to eliminate the second possibility.
 
-I have also computed the modular degrees of all curves (not just the
-optimal ones) using Mark Watkins's sympow program, which confirms
+2. I have also computed the modular degrees of all curves (not just
+the optimal ones) using Mark Watkins's sympow program (either as a
+stand-alone, or via Sage, or as implemented in Magma), which confirms
 optimality of the first curve in each class conditional on Stevens's
 conjecture that the Gamma_1(N)-optimal curve is the one with minimal
 Faltings Height (i.e. the one whose period lattice is a sublattice of
 all the others).
-
-The files optimality.20, ..., optimality.49 contain one line for each
-class of size at least 2, with the following format:
-
-209990bb: c=1; 3 possible optimal curves: E1 E2 E3
-209990bc: c=1; optimal curve is E1
-209990be: c=1; optimal curve is E1
-184916a: Neither c nor the optimal curve are uniquely determined.  Possibilities for (c,j0) are: (1,1) (2,2)
-
-The last of these is one of the 40 cases which were ambiguous before
-computing the full modular symbol space, but have now been settled; so
-it could now read:
-
-184916a: c=1; optimal curve is E1

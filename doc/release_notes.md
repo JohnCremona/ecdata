@@ -4,6 +4,10 @@
 
 ### 2019
 
+- 2 September 2019: replaced the optimality/* files with opt_man/*
+  files giving more information about optimality and the Manin
+  constant, documented in a rewritten doc/manin.txt.
+
 - 20 August 2019: switched labels of 3 pairs of curves in classes of
   two 2-isogenous curves for which the optimal curves was #2 (and now
   is #1).  Classes: 457226e, 461342l, 463834b
