@@ -85,12 +85,12 @@ and the only change is from upper to lower case.
 
 <p>
 We give all curves in each isogeny class.  For all classes of curves
-of conductor less than 250000, and many others, the first one listed in
-each class is proved to be the so-called "optimal" or "strong Weil"
+of conductor less than 260000, and many others, the first one listed
+in each class is proved to be the so-called "optimal" or "strong Weil"
 curve attached to each newform (referred to as optimal curves from now
-on).  For conductors above 250000, see the
-section <a href="#optimality">"Optimality and the Manin constant"</a>
-below.  Some of the data is common to all curves in the isogeny class.
+on).  See the section <a href="#optimality">"Optimality and the Manin
+constant"</a> below.  Some of the data is common to all curves in the
+isogeny class.
 </p>
 
 <p>
@@ -283,9 +283,9 @@ TABLE ONE: CURVES
 One entry for each isomorphism class of curves, giving conductor N,
 letter id for isogeny class, number of the curve in the class,
 coefficients of minimal Weierstrass equation, rank r, order of torsion
-subgroup |T|.  For all N up to 250000 the optimal
+subgroup |T|.  For all N up to 260000 the optimal
 &Gamma;<sub>0</sub>(N) curve is the one labelled 1 (except for class
-990h when it is the curve labelled 3). For N&gt;250000, this is
+990h when it is the curve labelled 3). For N&gt;260000, this is
 probably also true, but in some cases remains conditional on Stevens'
 Conjecture (see the section <a href="#optimality">"Optimality and the
 Manin constant"</a> below).
@@ -1052,7 +1052,7 @@ Data format with sample line:
 <ul>
 <li>
 <p>
-For isogeny classes of curves of conductor greater than 250000, we have
+For isogeny classes of curves of conductor greater than 260000, we have
 not yet determined in all cases which curve in each class is optimal.
 However, in all cases we have verified that the Manin constant of the
 optimal curve is equal to 1 (as it is conjectured to be for every
@@ -1067,64 +1067,101 @@ my Appendix to the paper "The Manin Constant" by Amod Agashe, Ken
 Ribet and William Stein [Pure and Applied Mathematics Quarterly,
 Vol. 2 no.2 (2006), pp. 617-636.]
 and <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc/manin.txt">these
-notes</a> updating the results for all conductors to 500000.  These
-updated results include the proof that Manin's constant is 1 in all
-cases, together with a list of which curves in the class might be
+detailed notes</a> with full results for all conductors to 500000.
+These updated results include the proof that Manin's constant is 1 in
+all cases, together with a list of which curves in the class might be
 optimal, given the incomplete modular symbol computations carried out
 to date.  Note, however, that it follows from computation of the
 modular degrees of all curves in the class (which computation is
-conditional on Stevens's conjecture) that the optimal curve is indeed
+conditional on Stevens's conjecture) that the optimal curve is always
 the first curve listed.
 </p>
 <p>
 <form>
 <select name="url" width=30>
 <option value="None">Select a conductor range</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.20">200000-209999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.21">210000-219999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.22">220000-229999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.23">230000-239999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.24">240000-249999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.25">250000-259999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.26">260000-269999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.27">270000-279999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.28">280000-289999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.29">290000-299999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.30">300000-309999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.31">310000-319999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.32">320000-329999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.33">330000-339999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.34">340000-349999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.35">350000-359999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.36">360000-369999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.37">370000-379999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.38">380000-389999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.39">390000-399999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.40">400000-409999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.41">410000-419999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.42">420000-429999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.43">430000-439999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.44">440000-449999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.45">450000-459999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.46">460000-469999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.47">470000-479999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.48">480000-489999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.49">490000-499999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.00000-09999">00000-09999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.10000-19999">10000-19999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.20000-29999">20000-29999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.30000-39999">30000-39999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.40000-49999">40000-49999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.50000-59999">50000-59999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.60000-69999">60000-69999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.70000-79999">70000-79999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.80000-89999">80000-89999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.90000-99999">90000-99999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.100000-109999">100000-109999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.110000-119999">110000-119999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.120000-129999">120000-129999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.130000-139999">130000-139999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.140000-149999">140000-149999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.150000-159999">150000-159999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.160000-169999">160000-169999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.170000-179999">170000-179999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.180000-189999">180000-189999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.190000-199999">190000-199999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.200000-209999">200000-209999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.210000-219999">210000-219999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.220000-229999">220000-229999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.230000-239999">230000-239999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.240000-249999">240000-249999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.250000-259999">250000-259999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.260000-269999">260000-269999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.270000-279999">270000-279999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.280000-289999">280000-289999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.290000-299999">290000-299999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.300000-309999">300000-309999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.310000-319999">310000-319999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.320000-329999">320000-329999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.330000-339999">330000-339999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.340000-349999">340000-349999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.350000-359999">350000-359999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.360000-369999">360000-369999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.370000-379999">370000-379999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.380000-389999">380000-389999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.390000-399999">390000-399999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.400000-409999">400000-409999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.410000-419999">410000-419999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.420000-429999">420000-429999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.430000-439999">430000-439999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.440000-449999">440000-449999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.450000-459999">450000-459999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.460000-469999">460000-469999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.470000-479999">470000-479999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.480000-489999">480000-489999</option>
+<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/opt_man/opt_man.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
-Summary of results known regarding optimality of all classes with
-conductor greater than 250000 and size at least 2.
+Table of results known regarding optimality and Manin constant in all
+isogeny classes.  For conductors greater than 260000, the values of
+the Manin constant are conditional on the first curve in the class
+being optimal.
 <br>
-Sample lines:
+Data format with sample lines:
 <table cellspacing="10" border="1">
 <tbody><tr>
-<th>Class</th> <th>Manin's constant</th> <th align="left">possible optimal curves</th>
+<th>N</th> <th>class</th> <th>#</th> <th>[a1,a2,a3,a4,a6]</th> <th>Optimality code</th> <th>Manin constant</th>
 </tr>
-<tr><td>60003a</td><td>c=1</td><td>optimal curve is E1</td></tr>
-<tr><td>60005a</td><td>c=1</td><td>2 possible optimal curves: E1 E2</td></tr>
-<tr><td>61710cz</td><td>c=1</td><td>6 possible optimal curves: E1 E2 E3 E5 E6 E8</td></tr>
+<tr><td>11</td><td>a</td><td>1</td><td>[0,-1,1,-10,-20]</td><td>1</td><td>1</td></tr>
+<tr><td>11</td><td>a</td><td>2</td><td>[0,-1,1,-7820,-263580]</td><td>0</td><td>1</td></tr>
+<tr><td>11</td><td>a</td><td>3</td><td>[0,-1,1,0,0]</td><td>0</td><td>5</td></tr>
+<tr><td>499992</td><td>a</td><td>1</td><td>[0,-1,0,4481,148204]</td><td>3</td><td>1</td></tr>
+<tr><td>499992</td><td>a</td><td>2</td><td>[0,-1,0,-29964,1526004]</td><td>3</td><td>1</td></tr>
+<tr><td>499992</td><td>a</td><td>3</td><td>[0,-1,0,-446624,115024188]</td><td>3</td><td>1</td></tr>
+<tr><td>499992</td><td>a</td><td>4</td><td>[0,-1,0,-164424,-24344100]</td><td>0</td><td>1</tr>
 </tbody></table>
+</p>
+<p>
+The optimality code is 0 for "not optimal", 1 for "optimal"
+and <i>n</i> for "one of <i>n</i> possibly optimal curves in this
+isogeny class".  In the case of isogeny class 11a above, out of the
+three curves in the class, the optimal curve is 11a1 (which is
+$X_0(11)$), the first two curves have Manin constant 1, while the
+curve 11a3 (which is $X_1(11)$) has Manin constant equal to 5.  In the
+class 499992a, out of four curves, the optimal curve is certainly one
+of the first 3; and if the optimal curve is indeed 499992a1 then all
+the Manin constants are equal to 1.
 </p>
 </li>
 </ul>
