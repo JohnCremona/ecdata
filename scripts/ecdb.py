@@ -1,6 +1,6 @@
-from sage.all import EllipticCurve, Integer, QQ, Set, magma, prime_range, factorial, mwrank_get_precision, mwrank_set_precision, srange
+from sage.all import EllipticCurve, Integer, QQ, Set, magma, prime_range, factorial, mwrank_get_precision, mwrank_set_precision, srange, pari
 
-from sage.databases.cremona import parse_cremona_label
+from sage.databases.cremona import parse_cremona_label, class_to_int
 try:
     from sage.databases.cremona import cmp_code
 except:
@@ -550,7 +550,7 @@ def make_paricurves(infilename, mode='w', verbose=False, prefix="t"):
 
 def compare(Ncc1,Ncc2):
     d = Integer(Ncc1[0])-Integer(Ncc2[0])
-    if d!=0: 
+    if d!=0:
         return d
     code1 = Ncc1[1]+Ncc1[2]
     code2 = Ncc2[1]+Ncc2[2]
@@ -626,14 +626,33 @@ def check_degphi(infilename):
 # Create manin constant files from allcurves files:
 #
 # NB We assume that curve 1 in each class is optimal with constant 1
+#
+# Use this on a range where we have established that the optimal curve
+# is #1.  Otherwise the C++ program h1pperiods outputs a file
+# opt_man.<range> which includes what can be deduced about optimality
+# (without a full check) and also outputs Manin constants condictional
+# on the optimal curve being #1.
 
-def make_manin(infilename, mode='w', verbose=False, prefix="t"):
+# The infilename should be an allcurves file, e.g. run in an ecdata
+# directory and use infilename=allcurves/allcurves.250000-259999.  The
+# part after the "." (here 250000-259999) will be used as suffix to
+# the output file.
+
+# Some classes may be output as "special": two curves in the class
+# linked by a 2-isogeny with the first lattice having positive
+# discriminant and the second Manin constant=2.  In several cases this
+# has been an indication that the wrong curve has been tagged as
+# optimal.
+
+def make_manin(infilename, mode='w', verbose=False, prefix=""):
     infile = open(infilename)
     pre, suf = infilename.split(".")
-    allmaninfile = open(prefix+"manin."+suf, mode=mode)
+    allmaninfile = open(prefix+"opt_man."+suf, mode=mode)
     allisogfile = open("allisog/allisog."+suf)
     last_class = ""
     manins = []
+    area0 = 0    # else pyflakes objects
+    degrees = [] # else pyflakes objects
     for L in infile.readlines():
         N, cl, num, ainvs, rest = L.split(' ',4)
         this_class = N+cl
@@ -641,7 +660,6 @@ def make_manin(infilename, mode='w', verbose=False, prefix="t"):
         E = EllipticCurve(eval(ainvs))
         lattice1 = None
         if this_class == last_class:
-            #deg = E0.isogeny_degree(E)
             deg = degrees[int(num)-1]
             #assert ideg==deg
             area = E.period_lattice().complex_area()
@@ -657,7 +675,7 @@ def make_manin(infilename, mode='w', verbose=False, prefix="t"):
             elif not (num==2 and deg==2 and mc==2):
                 lattice1 = None
             if lattice1:
-                print("Class {}".format(lattice1))
+                print("Class {} is special".format(lattice1))
         else: # start a new class
             if manins and verbose: # else we're at the start
                 print("class {} has Manin constants {}".format(last_class,manins))
@@ -668,20 +686,80 @@ def make_manin(infilename, mode='w', verbose=False, prefix="t"):
                 print("class {}".format(this_class))
                 print("isogmat: {}".format(isogmat))
                 print("degrees: {}".format(isogmat))
-            E0 = E
             area0 = E.period_lattice().complex_area()
             manins = [1]
             if num==1  and len(isogmat)==2 and isogmat[0][1]==2 and E.discriminant()>0:
                 lattice1 = this_class
             last_class = this_class
 
-        # alldegphi
-        line = ' '.join([str(N),cl,str(num),shortstr(E),str(manins[-1])])
+        # construct output line for this curve
+        #
+        # SPECIAL CASE 990h
+        #
+        if N==90 and cl=='h':
+            opt = str(int(num==3))
+            manins = [1,1,1,1]
+        else:
+            opt = str(int(num==1))
+        mc = str(manins[-1])
+        line = ' '.join([str(N),cl,str(num),shortstr(E),opt,mc])
+
         allmaninfile.write(line+'\n')
         if verbose: print("allmaninfile: {}".format(line))
         # if int(N)>100:
         #     break
     if manins and verbose: # else we're at the start
+        # This output line is the only reason we keep the list of all m.c.s
         print("class {} has Manin constants {}".format(last_class,manins))
     infile.close()
     allmaninfile.close()
+
+def make_opt_input(N):
+    """Parse a file in optimality/ and produce an input file for
+    runh1firstx1 which runs h1first1.
+
+    Find lines containing "possible optimal curves", extract the
+    isogeny class label, convert iso class code to a number, and
+    output.  One line is output for each level N, of the form
+
+    N i_1 i_2 ... i_k 0
+
+    where N is the level and i_1,...,i_k are the numbers (from 1) of
+    the newforms / isogeny classes where we do not know which curve is
+    optimal.
+
+    For example the input lines starting with 250010 are
+
+    250010b: c=1; optimal curve is E1
+    250010d: c=1; 3 possible optimal curves: E1 E2 E3
+
+    and produce the output line
+
+    250010 2 4 0
+
+    while the lines starting with 250020 are
+
+    250020b: c=1; optimal curve is E1
+    250020d: c=1; optimal curve is E1
+
+    and produce no output
+    """
+    outfile = "optx.{0:02d}".format(N)
+    o = open(outfile, 'w')
+    n = 0
+    lastN = 0
+    for L in open("optimality/optimality.{0:02d}".format(N)):
+        if "possible" in L:
+            N, c, i = parse_cremona_label(L.split()[0][:-1])
+            if N==lastN:
+                o.write(" {}".format(1+class_to_int(c)))
+            else:
+                if lastN!=0:
+                    o.write(" 0\n")
+                o.write("{} {}".format(N, 1+class_to_int(c)))
+                lastN = N
+                n += 1
+    o.write(" 0\n")
+    n += 1
+    o.close()
+    print("wrote {} lines to {}".format(n,outfile))
