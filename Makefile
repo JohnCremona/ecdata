@@ -61,7 +61,7 @@ HTMLFILES = html/index.html html/shas.html html/table.html html/curves.1-1000.ht
 TEXTFILES = doc/manin.txt doc/file-format.txt doc/release_notes.md doc/merging.txt
 DATAFILES =  $(ALLCURVES) $(APLIST) $(BIGSHA) $(COUNT) $(DEGPHI) $(ALLDEGPHI) $(ALLGENS) $(BSD) $(ALLISOG) $(PARICURVES) $(INTPTS) $(GALREPS) $(TWOADIC) $(OPTIMAL) $(GROWTH)
 FTPFILES = $(DATAFILES) $(TEXTFILES) $(HTMLFILES)
-DATASUBDIRS = allcurves aplist allbigsha count curves degphi alldegphi allgens allisog allbsd paricurves intpts galrep 2adic optimality
+DATASUBDIRS = allcurves aplist allbigsha count curves degphi alldegphi allgens allisog allbsd paricurves intpts galrep 2adic growth opt_man
 
 commit: $(FTPFILES)
 	git add $(DATAFILES)
