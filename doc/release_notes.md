@@ -4,6 +4,12 @@
 
 ### 2019
 
+- 11 September 2019: added one new isogeny class (with just 1 curve)
+  406598c, relabelling the old 406598c to 406598d.  Checked that there
+  are no mor missing curve which either have |a4|, |a6|<=100 or which
+  are in Stein-Watkins.  Thanks to Bill Allombert for spotting this
+  omission.
+
 - 2 September 2019: replaced the optimality/* files with opt_man/*
   files giving more information about optimality and the Manin
   constant, documented in a rewritten doc/manin.txt.

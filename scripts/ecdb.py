@@ -763,3 +763,37 @@ def make_opt_input(N):
     n += 1
     o.close()
     print("wrote {} lines to {}".format(n,outfile))
+
+def check_sagedb(N1, N2, a4a6bound=100):
+    """Sanity check that Sage's elliptic curve database contains all
+    curves [a1,a2,a3,a4,a6] with a1,a3 in [0,1], a2 in [-1,0,1], a4,a6
+    in [-100..100] and conductor in the given range.
+
+    Borrowed from Bill Allombert (who found a missing curve of
+    conductor 406598 this way).
+    """
+    CDB = CremonaDatabase()
+    def CDB_curves(N):
+        return [c[0] for c in CDB.allcurves(N).values()]
+    Nrange = srange(N1,N2+1)
+    ncurves = 12*(2*a4a6bound+1)**2
+    print("Testing {} curves".format(ncurves))
+    n=0
+    for a1 in xrange(2):
+        for a2 in xrange(-1,2):
+            for a3 in xrange(2):
+                for a4 in xrange(-a4a6bound,a4a6bound+1):
+                    for a6 in xrange(-a4a6bound,a4a6bound+1):
+                        ai = [a1,a2,a3,a4,a6]
+                        n += 1
+                        if n%1000==0:
+                            print("test #{}/{}".format(n,ncurves))
+                        try:
+                            E = EllipticCurve(ai).minimal_model()
+                        except ArithmeticError: #singular curve
+                            continue
+                        N = E.conductor()
+                        if not N in Nrange:
+                            continue
+                        if not list(E.ainvs()) in CDB_curves(N):
+                            print("Missing N={}, ai={}".format(N,ai))

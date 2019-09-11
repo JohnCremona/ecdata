@@ -64,7 +64,7 @@ rarely greater than 3:
 
             Manin constant      Number of curves        Curves
 
-                  1             3064435
+                  1             3064436
                   2                 225
                   3                  41                 14a4, 14a6, ...
                   4                   2                 15a8, 17a4
