@@ -22,7 +22,7 @@ INTPTS = intpts/intpts.?0000-?9999 intpts/intpts.??0000-??9999
 GALREPS = galrep/galrep.?0000-?9999 galrep/galrep.??0000-??9999
 TWOADIC = 2adic/2adic.?0000-?9999 2adic/2adic.??0000-??9999
 OPTIMAL = opt_man/opt_man.?0000-?9999 opt_man/opt_man.??0000-??9999
-GROWTH = growth/growth?d.*000-*999
+GROWTH = growth/*/growth*.*000-*999
 
 allcurves: $(ALLCURVES)
 	@echo $(ALLCURVES)
