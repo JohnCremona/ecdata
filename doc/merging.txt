@@ -175,10 +175,10 @@ This commits all the changes, pushes to github, also updates the
 gh-pages branch and pushes that, so the website is updated too.
 
 2. (a) email Bill Allombert to he can update pari's elldata
-   [done to 400000]
+   [done to 500000]
 
    (b) email John Cannon so he can update Magma's database
-   [done to 400000]
+   [done to 500000]
 
    (c) Update LMFDB.  On atkin, make sure that lmfdb can connect to
    the database, then
@@ -187,50 +187,44 @@ gh-pages branch and pushes that, so the website is updated too.
        sage: %runfile scripts/elliptic_curves/import_ec_data.py
        sage: upload_to_db("/home/jec/ecdata",380000,389999)
 
-   [done to 400000]
+   [done to 500000]
 
    (d) Update Sage's optional spkg (this assumes that the old version
-       of the optional spkg is already installed):
+       of the optional spkg is already installed and that the updated
+       ecdata repository exists):
 
        (i) Move aside the old db:
 
        cd SAGE_ROOT/local/share/cremona
        mv cremona.db cremona.db.bak
 
-       (ii) Make a tar file since the Sage db creation function
-       expects one:
-
-       cd /home/jec/ecdata
-       make tar
-
-       which will create a file called something like ecdata-2016-02-11.tgz
-
-       (iii) Creat the new db:
+       (ii) Create the new db:
 
        sage
-       sage: time d = sage.databases.cremona.build('cremona','/home/jec/ecdata/ecdata-2016-02-11.tgz')
-       sage: CremonaDatabase().largest_conductor()
-       389998
-       sage: CremonaDatabase().number_of_curves()
-       2365566
+       sage: C = sage.databases.cremona.LargeCremonaDatabase('cremona',False, True)
+       sage: C._init_from_ftpdata('ecdata/',0)
+
+       sage: CDB=CremonaDatabase()
+       sage: CDB.number_of_curves()
+       3064705
+       sage: CDB.number_of_isogeny_classes()
+       2164260
+       sage: CDB.largest_conductor()
+       499998
+
 
        cp SAGE_ROOT/local/share/cremona/cremona.db ~/ecdata/src
        cd ~/ecdata
        chmod -R 744 src
-       tar cvf database_cremona_ellcurve-20161017.tar src
-       bzip2 database_cremona_ellcurve-201610217.tar
-       chmod a+r database_cremona_ellcurve-20161017.tar.bz2
-       cp database_cremona_ellcurve-20161017.tar.bz2 SAGE_ROOT/upstream/
-       scp database_cremona_ellcurve-20161017.tar.bz2 warwick:public_html/ftp/
+       tar cvf database_cremona_ellcurve-20190911.tar src
+       bzip2 database_cremona_ellcurve-20190911.tar
+       chmod a+r database_cremona_ellcurve-20190911.tar.bz2
+       cp database_cremona_ellcurve-20190911.tar.bz2 SAGE_ROOT/upstream/
+       scp database_cremona_ellcurve-20190911.tar.bz2 warwick:public_html/ftp/
 
        and now make a trac ticket for the upgrade.  The only changes
        to be made (make a new git branch off develop first!) are
-       (1)  edit manually the file
-       build/pkgs/database_cremona_ellcurve/package-version.txt
-            to contain (e.g.) 20161017
-       and
-       (2)  run ./sage -sh sage-fix-pkg-checksums
-       to change the file
-       build/pkgs/database_cremona_ellcurve/checksums.ini
 
-   [done to 400000]
+       $ ./sage --package create database_cremona_ellcurve --version 20190911 --tarball database_cremona_ellcurve-20190911.tar.bz2 --type optional
+
+   [done to 500000]

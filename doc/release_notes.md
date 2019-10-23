@@ -4,9 +4,17 @@
 
 ### 2019
 
+- 23 October 2019: replaced all old torsion growth files with new
+  ones, now split into conductor ranges of 10000 as with the other
+  files (as well as by degree), and extended to degree 23.  The
+  polynomials defining the extension fields are all polredabs-ed, and
+  the new torsion structure over these fields has been independently
+  checked (by me).  All the data was provided by Enrique Gonzalez
+  Jimenez and Filip Najman.
+
 - 11 September 2019: added one new isogeny class (with just 1 curve)
   406598c, relabelling the old 406598c to 406598d.  Checked that there
-  are no mor missing curve which either have |a4|, |a6|<=100 or which
+  are no more missing curve which either have |a4|, |a6|<=100 or which
   are in Stein-Watkins.  Thanks to Bill Allombert for spotting this
   omission.
 
