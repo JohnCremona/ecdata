@@ -4,6 +4,11 @@
 
 ### 2019
 
+- 28 October 2019: updated opt_man files after reaching conductor
+  370000 in optimality checking.
+
+  Added The Artistic License 2.0 to the repository.
+
 - 23 October 2019: replaced all old torsion growth files with new
   ones, now split into conductor ranges of 10000 as with the other
   files (as well as by degree), and extended to degree 23.  The
