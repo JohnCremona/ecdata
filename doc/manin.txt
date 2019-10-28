@@ -26,30 +26,30 @@ number 1 is the Gamma_0(N)-optimal curve, with the following provisos:
     which I decided not to change later, when the discrepancy was
     discovered.
 
-  - for about 42000 conductors above 260000 (as of 2 September 2019),
-    the optimal curve has not yet been determined and is one of n
-    curves in the class for some n between 2 and 6 inclusive.  Work is
-    in progress to reduce this number of ambiguous cases, by doing
-    more modular symbol computations.  Note that the heuristics used
-    to guess which curve is optimal from the information from the plus
-    space only are such that I do not expect to find any isogeny
-    classes where the optimal curve is not number 1.  This was not
-    quite true before August 2019, when for 10 isogeny classes of size
-    2 linked by 2-isogenies the heuristics had given the wrong result;
-    the labels for these classes (235470bb, 235746u, 258482a, 265706a,
-    333270bu, 359282a, 369194a, 375410g, 377034t, 389774b) were
-    switched on 19 August 2019.
+  - for 21496 conductors above 370000 (as of 28 October 2019), the
+    optimal curve has not yet been determined and is one of n curves
+    in the class for some n between 2 and 6 inclusive.  Work is in
+    progress to eliminate these ambiguous cases, by doing more modular
+    symbol computations.  Note that the heuristics used to guess which
+    curve is optimal from the information from the plus space only are
+    such that I do not expect to find any isogeny classes where the
+    optimal curve is not number 1.  This was not true before August
+    2019, when for 10 isogeny classes of size 2 linked by 2-isogenies
+    the heuristics had given the wrong result; the labels for these
+    classes (235470bb, 235746u, 258482a, 265706a, 333270bu, 359282a,
+    369194a, 375410g, 377034t, 389774b) were switched on 19 August
+    2019.
 
     Of the 2164259 isogeny classes of conductor up to 500000, there
-    are 157427 (all of conductor >260000) in which the optimal curve
-    has not yet been determined, and 1999986 in which the optimal curve
-    is certainly curve number 1:
+    are 83799 of conductor >370000 in which the optimal curve has not
+    yet been determined, and 468222 in which the optimal curve is
+    certainly curve number 1:
 
-          2 possibly optimal curves in 135845 classes
-          3 possibly optimal curves in  26227 classes
-          4 possibly optimal curves in   1991 classes
-          5 possibly optimal curves in     92 classes
-          6 possibly optimal curves in    118 classes
+          2 possibly optimal curves in  69508 classes
+          3 possibly optimal curves in  13174 classes
+          4 possibly optimal curves in   1016 classes
+          5 possibly optimal curves in     44 classes
+          6 possibly optimal curves in     57 classes
 
 Concerning the Manin constant, the methods described in the paper
 (op.cit.)  have been used to show that the Manin constant is 1 for
@@ -58,9 +58,9 @@ which we have used are: that c is an integer, that c=2 is impossible
 when N is odd, and that c=3 is impossible unless N is a multiple of 3.
 
 On the assumption that the optimal curve is number 1 in all isogeny
-classes, the Manin constants of all curves in the database have been
-computed.  They are almost all 1, even for non-optimal curves, and are
-rarely greater than 3:
+classes (other than 990h), the Manin constants of all curves in the
+database have been computed.  They are almost all 1, even for
+non-optimal curves, and are rarely greater than 3:
 
             Manin constant      Number of curves        Curves
 

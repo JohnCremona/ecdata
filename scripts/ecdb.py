@@ -630,7 +630,7 @@ def check_degphi(infilename):
 # Use this on a range where we have established that the optimal curve
 # is #1.  Otherwise the C++ program h1pperiods outputs a file
 # opt_man.<range> which includes what can be deduced about optimality
-# (without a full check) and also outputs Manin constants condictional
+# (without a full check) and also outputs Manin constants conditional
 # on the optimal curve being #1.
 
 # The infilename should be an allcurves file, e.g. run in an ecdata
