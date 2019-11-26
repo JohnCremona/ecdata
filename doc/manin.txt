@@ -26,7 +26,7 @@ number 1 is the Gamma_0(N)-optimal curve, with the following provisos:
     which I decided not to change later, when the discrepancy was
     discovered.
 
-  - for 21496 conductors above 370000 (as of 28 October 2019), the
+  - for 16436 conductors above 400000 (as of 26 November 2019), the
     optimal curve has not yet been determined and is one of n curves
     in the class for some n between 2 and 6 inclusive.  Work is in
     progress to eliminate these ambiguous cases, by doing more modular
@@ -41,15 +41,15 @@ number 1 is the Gamma_0(N)-optimal curve, with the following provisos:
     2019.
 
     Of the 2164259 isogeny classes of conductor up to 500000, there
-    are 83799 of conductor >370000 in which the optimal curve has not
-    yet been determined, and 468222 in which the optimal curve is
+    are 64249 of conductor > 400000 in which the optimal curve has not
+    yet been determined, and 359009 in which the optimal curve is
     certainly curve number 1:
 
-          2 possibly optimal curves in  69508 classes
-          3 possibly optimal curves in  13174 classes
-          4 possibly optimal curves in   1016 classes
-          5 possibly optimal curves in     44 classes
-          6 possibly optimal curves in     57 classes
+          2 possibly optimal curves in  53394 classes
+          3 possibly optimal curves in  10017 classes
+          4 possibly optimal curves in    763 classes
+          5 possibly optimal curves in     32 classes
+          6 possibly optimal curves in     43 classes
 
 Concerning the Manin constant, the methods described in the paper
 (op.cit.)  have been used to show that the Manin constant is 1 for
