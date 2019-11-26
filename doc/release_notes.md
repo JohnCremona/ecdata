@@ -7,6 +7,9 @@
 - 28 October 2019: updated opt_man files after reaching conductor
   370000 in optimality checking.
 
+- 26 November 2019: updated opt_man files after reaching conductor
+  400000 in optimality checking.
+
   Added The Artistic License 2.0 to the repository.
 
 - 23 October 2019: replaced all old torsion growth files with new
