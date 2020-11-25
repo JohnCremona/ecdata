@@ -8,8 +8,19 @@
 <script language="JavaScript">
 <!--
 function JumpToIt(frm) {
-    var newPage = frm.url.options[frm.url.selectedIndex].value
-    if (newPage != "None") {
+    var base_url = "https://raw.githubusercontent.com/JohnCremona/ecdata/master/"
+    var file = frm.url.options[frm.url.selectedIndex].value
+    if (file != "None") {
+        window.open(base_url + file)
+    }
+}
+function JumpToTorGro(frm) {
+    var base_url = "https://raw.githubusercontent.com/JohnCremona/ecdata/master/growth/"
+    var deg = frm.deg.options[frm.deg.selectedIndex].value
+    var range = frm.range.options[frm.range.selectedIndex].value
+    var newPage = base_url + deg + "/growth" + deg + "." + range
+    //window.alert(newPage)
+    if ((deg != "None") && (range != "None")) {
         window.open(newPage)
     }
 }
@@ -24,7 +35,7 @@ by J. E. Cremona<br>
 University of Warwick, U.K.</h2>
 <p>
 <i>
-Updated <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc/release_notes.md">2016-10-17</a> (last major update 2016-10-17)
+Updated <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc/release_notes.md">2019-11-26</a> (last major update 2019-07-22)
 </i>
 </p>
 </center>
@@ -66,6 +77,8 @@ class;
   representations attached to each curve;
 <li>Table 10 gives information on the 2-adic Galois
   representations attached to each curve.
+<li>Table 11 gives information on the growth of torsion in number
+fields of small degree, for each curve.
 </ul>
 </p>
 
@@ -83,16 +96,16 @@ and the only change is from upper to lower case.
 
 <p>
 We give all curves in each isogeny class.  For all classes of curves
-of conductor less than 60000, and many others, the first one listed in
-each class is proved to be the so-called "optimal" or "strong Weil"
+of conductor less than 400000, and many others, the first one listed
+in each class is proved to be the so-called "optimal" or "strong Weil"
 curve attached to each newform (referred to as optimal curves from now
-on).  For conductors above 60000, see the
-section <a href="#optimality">"Optimality and the Manin constant"</a>
-below.  Some of the data is common to all curves in the isogeny class.
+on).  See the section <a href="#optimality">"Optimality and the Manin
+constant"</a> below.  Some of the data is common to all curves in the
+isogeny class.
 </p>
 
 <p>
-The tables currently contain data for conductors up to <b>400000</b>.
+The tables currently contain data for conductors up to <b>500000</b>.
 </p>
 
 
@@ -100,10 +113,14 @@ The tables currently contain data for conductors up to <b>400000</b>.
 <ul>
 <li>The curves were computed via modular symbols, using the C++
 library eclib (see https://github.com/JohnCremona/eclib), run on
-  machines in a variety of places, including clusters at Nottingham
-  (1999-2007) and Warwick (since 2011).  Additional data is computed
-  using a SageMath script to interface a variety of software,
-  including the following:
+machines in a variety of places, including clusters at Nottingham
+(1999-2007, conductors up to 130000); Warwick (2011-2016, conductors
+130000 to 400000); and the Google Computing Platform (15-22 July 2019,
+conductors 400000-500000).  Thanks to the universities of Nttingham
+and Warwick, and to the Simons Foundation for the GCP runs.
+
+  Additional data is computed using a SageMath script to interface a
+variety of software, including the following:
 </li>
 <li>
 The modular degrees for conductors over 12000 were computed using Mark
@@ -117,13 +134,11 @@ GP's <tt>ellheegner</tt> function written by Christophe Delaunay and
 Bill Allombert, based on the same ideas of Delaunay and Watkins.
 </li>
 <li>
-The integral points for all curves were computed using Sage in a new
-implementation due to Michael Mardaus, Tobias Nagel and JEC.  For
-conductors up to 1000 we have checked that these agree with Magma
-(version V2.14-14).
-<br><b>N.B.</b> It is known that these lists are in some cases
-incomplete, due to bugs in the program mentioned; they will be
-corrected in due course.
+The integral points for all curves were first computed using Sage in
+an implementation due to Michael Mardaus, Tobias Nagel and JEC.  For
+all curves we checked on 2018-12-19 whether these agree with Magma
+(version V2.24-1): in 207 cases Magma found more integral points
+(never fewer), and the lists here are now hoped to be complete.
 </li>
 <li>
 The images of the mod <i>p</i> Galois representations were computed by
@@ -132,6 +147,10 @@ Andrew Sutherland.
 <li>
 The images of the 2-adic Galois representations were computed using a
 Magma program provided by Jeremy Rouse.
+</li>
+<li>
+The torsion growth data was computed by Enrique Gonzalez-Jimenez and
+Filip Najman.
 </li>
 </ul>
 
@@ -145,47 +164,57 @@ SUMMARY TABLES
 <form>
 <select name="url" width=30>
 <option value="None">Select a conductor range</option>
-https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.00000-09999
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.00000-09999">1-9999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.10000-19999">10000-19999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.20000-29999">20000-29999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.30000-39999">30000-39999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.40000-49999">40000-49999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.50000-59999">50000-59999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.60000-69999">60000-69999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.70000-79999">70000-79999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.80000-89999">80000-89999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.90000-99999">90000-99999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.100000-109999">100000-109999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.110000-119999">110000-119999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.120000-129999">120000-129999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.130000-139999">130000-139999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.140000-149999">140000-149999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.150000-159999">150000-159999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.160000-169999">160000-169999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.170000-179999">170000-179999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.180000-189999">180000-189999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.190000-199999">190000-199999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.200000-209999">200000-209999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.210000-219999">210000-219999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.220000-229999">220000-229999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.230000-239999">230000-239999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.240000-249999">240000-249999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.250000-259999">250000-259999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.260000-269999">260000-269999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.270000-279999">270000-279999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.280000-289999">280000-289999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.290000-299999">290000-299999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.300000-309999">300000-309999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.310000-319999">310000-319999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.320000-329999">320000-329999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.330000-339999">330000-339999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.340000-349999">340000-349999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.350000-359999">350000-359999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.360000-369999">360000-369999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.370000-379999">370000-379999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.380000-389999">380000-389999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/count/count.390000-399999">390000-399999</option>
+count/count.00000-09999
+<option value="count/count.00000-09999">1-9999</option>
+<option value="count/count.10000-19999">10000-19999</option>
+<option value="count/count.20000-29999">20000-29999</option>
+<option value="count/count.30000-39999">30000-39999</option>
+<option value="count/count.40000-49999">40000-49999</option>
+<option value="count/count.50000-59999">50000-59999</option>
+<option value="count/count.60000-69999">60000-69999</option>
+<option value="count/count.70000-79999">70000-79999</option>
+<option value="count/count.80000-89999">80000-89999</option>
+<option value="count/count.90000-99999">90000-99999</option>
+<option value="count/count.100000-109999">100000-109999</option>
+<option value="count/count.110000-119999">110000-119999</option>
+<option value="count/count.120000-129999">120000-129999</option>
+<option value="count/count.130000-139999">130000-139999</option>
+<option value="count/count.140000-149999">140000-149999</option>
+<option value="count/count.150000-159999">150000-159999</option>
+<option value="count/count.160000-169999">160000-169999</option>
+<option value="count/count.170000-179999">170000-179999</option>
+<option value="count/count.180000-189999">180000-189999</option>
+<option value="count/count.190000-199999">190000-199999</option>
+<option value="count/count.200000-209999">200000-209999</option>
+<option value="count/count.210000-219999">210000-219999</option>
+<option value="count/count.220000-229999">220000-229999</option>
+<option value="count/count.230000-239999">230000-239999</option>
+<option value="count/count.240000-249999">240000-249999</option>
+<option value="count/count.250000-259999">250000-259999</option>
+<option value="count/count.260000-269999">260000-269999</option>
+<option value="count/count.270000-279999">270000-279999</option>
+<option value="count/count.280000-289999">280000-289999</option>
+<option value="count/count.290000-299999">290000-299999</option>
+<option value="count/count.300000-309999">300000-309999</option>
+<option value="count/count.310000-319999">310000-319999</option>
+<option value="count/count.320000-329999">320000-329999</option>
+<option value="count/count.330000-339999">330000-339999</option>
+<option value="count/count.340000-349999">340000-349999</option>
+<option value="count/count.350000-359999">350000-359999</option>
+<option value="count/count.360000-369999">360000-369999</option>
+<option value="count/count.370000-379999">370000-379999</option>
+<option value="count/count.380000-389999">380000-389999</option>
+<option value="count/count.390000-399999">390000-399999</option>
+<option value="count/count.400000-409999">400000-409999</option>
+<option value="count/count.410000-419999">410000-419999</option>
+<option value="count/count.420000-429999">420000-429999</option>
+<option value="count/count.430000-439999">430000-439999</option>
+<option value="count/count.440000-449999">440000-449999</option>
+<option value="count/count.450000-459999">450000-459999</option>
+<option value="count/count.460000-469999">460000-469999</option>
+<option value="count/count.470000-479999">470000-479999</option>
+<option value="count/count.480000-489999">480000-489999</option>
+<option value="count/count.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -209,46 +238,56 @@ TABLE ONE: CURVES
 <form>
 <select name="url" width=30>
 <option value="None">Select a conductor range</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.00000-09999">1-9999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.10000-19999">10000-19999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.20000-29999">20000-29999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.30000-39999">30000-39999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.40000-49999">40000-49999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.50000-59999">50000-59999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.60000-69999">60000-69999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.70000-79999">70000-79999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.80000-89999">80000-89999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.90000-99999">90000-99999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.100000-109999">100000-109999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.110000-119999">110000-119999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.120000-129999">120000-129999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.130000-139999">130000-139999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.140000-149999">140000-149999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.150000-159999">150000-159999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.160000-169999">160000-169999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.170000-179999">170000-179999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.180000-189999">180000-189999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.190000-199999">190000-199999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.200000-209999">200000-209999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.210000-219999">210000-219999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.220000-229999">220000-229999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.230000-239999">230000-239999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.240000-249999">240000-249999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.250000-259999">250000-259999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.260000-269999">260000-269999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.270000-279999">270000-279999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.280000-289999">280000-289999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.290000-299999">290000-299999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.300000-309999">300000-309999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.310000-319999">310000-319999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.320000-329999">320000-329999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.330000-339999">330000-339999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.340000-349999">340000-349999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.350000-359999">350000-359999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.360000-369999">360000-369999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.370000-379999">370000-379999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.380000-389999">380000-389999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allcurves/allcurves.390000-399999">390000-399999</option>
+<option value="allcurves/allcurves.00000-09999">1-9999</option>
+<option value="allcurves/allcurves.10000-19999">10000-19999</option>
+<option value="allcurves/allcurves.20000-29999">20000-29999</option>
+<option value="allcurves/allcurves.30000-39999">30000-39999</option>
+<option value="allcurves/allcurves.40000-49999">40000-49999</option>
+<option value="allcurves/allcurves.50000-59999">50000-59999</option>
+<option value="allcurves/allcurves.60000-69999">60000-69999</option>
+<option value="allcurves/allcurves.70000-79999">70000-79999</option>
+<option value="allcurves/allcurves.80000-89999">80000-89999</option>
+<option value="allcurves/allcurves.90000-99999">90000-99999</option>
+<option value="allcurves/allcurves.100000-109999">100000-109999</option>
+<option value="allcurves/allcurves.110000-119999">110000-119999</option>
+<option value="allcurves/allcurves.120000-129999">120000-129999</option>
+<option value="allcurves/allcurves.130000-139999">130000-139999</option>
+<option value="allcurves/allcurves.140000-149999">140000-149999</option>
+<option value="allcurves/allcurves.150000-159999">150000-159999</option>
+<option value="allcurves/allcurves.160000-169999">160000-169999</option>
+<option value="allcurves/allcurves.170000-179999">170000-179999</option>
+<option value="allcurves/allcurves.180000-189999">180000-189999</option>
+<option value="allcurves/allcurves.190000-199999">190000-199999</option>
+<option value="allcurves/allcurves.200000-209999">200000-209999</option>
+<option value="allcurves/allcurves.210000-219999">210000-219999</option>
+<option value="allcurves/allcurves.220000-229999">220000-229999</option>
+<option value="allcurves/allcurves.230000-239999">230000-239999</option>
+<option value="allcurves/allcurves.240000-249999">240000-249999</option>
+<option value="allcurves/allcurves.250000-259999">250000-259999</option>
+<option value="allcurves/allcurves.260000-269999">260000-269999</option>
+<option value="allcurves/allcurves.270000-279999">270000-279999</option>
+<option value="allcurves/allcurves.280000-289999">280000-289999</option>
+<option value="allcurves/allcurves.290000-299999">290000-299999</option>
+<option value="allcurves/allcurves.300000-309999">300000-309999</option>
+<option value="allcurves/allcurves.310000-319999">310000-319999</option>
+<option value="allcurves/allcurves.320000-329999">320000-329999</option>
+<option value="allcurves/allcurves.330000-339999">330000-339999</option>
+<option value="allcurves/allcurves.340000-349999">340000-349999</option>
+<option value="allcurves/allcurves.350000-359999">350000-359999</option>
+<option value="allcurves/allcurves.360000-369999">360000-369999</option>
+<option value="allcurves/allcurves.370000-379999">370000-379999</option>
+<option value="allcurves/allcurves.380000-389999">380000-389999</option>
+<option value="allcurves/allcurves.390000-399999">390000-399999</option>
+<option value="allcurves/allcurves.400000-409999">400000-409999</option>
+<option value="allcurves/allcurves.410000-419999">410000-419999</option>
+<option value="allcurves/allcurves.420000-429999">420000-429999</option>
+<option value="allcurves/allcurves.430000-439999">430000-439999</option>
+<option value="allcurves/allcurves.440000-449999">440000-449999</option>
+<option value="allcurves/allcurves.450000-459999">450000-459999</option>
+<option value="allcurves/allcurves.460000-469999">460000-469999</option>
+<option value="allcurves/allcurves.470000-479999">470000-479999</option>
+<option value="allcurves/allcurves.480000-489999">480000-489999</option>
+<option value="allcurves/allcurves.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -256,9 +295,9 @@ TABLE ONE: CURVES
 One entry for each isomorphism class of curves, giving conductor N,
 letter id for isogeny class, number of the curve in the class,
 coefficients of minimal Weierstrass equation, rank r, order of torsion
-subgroup |T|.  For all N up to 60000 the optimal
+subgroup |T|.  For all N up to 370000 the optimal
 &Gamma;<sub>0</sub>(N) curve is the one labelled 1 (except for class
-990h when it is the curve labelled 3). For N&gt;60000, this is
+990h when it is the curve labelled 3). For N&gt;370000, this is
 probably also true, but in some cases remains conditional on Stevens'
 Conjecture (see the section <a href="#optimality">"Optimality and the
 Manin constant"</a> below).
@@ -322,46 +361,56 @@ TABLE TWO: GENERATORS
 <form>
 <select name="url" width=30>
 <option value="None">Select a conductor range</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.00000-09999">1-9999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.10000-19999">10000-19999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.20000-29999">20000-29999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.30000-39999">30000-39999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.40000-49999">40000-49999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.50000-59999">50000-59999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.60000-69999">60000-69999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.70000-79999">70000-79999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.80000-89999">80000-89999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.90000-99999">90000-99999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.100000-109999">100000-109999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.110000-119999">110000-119999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.120000-129999">120000-129999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.130000-139999">130000-139999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.140000-149999">140000-149999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.150000-159999">150000-159999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.160000-169999">160000-169999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.170000-179999">170000-179999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.180000-189999">180000-189999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.190000-199999">190000-199999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.200000-209999">200000-209999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.210000-219999">210000-219999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.220000-229999">220000-229999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.230000-239999">230000-239999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.240000-249999">240000-249999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.250000-259999">250000-259999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.260000-269999">260000-269999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.270000-279999">270000-279999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.280000-289999">280000-289999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.290000-299999">290000-299999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.300000-309999">300000-309999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.310000-319999">310000-319999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.320000-329999">320000-329999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.330000-339999">330000-339999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.340000-349999">340000-349999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.350000-359999">350000-359999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.360000-369999">360000-369999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.370000-379999">370000-379999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.380000-389999">380000-389999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allgens/allgens.390000-399999">390000-399999</option>
+<option value="allgens/allgens.00000-09999">1-9999</option>
+<option value="allgens/allgens.10000-19999">10000-19999</option>
+<option value="allgens/allgens.20000-29999">20000-29999</option>
+<option value="allgens/allgens.30000-39999">30000-39999</option>
+<option value="allgens/allgens.40000-49999">40000-49999</option>
+<option value="allgens/allgens.50000-59999">50000-59999</option>
+<option value="allgens/allgens.60000-69999">60000-69999</option>
+<option value="allgens/allgens.70000-79999">70000-79999</option>
+<option value="allgens/allgens.80000-89999">80000-89999</option>
+<option value="allgens/allgens.90000-99999">90000-99999</option>
+<option value="allgens/allgens.100000-109999">100000-109999</option>
+<option value="allgens/allgens.110000-119999">110000-119999</option>
+<option value="allgens/allgens.120000-129999">120000-129999</option>
+<option value="allgens/allgens.130000-139999">130000-139999</option>
+<option value="allgens/allgens.140000-149999">140000-149999</option>
+<option value="allgens/allgens.150000-159999">150000-159999</option>
+<option value="allgens/allgens.160000-169999">160000-169999</option>
+<option value="allgens/allgens.170000-179999">170000-179999</option>
+<option value="allgens/allgens.180000-189999">180000-189999</option>
+<option value="allgens/allgens.190000-199999">190000-199999</option>
+<option value="allgens/allgens.200000-209999">200000-209999</option>
+<option value="allgens/allgens.210000-219999">210000-219999</option>
+<option value="allgens/allgens.220000-229999">220000-229999</option>
+<option value="allgens/allgens.230000-239999">230000-239999</option>
+<option value="allgens/allgens.240000-249999">240000-249999</option>
+<option value="allgens/allgens.250000-259999">250000-259999</option>
+<option value="allgens/allgens.260000-269999">260000-269999</option>
+<option value="allgens/allgens.270000-279999">270000-279999</option>
+<option value="allgens/allgens.280000-289999">280000-289999</option>
+<option value="allgens/allgens.290000-299999">290000-299999</option>
+<option value="allgens/allgens.300000-309999">300000-309999</option>
+<option value="allgens/allgens.310000-319999">310000-319999</option>
+<option value="allgens/allgens.320000-329999">320000-329999</option>
+<option value="allgens/allgens.330000-339999">330000-339999</option>
+<option value="allgens/allgens.340000-349999">340000-349999</option>
+<option value="allgens/allgens.350000-359999">350000-359999</option>
+<option value="allgens/allgens.360000-369999">360000-369999</option>
+<option value="allgens/allgens.370000-379999">370000-379999</option>
+<option value="allgens/allgens.380000-389999">380000-389999</option>
+<option value="allgens/allgens.390000-399999">390000-399999</option>
+<option value="allgens/allgens.400000-409999">400000-409999</option>
+<option value="allgens/allgens.410000-419999">410000-419999</option>
+<option value="allgens/allgens.420000-429999">420000-429999</option>
+<option value="allgens/allgens.430000-439999">430000-439999</option>
+<option value="allgens/allgens.440000-449999">440000-449999</option>
+<option value="allgens/allgens.450000-459999">450000-459999</option>
+<option value="allgens/allgens.460000-469999">460000-469999</option>
+<option value="allgens/allgens.470000-479999">470000-479999</option>
+<option value="allgens/allgens.480000-489999">480000-489999</option>
+<option value="allgens/allgens.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -423,46 +472,56 @@ TABLE THREE: HECKE EIGENVALUES
 <form>
 <select name="url" width=30>
 <option value="None">Select a conductor range</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.00000-09999">1-9999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.10000-19999">10000-19999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.20000-29999">20000-29999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.30000-39999">30000-39999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.40000-49999">40000-49999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.50000-59999">50000-59999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.60000-69999">60000-69999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.70000-79999">70000-79999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.80000-89999">80000-89999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.90000-99999">90000-99999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.100000-109999">100000-109999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.110000-119999">110000-119999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.120000-129999">120000-129999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.130000-139999">130000-139999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.140000-149999">140000-149999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.150000-159999">150000-159999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.160000-169999">160000-169999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.170000-179999">170000-179999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.180000-189999">180000-189999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.190000-199999">190000-199999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.200000-209999">200000-209999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.210000-219999">210000-219999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.220000-229999">220000-229999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.230000-239999">230000-239999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.240000-249999">240000-249999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.250000-259999">250000-259999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.260000-269999">260000-269999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.270000-279999">270000-279999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.280000-289999">280000-289999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.290000-299999">290000-299999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.300000-309999">300000-309999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.310000-319999">310000-319999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.320000-329999">320000-329999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.330000-339999">330000-339999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.340000-349999">340000-349999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.350000-359999">350000-359999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.360000-369999">360000-369999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.370000-379999">370000-379999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.380000-389999">380000-389999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/aplist/aplist.390000-399999">390000-399999</option>
+<option value="aplist/aplist.00000-09999">1-9999</option>
+<option value="aplist/aplist.10000-19999">10000-19999</option>
+<option value="aplist/aplist.20000-29999">20000-29999</option>
+<option value="aplist/aplist.30000-39999">30000-39999</option>
+<option value="aplist/aplist.40000-49999">40000-49999</option>
+<option value="aplist/aplist.50000-59999">50000-59999</option>
+<option value="aplist/aplist.60000-69999">60000-69999</option>
+<option value="aplist/aplist.70000-79999">70000-79999</option>
+<option value="aplist/aplist.80000-89999">80000-89999</option>
+<option value="aplist/aplist.90000-99999">90000-99999</option>
+<option value="aplist/aplist.100000-109999">100000-109999</option>
+<option value="aplist/aplist.110000-119999">110000-119999</option>
+<option value="aplist/aplist.120000-129999">120000-129999</option>
+<option value="aplist/aplist.130000-139999">130000-139999</option>
+<option value="aplist/aplist.140000-149999">140000-149999</option>
+<option value="aplist/aplist.150000-159999">150000-159999</option>
+<option value="aplist/aplist.160000-169999">160000-169999</option>
+<option value="aplist/aplist.170000-179999">170000-179999</option>
+<option value="aplist/aplist.180000-189999">180000-189999</option>
+<option value="aplist/aplist.190000-199999">190000-199999</option>
+<option value="aplist/aplist.200000-209999">200000-209999</option>
+<option value="aplist/aplist.210000-219999">210000-219999</option>
+<option value="aplist/aplist.220000-229999">220000-229999</option>
+<option value="aplist/aplist.230000-239999">230000-239999</option>
+<option value="aplist/aplist.240000-249999">240000-249999</option>
+<option value="aplist/aplist.250000-259999">250000-259999</option>
+<option value="aplist/aplist.260000-269999">260000-269999</option>
+<option value="aplist/aplist.270000-279999">270000-279999</option>
+<option value="aplist/aplist.280000-289999">280000-289999</option>
+<option value="aplist/aplist.290000-299999">290000-299999</option>
+<option value="aplist/aplist.300000-309999">300000-309999</option>
+<option value="aplist/aplist.310000-319999">310000-319999</option>
+<option value="aplist/aplist.320000-329999">320000-329999</option>
+<option value="aplist/aplist.330000-339999">330000-339999</option>
+<option value="aplist/aplist.340000-349999">340000-349999</option>
+<option value="aplist/aplist.350000-359999">350000-359999</option>
+<option value="aplist/aplist.360000-369999">360000-369999</option>
+<option value="aplist/aplist.370000-379999">370000-379999</option>
+<option value="aplist/aplist.380000-389999">380000-389999</option>
+<option value="aplist/aplist.390000-399999">390000-399999</option>
+<option value="aplist/aplist.400000-409999">400000-409999</option>
+<option value="aplist/aplist.410000-419999">410000-419999</option>
+<option value="aplist/aplist.420000-429999">420000-429999</option>
+<option value="aplist/aplist.430000-439999">430000-439999</option>
+<option value="aplist/aplist.440000-449999">440000-449999</option>
+<option value="aplist/aplist.450000-459999">450000-459999</option>
+<option value="aplist/aplist.460000-469999">460000-469999</option>
+<option value="aplist/aplist.470000-479999">470000-479999</option>
+<option value="aplist/aplist.480000-489999">480000-489999</option>
+<option value="aplist/aplist.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -522,46 +581,56 @@ computed to several places but to save space is just entered as
 <form>
 <select name="url" width=30>
 <option value="None">Select a conductor range</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.00000-09999">1-9999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.10000-19999">10000-19999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.20000-29999">20000-29999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.30000-39999">30000-39999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.40000-49999">40000-49999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.50000-59999">50000-59999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.60000-69999">60000-69999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.70000-79999">70000-79999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.80000-89999">80000-89999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.90000-99999">90000-99999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.100000-109999">100000-109999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.110000-119999">110000-119999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.120000-129999">120000-129999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.130000-139999">130000-139999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.140000-149999">140000-149999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.150000-159999">150000-159999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.160000-169999">160000-169999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.170000-179999">170000-179999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.180000-189999">180000-189999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.190000-199999">190000-199999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.200000-209999">200000-209999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.210000-219999">210000-219999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.220000-229999">220000-229999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.230000-239999">230000-239999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.240000-249999">240000-249999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.250000-259999">250000-259999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.260000-269999">260000-269999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.270000-279999">270000-279999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.280000-289999">280000-289999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.290000-299999">290000-299999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.300000-309999">300000-309999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.310000-319999">310000-319999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.320000-329999">320000-329999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.330000-339999">330000-339999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.340000-349999">340000-349999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.350000-359999">350000-359999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.360000-369999">360000-369999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.370000-379999">370000-379999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.380000-389999">380000-389999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbsd/allbsd.390000-399999">390000-399999</option>
+<option value="allbsd/allbsd.00000-09999">1-9999</option>
+<option value="allbsd/allbsd.10000-19999">10000-19999</option>
+<option value="allbsd/allbsd.20000-29999">20000-29999</option>
+<option value="allbsd/allbsd.30000-39999">30000-39999</option>
+<option value="allbsd/allbsd.40000-49999">40000-49999</option>
+<option value="allbsd/allbsd.50000-59999">50000-59999</option>
+<option value="allbsd/allbsd.60000-69999">60000-69999</option>
+<option value="allbsd/allbsd.70000-79999">70000-79999</option>
+<option value="allbsd/allbsd.80000-89999">80000-89999</option>
+<option value="allbsd/allbsd.90000-99999">90000-99999</option>
+<option value="allbsd/allbsd.100000-109999">100000-109999</option>
+<option value="allbsd/allbsd.110000-119999">110000-119999</option>
+<option value="allbsd/allbsd.120000-129999">120000-129999</option>
+<option value="allbsd/allbsd.130000-139999">130000-139999</option>
+<option value="allbsd/allbsd.140000-149999">140000-149999</option>
+<option value="allbsd/allbsd.150000-159999">150000-159999</option>
+<option value="allbsd/allbsd.160000-169999">160000-169999</option>
+<option value="allbsd/allbsd.170000-179999">170000-179999</option>
+<option value="allbsd/allbsd.180000-189999">180000-189999</option>
+<option value="allbsd/allbsd.190000-199999">190000-199999</option>
+<option value="allbsd/allbsd.200000-209999">200000-209999</option>
+<option value="allbsd/allbsd.210000-219999">210000-219999</option>
+<option value="allbsd/allbsd.220000-229999">220000-229999</option>
+<option value="allbsd/allbsd.230000-239999">230000-239999</option>
+<option value="allbsd/allbsd.240000-249999">240000-249999</option>
+<option value="allbsd/allbsd.250000-259999">250000-259999</option>
+<option value="allbsd/allbsd.260000-269999">260000-269999</option>
+<option value="allbsd/allbsd.270000-279999">270000-279999</option>
+<option value="allbsd/allbsd.280000-289999">280000-289999</option>
+<option value="allbsd/allbsd.290000-299999">290000-299999</option>
+<option value="allbsd/allbsd.300000-309999">300000-309999</option>
+<option value="allbsd/allbsd.310000-319999">310000-319999</option>
+<option value="allbsd/allbsd.320000-329999">320000-329999</option>
+<option value="allbsd/allbsd.330000-339999">330000-339999</option>
+<option value="allbsd/allbsd.340000-349999">340000-349999</option>
+<option value="allbsd/allbsd.350000-359999">350000-359999</option>
+<option value="allbsd/allbsd.360000-369999">360000-369999</option>
+<option value="allbsd/allbsd.370000-379999">370000-379999</option>
+<option value="allbsd/allbsd.380000-389999">380000-389999</option>
+<option value="allbsd/allbsd.390000-399999">390000-399999</option>
+<option value="allbsd/allbsd.400000-409999">400000-409999</option>
+<option value="allbsd/allbsd.410000-419999">410000-419999</option>
+<option value="allbsd/allbsd.420000-429999">420000-429999</option>
+<option value="allbsd/allbsd.430000-439999">430000-439999</option>
+<option value="allbsd/allbsd.440000-449999">440000-449999</option>
+<option value="allbsd/allbsd.450000-459999">450000-459999</option>
+<option value="allbsd/allbsd.460000-469999">460000-469999</option>
+<option value="allbsd/allbsd.470000-479999">470000-479999</option>
+<option value="allbsd/allbsd.480000-489999">480000-489999</option>
+<option value="allbsd/allbsd.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -605,60 +674,70 @@ where:
 <form>
 <select name="url" width=30>
 <option value="None">Select a conductor range</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.00000-09999">1-9999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.10000-19999">10000-19999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.20000-29999">20000-29999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.30000-39999">30000-39999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.40000-49999">40000-49999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.50000-59999">50000-59999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.60000-69999">60000-69999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.70000-79999">70000-79999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.80000-89999">80000-89999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.90000-99999">90000-99999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.100000-109999">100000-109999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.110000-119999">110000-119999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.120000-129999">120000-129999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.130000-139999">130000-139999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.140000-149999">140000-149999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.150000-159999">150000-159999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.160000-169999">160000-169999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.170000-179999">170000-179999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.180000-189999">180000-189999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.190000-199999">190000-199999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.200000-209999">200000-209999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.210000-219999">210000-219999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.220000-229999">220000-229999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.230000-239999">230000-239999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.240000-249999">240000-249999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.250000-259999">250000-259999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.260000-269999">260000-269999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.270000-279999">270000-279999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.280000-289999">280000-289999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.290000-299999">290000-299999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.300000-309999">300000-309999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.310000-319999">310000-319999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.320000-329999">320000-329999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.330000-339999">330000-339999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.340000-349999">340000-349999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.350000-359999">350000-359999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.360000-369999">360000-369999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.370000-379999">370000-379999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.380000-389999">380000-389999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allbigsha/allbigsha.390000-399999">390000-399999</option>
+<option value="allbigsha/allbigsha.00000-09999">1-9999</option>
+<option value="allbigsha/allbigsha.10000-19999">10000-19999</option>
+<option value="allbigsha/allbigsha.20000-29999">20000-29999</option>
+<option value="allbigsha/allbigsha.30000-39999">30000-39999</option>
+<option value="allbigsha/allbigsha.40000-49999">40000-49999</option>
+<option value="allbigsha/allbigsha.50000-59999">50000-59999</option>
+<option value="allbigsha/allbigsha.60000-69999">60000-69999</option>
+<option value="allbigsha/allbigsha.70000-79999">70000-79999</option>
+<option value="allbigsha/allbigsha.80000-89999">80000-89999</option>
+<option value="allbigsha/allbigsha.90000-99999">90000-99999</option>
+<option value="allbigsha/allbigsha.100000-109999">100000-109999</option>
+<option value="allbigsha/allbigsha.110000-119999">110000-119999</option>
+<option value="allbigsha/allbigsha.120000-129999">120000-129999</option>
+<option value="allbigsha/allbigsha.130000-139999">130000-139999</option>
+<option value="allbigsha/allbigsha.140000-149999">140000-149999</option>
+<option value="allbigsha/allbigsha.150000-159999">150000-159999</option>
+<option value="allbigsha/allbigsha.160000-169999">160000-169999</option>
+<option value="allbigsha/allbigsha.170000-179999">170000-179999</option>
+<option value="allbigsha/allbigsha.180000-189999">180000-189999</option>
+<option value="allbigsha/allbigsha.190000-199999">190000-199999</option>
+<option value="allbigsha/allbigsha.200000-209999">200000-209999</option>
+<option value="allbigsha/allbigsha.210000-219999">210000-219999</option>
+<option value="allbigsha/allbigsha.220000-229999">220000-229999</option>
+<option value="allbigsha/allbigsha.230000-239999">230000-239999</option>
+<option value="allbigsha/allbigsha.240000-249999">240000-249999</option>
+<option value="allbigsha/allbigsha.250000-259999">250000-259999</option>
+<option value="allbigsha/allbigsha.260000-269999">260000-269999</option>
+<option value="allbigsha/allbigsha.270000-279999">270000-279999</option>
+<option value="allbigsha/allbigsha.280000-289999">280000-289999</option>
+<option value="allbigsha/allbigsha.290000-299999">290000-299999</option>
+<option value="allbigsha/allbigsha.300000-309999">300000-309999</option>
+<option value="allbigsha/allbigsha.310000-319999">310000-319999</option>
+<option value="allbigsha/allbigsha.320000-329999">320000-329999</option>
+<option value="allbigsha/allbigsha.330000-339999">330000-339999</option>
+<option value="allbigsha/allbigsha.340000-349999">340000-349999</option>
+<option value="allbigsha/allbigsha.350000-359999">350000-359999</option>
+<option value="allbigsha/allbigsha.360000-369999">360000-369999</option>
+<option value="allbigsha/allbigsha.370000-379999">370000-379999</option>
+<option value="allbigsha/allbigsha.380000-389999">380000-389999</option>
+<option value="allbigsha/allbigsha.390000-399999">390000-399999</option>
+<option value="allbigsha/allbigsha.400000-409999">400000-409999</option>
+<option value="allbigsha/allbigsha.410000-419999">410000-419999</option>
+<option value="allbigsha/allbigsha.420000-429999">420000-429999</option>
+<option value="allbigsha/allbigsha.430000-439999">430000-439999</option>
+<option value="allbigsha/allbigsha.440000-449999">440000-449999</option>
+<option value="allbigsha/allbigsha.450000-459999">450000-459999</option>
+<option value="allbigsha/allbigsha.460000-469999">460000-469999</option>
+<option value="allbigsha/allbigsha.470000-479999">470000-479999</option>
+<option value="allbigsha/allbigsha.480000-489999">480000-489999</option>
+<option value="allbigsha/allbigsha.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
 Lists of the curves with non-trivial Tate-Shafarevich group, according
 to the BSD conjecture; i.e., curves whose "analytic order of Sha" is
-greater than 1.  The record (to conductor 390000) is 5625=75<sup>2</sup>
+greater than 1.  The record (to conductor 410000) is 5625=75<sup>2</sup>
 for 165066d3.
 </li>
 <br>
 <li>
 <a href="shas.html">shas.html</a><br>
-A summary table of large Shas.  Note that up to conductor 400000
-there are 192161 elliptic curves with non-trivial Sha, with ranks 0
-(176631 curves), 1 (15509 curves), 2 (21 curves, all with
+A summary table of large Shas.  Note that up to conductor 500000
+there are 243527 elliptic curves with non-trivial Sha, with ranks 0
+(222922 curves), 1 (20563 curves), 2 (42 curves, all with
 2-torsion).
 </li></ul>
 
@@ -673,46 +752,56 @@ Optimal curves:
 <form>
 <select name="url" width=30>
 <option value="None">Select a conductor range</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.00000-09999">1-9999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.10000-19999">10000-19999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.20000-29999">20000-29999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.30000-39999">30000-39999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.40000-49999">40000-49999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.50000-59999">50000-59999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.60000-69999">60000-69999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.70000-79999">70000-79999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.80000-89999">80000-89999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.90000-99999">90000-99999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.100000-109999">100000-109999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.110000-119999">110000-119999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.120000-129999">120000-129999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.130000-139999">130000-139999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.140000-149999">140000-149999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.150000-159999">150000-159999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.160000-169999">160000-169999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.170000-179999">170000-179999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.180000-189999">180000-189999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.190000-199999">190000-199999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.200000-209999">200000-209999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.210000-219999">210000-219999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.220000-229999">220000-229999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.230000-239999">230000-239999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.240000-249999">240000-249999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.250000-259999">250000-259999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.260000-269999">260000-269999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.270000-279999">270000-279999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.280000-289999">280000-289999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.290000-299999">290000-299999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.300000-309999">300000-309999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.310000-319999">310000-319999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.320000-329999">320000-329999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.330000-339999">330000-339999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.340000-349999">340000-349999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.350000-359999">350000-359999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.360000-369999">360000-369999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.370000-379999">370000-379999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.380000-389999">380000-389999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/degphi/degphi.390000-399999">390000-399999</option>
+<option value="degphi/degphi.00000-09999">1-9999</option>
+<option value="degphi/degphi.10000-19999">10000-19999</option>
+<option value="degphi/degphi.20000-29999">20000-29999</option>
+<option value="degphi/degphi.30000-39999">30000-39999</option>
+<option value="degphi/degphi.40000-49999">40000-49999</option>
+<option value="degphi/degphi.50000-59999">50000-59999</option>
+<option value="degphi/degphi.60000-69999">60000-69999</option>
+<option value="degphi/degphi.70000-79999">70000-79999</option>
+<option value="degphi/degphi.80000-89999">80000-89999</option>
+<option value="degphi/degphi.90000-99999">90000-99999</option>
+<option value="degphi/degphi.100000-109999">100000-109999</option>
+<option value="degphi/degphi.110000-119999">110000-119999</option>
+<option value="degphi/degphi.120000-129999">120000-129999</option>
+<option value="degphi/degphi.130000-139999">130000-139999</option>
+<option value="degphi/degphi.140000-149999">140000-149999</option>
+<option value="degphi/degphi.150000-159999">150000-159999</option>
+<option value="degphi/degphi.160000-169999">160000-169999</option>
+<option value="degphi/degphi.170000-179999">170000-179999</option>
+<option value="degphi/degphi.180000-189999">180000-189999</option>
+<option value="degphi/degphi.190000-199999">190000-199999</option>
+<option value="degphi/degphi.200000-209999">200000-209999</option>
+<option value="degphi/degphi.210000-219999">210000-219999</option>
+<option value="degphi/degphi.220000-229999">220000-229999</option>
+<option value="degphi/degphi.230000-239999">230000-239999</option>
+<option value="degphi/degphi.240000-249999">240000-249999</option>
+<option value="degphi/degphi.250000-259999">250000-259999</option>
+<option value="degphi/degphi.260000-269999">260000-269999</option>
+<option value="degphi/degphi.270000-279999">270000-279999</option>
+<option value="degphi/degphi.280000-289999">280000-289999</option>
+<option value="degphi/degphi.290000-299999">290000-299999</option>
+<option value="degphi/degphi.300000-309999">300000-309999</option>
+<option value="degphi/degphi.310000-319999">310000-319999</option>
+<option value="degphi/degphi.320000-329999">320000-329999</option>
+<option value="degphi/degphi.330000-339999">330000-339999</option>
+<option value="degphi/degphi.340000-349999">340000-349999</option>
+<option value="degphi/degphi.350000-359999">350000-359999</option>
+<option value="degphi/degphi.360000-369999">360000-369999</option>
+<option value="degphi/degphi.370000-379999">370000-379999</option>
+<option value="degphi/degphi.380000-389999">380000-389999</option>
+<option value="degphi/degphi.390000-399999">390000-399999</option>
+<option value="degphi/degphi.400000-409999">400000-409999</option>
+<option value="degphi/degphi.410000-419999">410000-419999</option>
+<option value="degphi/degphi.420000-429999">420000-429999</option>
+<option value="degphi/degphi.430000-439999">430000-439999</option>
+<option value="degphi/degphi.440000-449999">440000-449999</option>
+<option value="degphi/degphi.450000-459999">450000-459999</option>
+<option value="degphi/degphi.460000-469999">460000-469999</option>
+<option value="degphi/degphi.470000-479999">470000-479999</option>
+<option value="degphi/degphi.480000-489999">480000-489999</option>
+<option value="degphi/degphi.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -734,46 +823,56 @@ All curves:
 <form>
 <select name="url" width=30>
 <option value="None">Select a conductor range</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.00000-09999">1-9999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.10000-19999">10000-19999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.20000-29999">20000-29999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.30000-39999">30000-39999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.40000-49999">40000-49999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.50000-59999">50000-59999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.60000-69999">60000-69999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.70000-79999">70000-79999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.80000-89999">80000-89999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.90000-99999">90000-99999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.100000-109999">100000-109999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.110000-119999">110000-119999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.120000-129999">120000-129999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.130000-139999">130000-139999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.140000-149999">140000-149999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.150000-159999">150000-159999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.160000-169999">160000-169999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.170000-179999">170000-179999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.180000-189999">180000-189999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.190000-199999">190000-199999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.200000-209999">200000-209999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.210000-219999">210000-219999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.220000-229999">220000-229999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.230000-239999">230000-239999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.240000-249999">240000-249999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.250000-259999">250000-259999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.260000-269999">260000-269999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.270000-279999">270000-279999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.280000-289999">280000-289999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.290000-299999">290000-299999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.300000-309999">300000-309999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.310000-319999">310000-319999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.320000-329999">320000-329999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.330000-339999">330000-339999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.340000-349999">340000-349999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.350000-359999">350000-359999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.360000-369999">360000-369999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.370000-379999">370000-379999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.380000-389999">380000-389999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/alldegphi/alldegphi.390000-399999">390000-399999</option>
+<option value="alldegphi/alldegphi.00000-09999">1-9999</option>
+<option value="alldegphi/alldegphi.10000-19999">10000-19999</option>
+<option value="alldegphi/alldegphi.20000-29999">20000-29999</option>
+<option value="alldegphi/alldegphi.30000-39999">30000-39999</option>
+<option value="alldegphi/alldegphi.40000-49999">40000-49999</option>
+<option value="alldegphi/alldegphi.50000-59999">50000-59999</option>
+<option value="alldegphi/alldegphi.60000-69999">60000-69999</option>
+<option value="alldegphi/alldegphi.70000-79999">70000-79999</option>
+<option value="alldegphi/alldegphi.80000-89999">80000-89999</option>
+<option value="alldegphi/alldegphi.90000-99999">90000-99999</option>
+<option value="alldegphi/alldegphi.100000-109999">100000-109999</option>
+<option value="alldegphi/alldegphi.110000-119999">110000-119999</option>
+<option value="alldegphi/alldegphi.120000-129999">120000-129999</option>
+<option value="alldegphi/alldegphi.130000-139999">130000-139999</option>
+<option value="alldegphi/alldegphi.140000-149999">140000-149999</option>
+<option value="alldegphi/alldegphi.150000-159999">150000-159999</option>
+<option value="alldegphi/alldegphi.160000-169999">160000-169999</option>
+<option value="alldegphi/alldegphi.170000-179999">170000-179999</option>
+<option value="alldegphi/alldegphi.180000-189999">180000-189999</option>
+<option value="alldegphi/alldegphi.190000-199999">190000-199999</option>
+<option value="alldegphi/alldegphi.200000-209999">200000-209999</option>
+<option value="alldegphi/alldegphi.210000-219999">210000-219999</option>
+<option value="alldegphi/alldegphi.220000-229999">220000-229999</option>
+<option value="alldegphi/alldegphi.230000-239999">230000-239999</option>
+<option value="alldegphi/alldegphi.240000-249999">240000-249999</option>
+<option value="alldegphi/alldegphi.250000-259999">250000-259999</option>
+<option value="alldegphi/alldegphi.260000-269999">260000-269999</option>
+<option value="alldegphi/alldegphi.270000-279999">270000-279999</option>
+<option value="alldegphi/alldegphi.280000-289999">280000-289999</option>
+<option value="alldegphi/alldegphi.290000-299999">290000-299999</option>
+<option value="alldegphi/alldegphi.300000-309999">300000-309999</option>
+<option value="alldegphi/alldegphi.310000-319999">310000-319999</option>
+<option value="alldegphi/alldegphi.320000-329999">320000-329999</option>
+<option value="alldegphi/alldegphi.330000-339999">330000-339999</option>
+<option value="alldegphi/alldegphi.340000-349999">340000-349999</option>
+<option value="alldegphi/alldegphi.350000-359999">350000-359999</option>
+<option value="alldegphi/alldegphi.360000-369999">360000-369999</option>
+<option value="alldegphi/alldegphi.370000-379999">370000-379999</option>
+<option value="alldegphi/alldegphi.380000-389999">380000-389999</option>
+<option value="alldegphi/alldegphi.390000-399999">390000-399999</option>
+<option value="alldegphi/alldegphi.400000-409999">400000-409999</option>
+<option value="alldegphi/alldegphi.410000-419999">410000-419999</option>
+<option value="alldegphi/alldegphi.420000-429999">420000-429999</option>
+<option value="alldegphi/alldegphi.430000-439999">430000-439999</option>
+<option value="alldegphi/alldegphi.440000-449999">440000-449999</option>
+<option value="alldegphi/alldegphi.450000-459999">450000-459999</option>
+<option value="alldegphi/alldegphi.460000-469999">460000-469999</option>
+<option value="alldegphi/alldegphi.470000-479999">470000-479999</option>
+<option value="alldegphi/alldegphi.480000-489999">480000-489999</option>
+<option value="alldegphi/alldegphi.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -806,45 +905,55 @@ TABLE SIX: ISOGENY MATRICES
 <form>
 <select name="url" width=30>
 <option value="None">Select a conductor range</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.00000-09999">1-9999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.10000-19999">10000-19999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.20000-29999">20000-29999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.30000-39999">30000-39999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.40000-49999">40000-49999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.50000-59999">50000-59999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.60000-69999">60000-69999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.70000-79999">70000-79999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.80000-89999">80000-89999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.90000-99999">90000-99999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.100000-109999">100000-109999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.110000-119999">110000-119999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.120000-129999">120000-129999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.130000-139999">130000-139999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.140000-149999">140000-149999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.150000-159999">150000-159999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.160000-169999">160000-169999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.170000-179999">170000-179999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.180000-189999">180000-189999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.190000-199999">190000-199999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.200000-209999">200000-209999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.210000-219999">210000-219999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.220000-229999">220000-229999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.240000-249999">240000-249999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.250000-259999">250000-259999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.260000-269999">260000-269999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.270000-279999">270000-279999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.280000-289999">280000-289999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.290000-299999">290000-299999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.300000-309999">300000-309999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.310000-319999">310000-319999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.320000-329999">320000-329999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.330000-339999">330000-339999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.340000-349999">340000-349999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.350000-359999">350000-359999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.360000-369999">360000-369999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.370000-379999">370000-379999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.380000-389999">380000-389999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/allisog/allisog.390000-399999">390000-399999</option>
+<option value="allisog/allisog.00000-09999">1-9999</option>
+<option value="allisog/allisog.10000-19999">10000-19999</option>
+<option value="allisog/allisog.20000-29999">20000-29999</option>
+<option value="allisog/allisog.30000-39999">30000-39999</option>
+<option value="allisog/allisog.40000-49999">40000-49999</option>
+<option value="allisog/allisog.50000-59999">50000-59999</option>
+<option value="allisog/allisog.60000-69999">60000-69999</option>
+<option value="allisog/allisog.70000-79999">70000-79999</option>
+<option value="allisog/allisog.80000-89999">80000-89999</option>
+<option value="allisog/allisog.90000-99999">90000-99999</option>
+<option value="allisog/allisog.100000-109999">100000-109999</option>
+<option value="allisog/allisog.110000-119999">110000-119999</option>
+<option value="allisog/allisog.120000-129999">120000-129999</option>
+<option value="allisog/allisog.130000-139999">130000-139999</option>
+<option value="allisog/allisog.140000-149999">140000-149999</option>
+<option value="allisog/allisog.150000-159999">150000-159999</option>
+<option value="allisog/allisog.160000-169999">160000-169999</option>
+<option value="allisog/allisog.170000-179999">170000-179999</option>
+<option value="allisog/allisog.180000-189999">180000-189999</option>
+<option value="allisog/allisog.190000-199999">190000-199999</option>
+<option value="allisog/allisog.200000-209999">200000-209999</option>
+<option value="allisog/allisog.210000-219999">210000-219999</option>
+<option value="allisog/allisog.220000-229999">220000-229999</option>
+<option value="allisog/allisog.240000-249999">240000-249999</option>
+<option value="allisog/allisog.250000-259999">250000-259999</option>
+<option value="allisog/allisog.260000-269999">260000-269999</option>
+<option value="allisog/allisog.270000-279999">270000-279999</option>
+<option value="allisog/allisog.280000-289999">280000-289999</option>
+<option value="allisog/allisog.290000-299999">290000-299999</option>
+<option value="allisog/allisog.300000-309999">300000-309999</option>
+<option value="allisog/allisog.310000-319999">310000-319999</option>
+<option value="allisog/allisog.320000-329999">320000-329999</option>
+<option value="allisog/allisog.330000-339999">330000-339999</option>
+<option value="allisog/allisog.340000-349999">340000-349999</option>
+<option value="allisog/allisog.350000-359999">350000-359999</option>
+<option value="allisog/allisog.360000-369999">360000-369999</option>
+<option value="allisog/allisog.370000-379999">370000-379999</option>
+<option value="allisog/allisog.380000-389999">380000-389999</option>
+<option value="allisog/allisog.390000-399999">390000-399999</option>
+<option value="allisog/allisog.400000-409999">400000-409999</option>
+<option value="allisog/allisog.410000-419999">410000-419999</option>
+<option value="allisog/allisog.420000-429999">420000-429999</option>
+<option value="allisog/allisog.430000-439999">430000-439999</option>
+<option value="allisog/allisog.440000-449999">440000-449999</option>
+<option value="allisog/allisog.450000-459999">450000-459999</option>
+<option value="allisog/allisog.460000-469999">460000-469999</option>
+<option value="allisog/allisog.470000-479999">470000-479999</option>
+<option value="allisog/allisog.480000-489999">480000-489999</option>
+<option value="allisog/allisog.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -878,51 +987,60 @@ TABLE SEVEN: INTEGRAL POINTS
 <form>
 <select name="url" width=30>
 <option value="None">Select a conductor range</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.00000-09999">1-9999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.10000-19999">10000-19999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.20000-29999">20000-29999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.30000-39999">30000-39999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.40000-49999">40000-49999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.50000-59999">50000-59999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.60000-69999">60000-69999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.70000-79999">70000-79999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.80000-89999">80000-89999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.90000-99999">90000-99999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.100000-109999">100000-109999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.110000-119999">110000-119999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.120000-129999">120000-129999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.130000-139999">130000-139999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.140000-149999">140000-149999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.150000-159999">150000-159999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.160000-169999">160000-169999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.170000-179999">170000-179999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.180000-189999">180000-189999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.190000-199999">190000-199999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.200000-209999">200000-209999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.210000-219999">210000-219999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.220000-229999">220000-229999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.230000-239999">230000-239999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.240000-249999">240000-249999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.250000-259999">250000-259999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.260000-269999">260000-269999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.270000-279999">270000-279999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.280000-289999">280000-289999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.290000-299999">290000-299999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.300000-309999">300000-309999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.310000-319999">310000-319999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.320000-329999">320000-329999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.330000-339999">330000-339999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.340000-349999">340000-349999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.350000-359999">350000-359999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.360000-369999">360000-369999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.370000-379999">370000-379999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.380000-389999">380000-389999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/intpts/intpts.390000-399999">390000-399999</option>
+<option value="intpts/intpts.00000-09999">1-9999</option>
+<option value="intpts/intpts.10000-19999">10000-19999</option>
+<option value="intpts/intpts.20000-29999">20000-29999</option>
+<option value="intpts/intpts.30000-39999">30000-39999</option>
+<option value="intpts/intpts.40000-49999">40000-49999</option>
+<option value="intpts/intpts.50000-59999">50000-59999</option>
+<option value="intpts/intpts.60000-69999">60000-69999</option>
+<option value="intpts/intpts.70000-79999">70000-79999</option>
+<option value="intpts/intpts.80000-89999">80000-89999</option>
+<option value="intpts/intpts.90000-99999">90000-99999</option>
+<option value="intpts/intpts.100000-109999">100000-109999</option>
+<option value="intpts/intpts.110000-119999">110000-119999</option>
+<option value="intpts/intpts.120000-129999">120000-129999</option>
+<option value="intpts/intpts.130000-139999">130000-139999</option>
+<option value="intpts/intpts.140000-149999">140000-149999</option>
+<option value="intpts/intpts.150000-159999">150000-159999</option>
+<option value="intpts/intpts.160000-169999">160000-169999</option>
+<option value="intpts/intpts.170000-179999">170000-179999</option>
+<option value="intpts/intpts.180000-189999">180000-189999</option>
+<option value="intpts/intpts.190000-199999">190000-199999</option>
+<option value="intpts/intpts.200000-209999">200000-209999</option>
+<option value="intpts/intpts.210000-219999">210000-219999</option>
+<option value="intpts/intpts.220000-229999">220000-229999</option>
+<option value="intpts/intpts.230000-239999">230000-239999</option>
+<option value="intpts/intpts.240000-249999">240000-249999</option>
+<option value="intpts/intpts.250000-259999">250000-259999</option>
+<option value="intpts/intpts.260000-269999">260000-269999</option>
+<option value="intpts/intpts.270000-279999">270000-279999</option>
+<option value="intpts/intpts.280000-289999">280000-289999</option>
+<option value="intpts/intpts.290000-299999">290000-299999</option>
+<option value="intpts/intpts.300000-309999">300000-309999</option>
+<option value="intpts/intpts.310000-319999">310000-319999</option>
+<option value="intpts/intpts.320000-329999">320000-329999</option>
+<option value="intpts/intpts.330000-339999">330000-339999</option>
+<option value="intpts/intpts.340000-349999">340000-349999</option>
+<option value="intpts/intpts.350000-359999">350000-359999</option>
+<option value="intpts/intpts.360000-369999">360000-369999</option>
+<option value="intpts/intpts.370000-379999">370000-379999</option>
+<option value="intpts/intpts.380000-389999">380000-389999</option>
+<option value="intpts/intpts.390000-399999">390000-399999</option>
+<option value="intpts/intpts.400000-409999">400000-409999</option>
+<option value="intpts/intpts.410000-419999">410000-419999</option>
+<option value="intpts/intpts.420000-429999">420000-429999</option>
+<option value="intpts/intpts.430000-439999">430000-439999</option>
+<option value="intpts/intpts.440000-449999">440000-449999</option>
+<option value="intpts/intpts.450000-459999">450000-459999</option>
+<option value="intpts/intpts.460000-469999">460000-469999</option>
+<option value="intpts/intpts.470000-479999">470000-479999</option>
+<option value="intpts/intpts.480000-489999">480000-489999</option>
+<option value="intpts/intpts.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
-A table giving the x-coordinates of (almost) all integral points on all
-curves. <b>Corrected</b> 2009-01-01, but still incomplete.
+A table giving the x-coordinates of all integral points on all curves.
 
 <br>
 Data format with sample line:
@@ -946,7 +1064,7 @@ Data format with sample line:
 <ul>
 <li>
 <p>
-For isogeny classes of curves of conductor greater than 60000, we have
+For isogeny classes of curves of conductor greater than 400000, we have
 not yet determined in all cases which curve in each class is optimal.
 However, in all cases we have verified that the Manin constant of the
 optimal curve is equal to 1 (as it is conjectured to be for every
@@ -954,75 +1072,108 @@ optimal curve), even in cases where we do not know for sure which
 curve is optimal.
 </p>
 <p>
-While we could (using our modular symbols programs) determine the
-optimal curve in any individual case, this would take a long time to
-do for all remaining cases.  For more details on this, see my Appendix
-to the paper "The Manin Constant" by Amod Agashe, Ken Ribet and
-William Stein [Pure and Applied Mathematics Quarterly, Vol. 2 no.2
-(2006), pp. 617-636.]
+While we can (using our modular symbols programs) determine the
+optimal curve in any individual case, this takes a long time to do for
+all remaining cases; this is ongoing.  For more details on this, see
+my Appendix to the paper "The Manin Constant" by Amod Agashe, Ken
+Ribet and William Stein [Pure and Applied Mathematics Quarterly,
+Vol. 2 no.2 (2006), pp. 617-636.]
 and <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc/manin.txt">these
-notes</a> updating the results for all conductors to 400000.  These
-updated results include the proof that Manin's constant is 1 in all
-cases, together with a list of which curves in the class might be
+detailed notes</a> with full results for all conductors to 500000.
+These updated results include the proof that Manin's constant is 1 in
+all cases, together with a list of which curves in the class might be
 optimal, given the incomplete modular symbol computations carried out
 to date.  Note, however, that it follows from computation of the
 modular degrees of all curves in the class (which computation is
-conditional on Stevens's conjecture) that the optimal curve is indeed
+conditional on Stevens's conjecture) that the optimal curve is always
 the first curve listed.
 </p>
 <p>
 <form>
 <select name="url" width=30>
 <option value="None">Select a conductor range</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.06">60000-69999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.07">70000-79999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.08">80000-89999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.09">90000-99999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.10">100000-109999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.11">110000-119999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.12">120000-129999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.13">130000-139999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.14">140000-149999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.15">150000-159999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.16">160000-169999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.17">170000-179999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.18">180000-189999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.19">190000-199999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.20">200000-209999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.21">210000-219999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.22">220000-229999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.23">230000-239999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.24">240000-249999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.25">250000-259999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.26">260000-269999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.27">270000-279999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.28">280000-289999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.29">290000-299999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.30">300000-309999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.31">310000-319999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.32">320000-329999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.33">330000-339999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.34">340000-349999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.35">350000-359999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.36">360000-369999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.37">370000-379999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.38">380000-389999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/optimality/optimality.39">390000-399999</option>
+<option value="opt_man/opt_man.00000-09999">00000-09999</option>
+<option value="opt_man/opt_man.10000-19999">10000-19999</option>
+<option value="opt_man/opt_man.20000-29999">20000-29999</option>
+<option value="opt_man/opt_man.30000-39999">30000-39999</option>
+<option value="opt_man/opt_man.40000-49999">40000-49999</option>
+<option value="opt_man/opt_man.50000-59999">50000-59999</option>
+<option value="opt_man/opt_man.60000-69999">60000-69999</option>
+<option value="opt_man/opt_man.70000-79999">70000-79999</option>
+<option value="opt_man/opt_man.80000-89999">80000-89999</option>
+<option value="opt_man/opt_man.90000-99999">90000-99999</option>
+<option value="opt_man/opt_man.100000-109999">100000-109999</option>
+<option value="opt_man/opt_man.110000-119999">110000-119999</option>
+<option value="opt_man/opt_man.120000-129999">120000-129999</option>
+<option value="opt_man/opt_man.130000-139999">130000-139999</option>
+<option value="opt_man/opt_man.140000-149999">140000-149999</option>
+<option value="opt_man/opt_man.150000-159999">150000-159999</option>
+<option value="opt_man/opt_man.160000-169999">160000-169999</option>
+<option value="opt_man/opt_man.170000-179999">170000-179999</option>
+<option value="opt_man/opt_man.180000-189999">180000-189999</option>
+<option value="opt_man/opt_man.190000-199999">190000-199999</option>
+<option value="opt_man/opt_man.200000-209999">200000-209999</option>
+<option value="opt_man/opt_man.210000-219999">210000-219999</option>
+<option value="opt_man/opt_man.220000-229999">220000-229999</option>
+<option value="opt_man/opt_man.230000-239999">230000-239999</option>
+<option value="opt_man/opt_man.240000-249999">240000-249999</option>
+<option value="opt_man/opt_man.250000-259999">250000-259999</option>
+<option value="opt_man/opt_man.260000-269999">260000-269999</option>
+<option value="opt_man/opt_man.270000-279999">270000-279999</option>
+<option value="opt_man/opt_man.280000-289999">280000-289999</option>
+<option value="opt_man/opt_man.290000-299999">290000-299999</option>
+<option value="opt_man/opt_man.300000-309999">300000-309999</option>
+<option value="opt_man/opt_man.310000-319999">310000-319999</option>
+<option value="opt_man/opt_man.320000-329999">320000-329999</option>
+<option value="opt_man/opt_man.330000-339999">330000-339999</option>
+<option value="opt_man/opt_man.340000-349999">340000-349999</option>
+<option value="opt_man/opt_man.350000-359999">350000-359999</option>
+<option value="opt_man/opt_man.360000-369999">360000-369999</option>
+<option value="opt_man/opt_man.370000-379999">370000-379999</option>
+<option value="opt_man/opt_man.380000-389999">380000-389999</option>
+<option value="opt_man/opt_man.390000-399999">390000-399999</option>
+<option value="opt_man/opt_man.400000-409999">400000-409999</option>
+<option value="opt_man/opt_man.410000-419999">410000-419999</option>
+<option value="opt_man/opt_man.420000-429999">420000-429999</option>
+<option value="opt_man/opt_man.430000-439999">430000-439999</option>
+<option value="opt_man/opt_man.440000-449999">440000-449999</option>
+<option value="opt_man/opt_man.450000-459999">450000-459999</option>
+<option value="opt_man/opt_man.460000-469999">460000-469999</option>
+<option value="opt_man/opt_man.470000-479999">470000-479999</option>
+<option value="opt_man/opt_man.480000-489999">480000-489999</option>
+<option value="opt_man/opt_man.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
-Summary of results known regarding optimality of all classes with
-conductor greater than 60000 and size at least 2.
+Table of results known regarding optimality and Manin constant in all
+isogeny classes.  For conductors greater than 400000, the values of
+the Manin constant are conditional on the first curve in the class
+being optimal.
 <br>
-Sample lines:
+Data format with sample lines:
 <table cellspacing="10" border="1">
 <tbody><tr>
-<th>Class</th> <th>Manin's constant</th> <th align="left">possible optimal curves</th>
+<th>N</th> <th>class</th> <th>#</th> <th>[a1,a2,a3,a4,a6]</th> <th>Optimality code</th> <th>Manin constant</th>
 </tr>
-<tr><td>60003a</td><td>c=1</td><td>optimal curve is E1</td></tr>
-<tr><td>60005a</td><td>c=1</td><td>2 possible optimal curves: E1 E2</td></tr>
-<tr><td>61710cz</td><td>c=1</td><td>6 possible optimal curves: E1 E2 E3 E5 E6 E8</td></tr>
+<tr><td>11</td><td>a</td><td>1</td><td>[0,-1,1,-10,-20]</td><td>1</td><td>1</td></tr>
+<tr><td>11</td><td>a</td><td>2</td><td>[0,-1,1,-7820,-263580]</td><td>0</td><td>1</td></tr>
+<tr><td>11</td><td>a</td><td>3</td><td>[0,-1,1,0,0]</td><td>0</td><td>5</td></tr>
+<tr><td>499992</td><td>a</td><td>1</td><td>[0,-1,0,4481,148204]</td><td>3</td><td>1</td></tr>
+<tr><td>499992</td><td>a</td><td>2</td><td>[0,-1,0,-29964,1526004]</td><td>3</td><td>1</td></tr>
+<tr><td>499992</td><td>a</td><td>3</td><td>[0,-1,0,-446624,115024188]</td><td>3</td><td>1</td></tr>
+<tr><td>499992</td><td>a</td><td>4</td><td>[0,-1,0,-164424,-24344100]</td><td>0</td><td>1</tr>
 </tbody></table>
+</p>
+<p>
+The optimality code is 0 for "not optimal", 1 for "optimal"
+and <i>n</i> for "one of <i>n</i> possibly optimal curves in this
+isogeny class".  In the case of isogeny class 11a above, out of the
+three curves in the class, the optimal curve is 11a1 (which is
+$X_0(11)$), the first two curves have Manin constant 1, while the
+curve 11a3 (which is $X_1(11)$) has Manin constant equal to 5.  In the
+class 499992a, out of four curves, the optimal curve is certainly one
+of the first 3; and if the optimal curve is indeed 499992a1 then all
+the Manin constants are equal to 1.
 </p>
 </li>
 </ul>
@@ -1036,46 +1187,56 @@ TABLE NINE: IMAGES OF GALOIS REPRESENTATIONS
 <form>
 <select name="url" width=30>
 <option value="None">Select a conductor range</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.00000-09999">1-9999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.10000-19999">10000-19999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.20000-29999">20000-29999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.30000-39999">30000-39999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.40000-49999">40000-49999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.50000-59999">50000-59999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.60000-69999">60000-69999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.70000-79999">70000-79999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.80000-89999">80000-89999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.90000-99999">90000-99999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.100000-109999">100000-109999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.110000-119999">110000-119999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.120000-129999">120000-129999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.130000-139999">130000-139999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.140000-149999">140000-149999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.150000-159999">150000-159999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.160000-169999">160000-169999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.170000-179999">170000-179999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.180000-189999">180000-189999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.190000-199999">190000-199999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.200000-209999">200000-209999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.210000-219999">210000-219999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.220000-229999">220000-229999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.230000-239999">230000-239999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.240000-249999">240000-249999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.250000-259999">250000-259999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.260000-269999">260000-269999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.270000-279999">270000-279999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.280000-289999">280000-289999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.290000-299999">290000-299999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.300000-309999">300000-309999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.310000-319999">310000-319999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.320000-329999">320000-329999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.330000-339999">330000-339999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.340000-349999">340000-349999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.350000-359999">350000-359999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.360000-369999">360000-369999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.370000-379999">370000-379999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.380000-389999">380000-389999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/galrep/galrep.390000-399999">390000-399999</option>
+<option value="galrep/galrep.00000-09999">1-9999</option>
+<option value="galrep/galrep.10000-19999">10000-19999</option>
+<option value="galrep/galrep.20000-29999">20000-29999</option>
+<option value="galrep/galrep.30000-39999">30000-39999</option>
+<option value="galrep/galrep.40000-49999">40000-49999</option>
+<option value="galrep/galrep.50000-59999">50000-59999</option>
+<option value="galrep/galrep.60000-69999">60000-69999</option>
+<option value="galrep/galrep.70000-79999">70000-79999</option>
+<option value="galrep/galrep.80000-89999">80000-89999</option>
+<option value="galrep/galrep.90000-99999">90000-99999</option>
+<option value="galrep/galrep.100000-109999">100000-109999</option>
+<option value="galrep/galrep.110000-119999">110000-119999</option>
+<option value="galrep/galrep.120000-129999">120000-129999</option>
+<option value="galrep/galrep.130000-139999">130000-139999</option>
+<option value="galrep/galrep.140000-149999">140000-149999</option>
+<option value="galrep/galrep.150000-159999">150000-159999</option>
+<option value="galrep/galrep.160000-169999">160000-169999</option>
+<option value="galrep/galrep.170000-179999">170000-179999</option>
+<option value="galrep/galrep.180000-189999">180000-189999</option>
+<option value="galrep/galrep.190000-199999">190000-199999</option>
+<option value="galrep/galrep.200000-209999">200000-209999</option>
+<option value="galrep/galrep.210000-219999">210000-219999</option>
+<option value="galrep/galrep.220000-229999">220000-229999</option>
+<option value="galrep/galrep.230000-239999">230000-239999</option>
+<option value="galrep/galrep.240000-249999">240000-249999</option>
+<option value="galrep/galrep.250000-259999">250000-259999</option>
+<option value="galrep/galrep.260000-269999">260000-269999</option>
+<option value="galrep/galrep.270000-279999">270000-279999</option>
+<option value="galrep/galrep.280000-289999">280000-289999</option>
+<option value="galrep/galrep.290000-299999">290000-299999</option>
+<option value="galrep/galrep.300000-309999">300000-309999</option>
+<option value="galrep/galrep.310000-319999">310000-319999</option>
+<option value="galrep/galrep.320000-329999">320000-329999</option>
+<option value="galrep/galrep.330000-339999">330000-339999</option>
+<option value="galrep/galrep.340000-349999">340000-349999</option>
+<option value="galrep/galrep.350000-359999">350000-359999</option>
+<option value="galrep/galrep.360000-369999">360000-369999</option>
+<option value="galrep/galrep.370000-379999">370000-379999</option>
+<option value="galrep/galrep.380000-389999">380000-389999</option>
+<option value="galrep/galrep.390000-399999">390000-399999</option>
+<option value="galrep/galrep.400000-409999">400000-409999</option>
+<option value="galrep/galrep.410000-419999">410000-419999</option>
+<option value="galrep/galrep.420000-429999">420000-429999</option>
+<option value="galrep/galrep.430000-439999">430000-439999</option>
+<option value="galrep/galrep.440000-449999">440000-449999</option>
+<option value="galrep/galrep.450000-459999">450000-459999</option>
+<option value="galrep/galrep.460000-469999">460000-469999</option>
+<option value="galrep/galrep.470000-479999">470000-479999</option>
+<option value="galrep/galrep.480000-489999">480000-489999</option>
+<option value="galrep/galrep.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -1117,46 +1278,56 @@ TABLE TEN: IMAGES OF TWO-ADIC GALOIS REPRESENTATION
 <form>
 <select name="url" width=30>
 <option value="None">Select a conductor range</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.00000-09999">1-9999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.10000-19999">10000-19999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.20000-29999">20000-29999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.30000-39999">30000-39999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.40000-49999">40000-49999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.50000-59999">50000-59999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.60000-69999">60000-69999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.70000-79999">70000-79999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.80000-89999">80000-89999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.90000-99999">90000-99999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.100000-109999">100000-109999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.110000-119999">110000-119999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.120000-129999">120000-129999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.130000-139999">130000-139999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.140000-149999">140000-149999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.150000-159999">150000-159999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.160000-169999">160000-169999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.170000-179999">170000-179999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.180000-189999">180000-189999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.190000-199999">190000-199999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.200000-209999">200000-209999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.210000-219999">210000-219999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.220000-229999">220000-229999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.230000-239999">230000-239999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.240000-249999">240000-249999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.250000-259999">250000-259999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.260000-269999">260000-269999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.270000-279999">270000-279999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.280000-289999">280000-289999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.290000-299999">290000-299999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.300000-309999">300000-309999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.310000-319999">310000-319999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.320000-329999">320000-329999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.330000-339999">330000-339999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.340000-349999">340000-349999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.350000-359999">350000-359999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.360000-369999">360000-369999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.370000-379999">370000-379999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.380000-389999">380000-389999</option>
-<option value="https://raw.githubusercontent.com/JohnCremona/ecdata/master/2adic/2adic.390000-399999">390000-399999</option>
+<option value="2adic/2adic.00000-09999">1-9999</option>
+<option value="2adic/2adic.10000-19999">10000-19999</option>
+<option value="2adic/2adic.20000-29999">20000-29999</option>
+<option value="2adic/2adic.30000-39999">30000-39999</option>
+<option value="2adic/2adic.40000-49999">40000-49999</option>
+<option value="2adic/2adic.50000-59999">50000-59999</option>
+<option value="2adic/2adic.60000-69999">60000-69999</option>
+<option value="2adic/2adic.70000-79999">70000-79999</option>
+<option value="2adic/2adic.80000-89999">80000-89999</option>
+<option value="2adic/2adic.90000-99999">90000-99999</option>
+<option value="2adic/2adic.100000-109999">100000-109999</option>
+<option value="2adic/2adic.110000-119999">110000-119999</option>
+<option value="2adic/2adic.120000-129999">120000-129999</option>
+<option value="2adic/2adic.130000-139999">130000-139999</option>
+<option value="2adic/2adic.140000-149999">140000-149999</option>
+<option value="2adic/2adic.150000-159999">150000-159999</option>
+<option value="2adic/2adic.160000-169999">160000-169999</option>
+<option value="2adic/2adic.170000-179999">170000-179999</option>
+<option value="2adic/2adic.180000-189999">180000-189999</option>
+<option value="2adic/2adic.190000-199999">190000-199999</option>
+<option value="2adic/2adic.200000-209999">200000-209999</option>
+<option value="2adic/2adic.210000-219999">210000-219999</option>
+<option value="2adic/2adic.220000-229999">220000-229999</option>
+<option value="2adic/2adic.230000-239999">230000-239999</option>
+<option value="2adic/2adic.240000-249999">240000-249999</option>
+<option value="2adic/2adic.250000-259999">250000-259999</option>
+<option value="2adic/2adic.260000-269999">260000-269999</option>
+<option value="2adic/2adic.270000-279999">270000-279999</option>
+<option value="2adic/2adic.280000-289999">280000-289999</option>
+<option value="2adic/2adic.290000-299999">290000-299999</option>
+<option value="2adic/2adic.300000-309999">300000-309999</option>
+<option value="2adic/2adic.310000-319999">310000-319999</option>
+<option value="2adic/2adic.320000-329999">320000-329999</option>
+<option value="2adic/2adic.330000-339999">330000-339999</option>
+<option value="2adic/2adic.340000-349999">340000-349999</option>
+<option value="2adic/2adic.350000-359999">350000-359999</option>
+<option value="2adic/2adic.360000-369999">360000-369999</option>
+<option value="2adic/2adic.370000-379999">370000-379999</option>
+<option value="2adic/2adic.380000-389999">380000-389999</option>
+<option value="2adic/2adic.390000-399999">390000-399999</option>
+<option value="2adic/2adic.400000-409999">400000-409999</option>
+<option value="2adic/2adic.410000-419999">410000-419999</option>
+<option value="2adic/2adic.420000-429999">420000-429999</option>
+<option value="2adic/2adic.430000-439999">430000-439999</option>
+<option value="2adic/2adic.440000-449999">440000-449999</option>
+<option value="2adic/2adic.450000-459999">450000-459999</option>
+<option value="2adic/2adic.460000-469999">460000-469999</option>
+<option value="2adic/2adic.470000-479999">470000-479999</option>
+<option value="2adic/2adic.480000-489999">480000-489999</option>
+<option value="2adic/2adic.490000-499999">490000-499999</option>
 </select>
 <input type=button value="Fetch" onClick="JumpToIt(this.form)">
 </form>
@@ -1193,12 +1364,111 @@ Data format with sample lines:
 </tbody></table>
 </li></ul>
 
-
+<h3>
+TABLE ELEVEN: TORSION GROWTH
+</h3>
+Torsion growth data has been computed so far for curves of conductor up
+to 400000, for extensions of degree up to 23.  (In degrees 11, 13,
+17, 19, 22 and 23 there are no cases of torsion growth).
+<ul>
+<li>
+<form>
+<select name="deg" width=10>
+<option value="None">Select a degree</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+<option value="5">5</option>
+<option value="6">6</option>
+<option value="7">7</option>
+<option value="8">8</option>
+<option value="9">9</option>
+<option value="10">10</option>
+<option value="12">12</option>
+<option value="14">14</option>
+<option value="15">15</option>
+<option value="16">16</option>
+<option value="18">18</option>
+<option value="20">20</option>
+<option value="21">21</option>
+</select>
+<select name="range" width=10>
+<option value="None">Select a conductor range</option>
+<option value="0-9999">0-9999</option>
+<option value="10000-19999">10000-19999</option>
+<option value="20000-29999">20000-29999</option>
+<option value="30000-39999">30000-39999</option>
+<option value="40000-49999">40000-49999</option>
+<option value="50000-59999">50000-59999</option>
+<option value="60000-69999">60000-69999</option>
+<option value="70000-79999">70000-79999</option>
+<option value="80000-89999">80000-89999</option>
+<option value="90000-99999">90000-99999</option>
+<option value="100000-109999">100000-109999</option>
+<option value="110000-119999">110000-119999</option>
+<option value="120000-129999">120000-129999</option>
+<option value="130000-139999">130000-139999</option>
+<option value="140000-149999">140000-149999</option>
+<option value="150000-159999">150000-159999</option>
+<option value="160000-169999">160000-169999</option>
+<option value="170000-179999">170000-179999</option>
+<option value="180000-189999">180000-189999</option>
+<option value="190000-199999">190000-199999</option>
+<option value="200000-209999">200000-209999</option>
+<option value="210000-219999">210000-219999</option>
+<option value="220000-229999">220000-229999</option>
+<option value="230000-239999">230000-239999</option>
+<option value="240000-249999">240000-249999</option>
+<option value="250000-259999">250000-259999</option>
+<option value="260000-269999">260000-269999</option>
+<option value="270000-279999">270000-279999</option>
+<option value="280000-289999">280000-289999</option>
+<option value="290000-299999">290000-299999</option>
+<option value="300000-309999">300000-309999</option>
+<option value="310000-319999">310000-319999</option>
+<option value="320000-329999">320000-329999</option>
+<option value="330000-339999">330000-339999</option>
+<option value="340000-349999">340000-349999</option>
+<option value="350000-359999">350000-359999</option>
+<option value="360000-369999">360000-369999</option>
+<option value="370000-379999">370000-379999</option>
+<option value="380000-389999">380000-389999</option>
+<option value="390000-399999">390000-399999</option>
+</select>
+<input type=button value="Fetch" onClick="JumpToTorGro(this.form)">
+</form>
+<p>
+For 2 &le; <i>d</i> &le; 23 we give for every curve <i>E</i> a list of the number
+fields <i>K</i> of degree <i>d</i> (if any) such that <i>E</i>(<i>K</i>)<sub>tors</sub> is strictly
+larger than <i>E</i>(<b>Q</b>)<sub>tors</sub> (and in case <i>d</i> is composite,
+strictly larger than <i>E</i>(<i>K'</i>)<sub>tors</sub> for all subfields <i>K'</i>&sub;
+</i>K</i>).
+</p>
+<p>
+Fields are specified by the coefficients of a canonical defining polynomial.
+Torsion structure is shown as [n] or [m,n] with m dividing n.
+</p>
+<p>
+Data format with sample lines (one in degree 2, one in degree 12):
+<table cellspacing="10" border="1">
+<tbody><tr>
+<th>Curve label</th> <th>[Torsion][Field]</th> <th>[Torsion][Field]</th> <th>[Torsion][Field]</th>
+</tr>
+<tr>
+<td>130014e1</td> <td>[2,2][1806,-1,1]</td> <td>[4][-23,-1,1]</td> <td>[4][175,-1,1]</td>
+</tr>
+<tr>
+<td>130032e1</td> <td colspan=3>[4][-10346,8862,-13965,14728,-4689,-1362,387,156,129,-86,9,0,1]</td>
+</tr>
+<tr>
+</tr>
+</tbody></table>
+</p>
 
 <hr>
 <p><b>Recent update
-    notes</b>:&nbsp; <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc/release_notes.md">17
-    October 2016</a>
+    notes</b>:&nbsp; <a href="https://raw.githubusercontent.com/JohnCremona/ecdata/master/doc/release_notes.md">26
+    November 2019</a>
 </p><hr>
 
 <tt>john dot cremona at gmail dot com</tt>
