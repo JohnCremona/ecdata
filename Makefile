@@ -23,6 +23,7 @@ GALREPS = galrep/galrep.?0000-?9999 galrep/galrep.??0000-??9999
 TWOADIC = 2adic/2adic.?0000-?9999 2adic/2adic.??0000-??9999
 OPTIMAL = opt_man/opt_man.?0000-?9999 opt_man/opt_man.??0000-??9999
 GROWTH = growth/*/growth*.*000-*999
+IWASAWA = iwasawa/iwasawa.?0000-?9999 iwasawa/iwasawa.1?0000-1?9999
 
 allcurves: $(ALLCURVES)
 	@echo $(ALLCURVES)
@@ -56,12 +57,14 @@ optimal: $(OPTIMAL)
 	@echo $(OPTIMAL)
 growth: $(GROWTH)
 	@echo $(GROWTH)
+iwasawa: $(IWASAWA)
+	@echo $(IWASAWA)
 
 HTMLFILES = html/index.html html/shas.html html/table.html html/curves.1-1000.html
 TEXTFILES = doc/manin.txt doc/file-format.txt doc/release_notes.md doc/merging.txt
-DATAFILES =  $(ALLCURVES) $(APLIST) $(BIGSHA) $(COUNT) $(DEGPHI) $(ALLDEGPHI) $(ALLGENS) $(BSD) $(ALLISOG) $(PARICURVES) $(INTPTS) $(GALREPS) $(TWOADIC) $(OPTIMAL) $(GROWTH)
+DATAFILES =  $(ALLCURVES) $(APLIST) $(BIGSHA) $(COUNT) $(DEGPHI) $(ALLDEGPHI) $(ALLGENS) $(BSD) $(ALLISOG) $(PARICURVES) $(INTPTS) $(GALREPS) $(TWOADIC) $(OPTIMAL) $(GROWTH) $(IWASAWA)
 FTPFILES = $(DATAFILES) $(TEXTFILES) $(HTMLFILES)
-DATASUBDIRS = allcurves aplist allbigsha count curves degphi alldegphi allgens allisog allbsd paricurves intpts galrep 2adic growth opt_man
+DATASUBDIRS = allcurves aplist allbigsha count curves degphi alldegphi allgens allisog allbsd paricurves intpts galrep 2adic growth opt_man iwasawa
 
 commit: $(FTPFILES)
 	git add $(DATAFILES)
