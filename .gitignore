@@ -2,9 +2,8 @@
 ecdata/*
 extra_tables/*
 ftpdir/*
-scripts/*
 tsat
-.hg*
 ecdata-*.tgz
 src
 database_cremona_ellcurve*.bz2
+scripts/trace_hash.py

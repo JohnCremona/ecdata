@@ -2,9 +2,8 @@
 
 CC = gcc
 
-FTP_HOST = warwick
-FTP_DIR = public_html/ftp/data
-DIST_DIR = /home/jec/ecdata/ecdata
+FTP_DIR = $(HOME)/JohnCremona.github.io/ftp/data
+DIST_DIR = $(HOME)/ecdata/ecdata
 
 ALLCURVES = allcurves/allcurves.?0000-?9999 allcurves/allcurves.??0000-??9999
 APLIST = aplist/aplist.?0000-?9999 aplist/aplist.??0000-??9999
@@ -89,9 +88,8 @@ tar: $(FTPFILES)
 	for d in $(DATASUBDIRS) html doc; do mkdir -p $(DIST_DIR)/$${d}; done
 	for f in $(FTPFILES); do ln -s $(PWD)/$${f} $(DIST_DIR)/$${f}; done
 	cd $(DIST_DIR)/..
-	tar -zchf ecdata-$(DATE).tgz ecdata
-	scp ecdata-$(DATE).tgz $(FTP_HOST):$(FTP_DIR)/..
-	ssh $(FTP_HOST) chmod a+r $(FTP_DIR)/../ecdata-$(DATE).tgz
+	tar -zchf $(FTP_DIR)/ecdata-$(DATE).tgz ecdata
+	rm -rf $(DIST_DIR)
 
 # NB The Sage import script requires that the tarball extracts to a
 # directory called 'ecdata'

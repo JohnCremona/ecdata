@@ -1,0 +1,187 @@
+Documentation of the content of the different text files containing
+data for elliptic curves over Q and how these map to the columns of
+the LMFDB table ec_curves
+
+Files not used for LMFDB data upload: curves, allcurves, aplist, allbigsha, degphi
+Files used: alllabels, allgens, allbsd, alldegphi, allisog, intpts,
+                       opt_man, 2adic, galreps.
+Also: torsion growth, Iwasawa data
+
+Here we describe each field (column) in the data files, using the
+column name from the LMFDB's ec_curves table where possible.  Some
+columns here are not LMFDB columns but are used for populating those;
+LMFDB columns which are not columns here are listed below as
+"dependent columns".  Some of these are trivially obtained (e.g. by
+concatenating strings), while others require constructing the curves.
+One day I will create extra text files for all these dependent columns
+so that reading the data in will be completely trivial.
+
+(0) 4 common fields in most files:
+
+1. conductor: int
+2. isoclass: string
+3. number: int
+4. ainvs: list of 5 ints
+
+Dependent columns: iso (conductor+isoclass), label (iso+number)
+
+(1) alllabels files have the 3 label fields and 3 more, 6 in all:
+
+4. conductor
+5. lmfdb_isoclass
+6. lmfdb_number
+
+Dependent columns: lmfdb_label, lmfdb_iso, lmfdb_number (and iso_nlabel)
+
+(2) allgens files have 2+r+t more fields, 6+r+t in all, where r is the
+rank and t the torsion rank:
+
+5. rank: int r
+6. torsion_structure: list of t = 0, 1 or 2 ints
+7..7+t-1. torsion_generators: point(s)
+7+t..7+t+r-1.  gens: point(s)
+
+Here each point has the form [x:y:z] where x,y,z are coprime integers,
+z>0, unweighted projective coordinates.
+
+Dependent columns: heights, torsion, torsion_primes, equation,
+                   num_bad_primes, bad_primes, jinv, min_quad_twist,
+                   signD, min_quad_twist, cm, trace_hash, local_data,
+                   semistable, aplist, anlist
+
+NB (1) these require creating each curve and should not be done on the
+fly.  We should write and run a one-off script to create a new data
+file with these columns.
+
+NB1 local_data is now a list (of length num_bad_primes) of dicts with keys
+
+'p', 'ord_cond', 'ord_disc', 'ord_den_j', 'red', 'rootno', 'kod', 'cp'
+
+but will be replaced by 7 columns each containing a list of length
+num_bad_primes:
+
+'conductor_valuations': list of ints
+'discriminant_valuations': list of ints
+'j_denominator_valuations': list of ints
+'reduction_types': list of ints
+'root_numbers': list of ints
+'kodaira_symbols': list of strings (latex without math delims)
+'tamagawa_numbers': list of ints
+
+NB2 min_quad_twist is a dict with 3 keys:
+'label'
+'lmfdb_label'
+'disc'
+
+but could be 3 columns:
+'twist_label'
+'twist_lmfdb_label'
+'twist_discriminant'
+
+or 2 columns:
+'twist_discriminant'
+'twist_ainvs'
+
+
+(3) allbsd files have 7 more fields, 11 in all:
+
+5. rank: int
+6. torsion: int
+7. tamagawa_product: int
+8. real_perod: real
+9. special_value: real
+10. regulator: real (or 1 when r=0)
+11. sha_an: real (approximate positive int)
+
+Dependent columns:  sha, sha_primes
+
+(4) alldegphi files have standard first 4 fields and 1 more, 5 in all:
+
+5. degree: int
+
+(5) allisog files only have one line per isogeny class.  Each line has 2 more fields, 6 in all:
+
+5. all_ainvs:  list of n lists of 5 ints (all ainvs of curves in the isogeny class)
+6. isogeny_matrix: list of n lists of n ints (matrix of isogeny degrees)
+
+ - Here, n is the class size
+ - Field 4 is the ainvs for curve #1 in the class
+ - NB before storing we sort all_ainvs (to get into the LMFDB order)
+   and apply the correct permutations to the rows and columns of
+   isogeny_matrix
+
+Dependent columns:  class_size, class_deg, isodeg, isogeny_degrees
+
+(6) intpts files 3 fields with label as one field:
+
+1. label: string
+2. ainvs
+3. xcoord_integral_points: list of ints
+
+Dependent columns:  num_int_pts
+
+(7) opt_man files have 2 more fields, 6 in all:
+
+5. optimality: int (0=no, 1=yes, n>0 if one of n possibles)
+6. manin_constant: int
+
+(8) 2adic files  have 4 more fields, 8 in all:
+
+5. 2adic_index: int or "inf"
+6. 2adic_level: int or "inf"
+7. 2adic_gens: list of lists of 4 ints
+8. 2adic_label: string
+
+Unused: 2adic_level
+Dependent columns:  2adic_log_level
+
+(9) galreps files have label as one field, n+1 in all where n is the
+number of non-maximal primes:
+
+1. label
+2..1+n. string
+Dependent columns:  nonmax_primes, nonmax_rad, modp_images
+
+----------------------------------------------------------------------
+
+New files with extra data
+
+ -omit columns already in other easy tables:
+       degree:                                                alldegphi
+       nonmax_primes, nonmax_rad, modp_images:                galrep
+       optimality, manin_constant:                            opt_man
+       num_int_pts, xcoord_integral_points:                   intpts
+       torsion_growth:                                        growth
+       2adic_label, 2adic_index, 2adic_log_level, 2adic_gens: 2adic
+       iwp0, iwdata:                                          iwasawa
+
+ -omit columns trivially obtained from these:
+       lmfdb_iso, num_bad_primes, sha_primes, torsion_primes,
+
+ -creating these requires reading of: allgens, alllabels, allisog,
+  which will then be no longer needed
+
+ -here we store 'class' and 'lmfdb_class' which just give the isogeny
+  class letter code, and not 'iso' or 'lmfdb_iso' which concatenate
+  the conductor with this.
+
+ -most data is in one file (curvedata.*) with a few columns which are
+  class invariants in a classdata.* file
+
+curvedata.*: label, isoclass, number, lmfdb_label, lmfdb_isoclass,
+             lmfdb_number, iso_nlabel,
+
+             conductor, ainvs, jinv, cm, isogeny_degrees, semistable,
+             signD, min_quad_twist_ainvs, min_quad_twist_disc,
+
+             bad_primes, tamagawa_numbers, kodaira_symbols,
+             reduction_types, root_numbers, conductor_valuations,
+             discriminant_valuations, j_denominator_valuations,
+
+             rank, rank_bounds, analytic_rank, ngens, gens, heights,
+             regulator, torsion, torsion_structure,
+             torsion_generators, tamagawa_product, real_period, area,
+             faltings_height, special_value, sha_an, sha
+
+classdata.*: iso, trace_hash, class_size, class_deg, isogeny_matrix,
+             aplist, anlist
