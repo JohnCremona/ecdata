@@ -983,7 +983,7 @@ def data_to_string(table, cols, record):
     """
     schema = schemas[table]
     if 'id' in cols:
-        schema['id'] = 'integer'
+        schema['id'] = 'bigint'
 
     return "|".join([postgres_encode(record.get(col, None), schema[col]) for col in cols])
 
@@ -1026,7 +1026,7 @@ def make_table_upload_file(data, table, rows=None):
         cols = table_cols(table, include_id)
         schema = schemas[table]
         if 'id' in cols:
-            schema['id'] = 'integer'
+            schema['id'] = 'bigint'
 
         # Write header lines: (1) column names; (2) column types; (3) blank
 
