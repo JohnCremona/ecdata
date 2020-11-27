@@ -772,6 +772,7 @@ def check_sagedb(N1, N2, a4a6bound=100):
     Borrowed from Bill Allombert (who found a missing curve of
     conductor 406598 this way).
     """
+    from sage.all import CremonaDatabase
     CDB = CremonaDatabase()
     def CDB_curves(N):
         return [c[0] for c in CDB.allcurves(N).values()]
@@ -779,11 +780,11 @@ def check_sagedb(N1, N2, a4a6bound=100):
     ncurves = 12*(2*a4a6bound+1)**2
     print("Testing {} curves".format(ncurves))
     n=0
-    for a1 in xrange(2):
-        for a2 in xrange(-1,2):
-            for a3 in xrange(2):
-                for a4 in xrange(-a4a6bound,a4a6bound+1):
-                    for a6 in xrange(-a4a6bound,a4a6bound+1):
+    for a1 in range(2):
+        for a2 in range(-1,2):
+            for a3 in range(2):
+                for a4 in range(-a4a6bound,a4a6bound+1):
+                    for a6 in range(-a4a6bound,a4a6bound+1):
                         ai = [a1,a2,a3,a4,a6]
                         n += 1
                         if n%1000==0:
