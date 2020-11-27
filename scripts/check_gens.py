@@ -46,19 +46,19 @@ def rewrite_gens(filename, base_dir = BASE_DIR):
         for line in infile:
             n+=1
             data = split(line)
+            label = "".join(data[:3])
             ainvs = parse_int_list(data[3])
             E = EllipticCurve(ainvs)
             rank = int(data[4])
             gens = [proj_to_point(gen, E) for gen in data[6:6 + rank]]
             tgens = [proj_to_point(gen, E) for gen in data[6 + rank:]]
+            if len(tgens)==2 and tgens[0].order() > tgens[1].order():
+                print("torsion gens for {} in wrong order".format(label))
             newgens, tgens = reduce_gens(gens, tgens)
-            #print(newgens, tgens)
             newgens = [point_to_proj(P) for P in newgens]
             tgens = [point_to_proj(P) for P in tgens]
-            #print(newgens, tgens)
             data[6:6+rank] = newgens
             data[6+rank:] = tgens
-            #print(data)
             outfile.write(" ".join(data)+"\n")
             if n%1000==0:
                 print("{} lines output...".format(n))

@@ -5,19 +5,20 @@
 #
 ######################################################################
 
+pt_wt = lambda P: len(str(P))
+
 def reduce_tgens(tgens, verbose=False):
     """
     tgens: list of torsion generators (if two, sorted by order)
 
     Return a new list of generators which is minimal with respect to string length.
     """
-    if not tgens:
-        return tgens
-    P1 = tgens[0]
-    n1 = P1.order()
     r = len(tgens)
-    pt_wt = lambda P: len(str(P))
+    if r == 0:
+        return tgens
     if r==1: # cyclic
+        P1 = tgens[0]
+        n1 = P1.order()
         if n1==2: # no choice
             return tgens
         Plist = [i*P1 for i in range(1,n1) if n1.gcd(i)==1]
@@ -28,11 +29,13 @@ def reduce_tgens(tgens, verbose=False):
         return [Q]
     # now r=2 and P1 has order n1=2  while n2 = 2, 4, 6, 8.
     # -- we use brute force
-    assert r==2
-    assert n1==2
-    P2 = tgens[1]
+    assert r == 2
+    if tgens[0].order() > tgens[1].order():
+        tgens.reverse()
+    P1, P2 = tgens
+    n1 = P1.order() # = 2
     n2 = P2.order() # = 2, 4, 6 or 8
-    assert n2 in [2,4,6,8]
+    assert n1==2 and n2 in [2,4,6,8]
     m = n2//2
     P1a = m*P2    # other 2-torsion
     P1b = P1+P1a  # points

@@ -948,7 +948,7 @@ def postgres_encode(col, coltype):
         col = col.replace("[","{").replace("]","}")
     return col
 
-def table_cols(table, include_id=True):
+def table_cols(table, include_id=False):
     """
     Get the list of column names for a table, sorted for consistency,
     with 'label' (or 'iso' for the classdata table) moved to the
@@ -998,7 +998,7 @@ def data_to_string(table, cols, record):
 #
 # 'ec_q_classdata'
 
-def make_table_upload_file(data, table, rows=None, include_id = True):
+def make_table_upload_file(data, table, rows=None):
     """This version works when there is one row per curve or one per
     class.  The other cases are passed to special versions.
     """
@@ -1014,7 +1014,9 @@ def make_table_upload_file(data, table, rows=None, include_id = True):
     if table == 'ec_q_torsion_growth':
         return make_torsion_growth_upload_file(data, rows)
 
-    filename = os.path.join(".", ".".join([table,rows]))
+    include_id = (table == 'ec_q_curvedata')
+
+    filename = os.path.join(UPLOAD_DIR, ".".join([table,rows]))
     allcurves = (table != 'ec_q_classdata')
     with open(filename, 'w') as outfile:
         print("Writing data for table {} to file {}".format(table, filename))
@@ -1057,7 +1059,7 @@ def make_localdata_upload_file(data, rows=None):
     if not rows:
         rows = 'all'
     table = 'ec_q_localdata'
-    filename = os.path.join(".", ".".join([table,rows]))
+    filename = os.path.join(UPLOAD_DIR, ".".join([table,rows]))
     with open(filename, 'w') as outfile:
         print("Writing data for table {} to file {}".format(table, filename))
 
@@ -1099,7 +1101,7 @@ def make_galrep_upload_file(data, rows=None):
     if not rows:
         rows = 'all'
     table = 'ec_q_galrep'
-    filename = os.path.join(".", ".".join([table,rows]))
+    filename = os.path.join(UPLOAD_DIR, ".".join([table,rows]))
     with open(filename, 'w') as outfile:
         print("Writing data for table {} to file {}".format(table, filename))
 
@@ -1134,7 +1136,7 @@ def make_torsion_growth_upload_file(data, rows=None):
     if not rows:
         rows = 'all'
     table = 'ec_q_torsion_growth'
-    filename = os.path.join(".", ".".join([table,rows]))
+    filename = os.path.join(UPLOAD_DIR, ".".join([table,rows]))
     with open(filename, 'w') as outfile:
         print("Writing data for table {} to file {}".format(table, filename))
 
@@ -1146,8 +1148,6 @@ def make_torsion_growth_upload_file(data, rows=None):
         outfile.write("|".join(cols) + "\n")
         outfile.write("|".join([schema[col] for col in cols]) + "\n\n")
 
-            # 'ec_q_torsion_growth': {'label': 'text', 'lmfdb_label': 'text',
-            #                         'degree': 'smallint', 'field': 'bigint[]', 'torsion': 'smallint[]'},
         n = 1
         for label, record in data.items():
             for degree, dat in record['torsion_growth'].items():
@@ -1163,4 +1163,3 @@ def make_torsion_growth_upload_file(data, rows=None):
                     n += 1
         n -= 1
         print("{} lines written to {}".format(n, filename))
-
