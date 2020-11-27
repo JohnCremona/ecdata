@@ -59,7 +59,7 @@ growth: $(GROWTH)
 iwasawa: $(IWASAWA)
 	@echo $(IWASAWA)
 
-HTMLFILES = docs/index.html html/shas.html html/table.html html/curves.1-1000.html
+HTMLFILES = docs/index.html docs/shas.html docs/table.html docs/curves.1-1000.html
 TEXTFILES = docs/manin.txt docs/file-format.txt docs/release_notes.md docs/merging.txt
 DATAFILES =  $(ALLCURVES) $(APLIST) $(BIGSHA) $(COUNT) $(DEGPHI) $(ALLDEGPHI) $(ALLGENS) $(BSD) $(ALLISOG) $(PARICURVES) $(INTPTS) $(GALREPS) $(TWOADIC) $(OPTIMAL) $(GROWTH) $(IWASAWA)
 FTPFILES = $(DATAFILES) $(TEXTFILES) $(HTMLFILES)
