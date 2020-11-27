@@ -2,13 +2,19 @@
 
 ## Last major update: 2019-07-22
 
-### 2019
+### 2020
 
-- 28 October 2019: updated opt_man files after reaching conductor
-  370000 in optimality checking.
+- 27 Novermber 2020: updated allgens files with Minkowski-reduced
+  generators mod torsion, of minimal naive height mod torsion. Thanks
+  to R. Rathbun.
+
+### 2019
 
 - 26 November 2019: updated opt_man files after reaching conductor
   400000 in optimality checking.
+
+- 28 October 2019: updated opt_man files after reaching conductor
+  370000 in optimality checking.
 
   Added The Artistic License 2.0 to the repository.
 

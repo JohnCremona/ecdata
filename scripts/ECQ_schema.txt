@@ -85,8 +85,9 @@ Proposed extra columns to move into main table (small and searchable):
  look up the labels in the WebEC constructor.  The advantage is that
  on upload we would not need to keep track of both sets of labels.
 
-Proposed new tables to hold extra columns (as well as both 'label' and
-'lmfdb_label'):
+######################################################################
+
+New tables:
 
 (1) ec_q_local_data:
 

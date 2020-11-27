@@ -59,8 +59,8 @@ growth: $(GROWTH)
 iwasawa: $(IWASAWA)
 	@echo $(IWASAWA)
 
-HTMLFILES = html/index.html html/shas.html html/table.html html/curves.1-1000.html
-TEXTFILES = doc/manin.txt doc/file-format.txt doc/release_notes.md doc/merging.txt
+HTMLFILES = docs/index.html docs/shas.html docs/table.html docs/curves.1-1000.html
+TEXTFILES = docs/manin.txt docs/file-format.txt docs/release_notes.md docs/merging.txt
 DATAFILES =  $(ALLCURVES) $(APLIST) $(BIGSHA) $(COUNT) $(DEGPHI) $(ALLDEGPHI) $(ALLGENS) $(BSD) $(ALLISOG) $(PARICURVES) $(INTPTS) $(GALREPS) $(TWOADIC) $(OPTIMAL) $(GROWTH) $(IWASAWA)
 FTPFILES = $(DATAFILES) $(TEXTFILES) $(HTMLFILES)
 DATASUBDIRS = allcurves aplist allbigsha count curves degphi alldegphi allgens allisog allbsd paricurves intpts galrep 2adic growth opt_man iwasawa
@@ -69,23 +69,16 @@ commit: $(FTPFILES)
 	git add $(DATAFILES)
 	-git commit -m "updated data files"
 	git add $(TEXTFILES)
-	-git commit -m "updated text files (in master:./doc)"
+	-git commit -m "updated text files (in master:./docs)"
 	git add $(HTMLFILES)
-	-git commit -m "updated html files (in master:./html)"
+	-git commit -m "updated html files (in master:./docs)"
 	git push
-	git checkout gh-pages
-	git checkout master:./html/ ./
-	git add *.html
-	-git commit -m "updated html files in gh-pages branch"
-	git push
-	git checkout master
-
 
 DATE = $(shell date +%Y-%m-%d )
 tar: $(FTPFILES)
 	rm -rf $(DIST_DIR)
 	mkdir -p $(DIST_DIR)
-	for d in $(DATASUBDIRS) html doc; do mkdir -p $(DIST_DIR)/$${d}; done
+	for d in $(DATASUBDIRS) docs; do mkdir -p $(DIST_DIR)/$${d}; done
 	for f in $(FTPFILES); do ln -s $(PWD)/$${f} $(DIST_DIR)/$${f}; done
 	cd $(DIST_DIR)/..
 	tar -zchf $(FTP_DIR)/ecdata-$(DATE).tgz ecdata

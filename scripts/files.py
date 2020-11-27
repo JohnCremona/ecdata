@@ -7,11 +7,12 @@
 # be arranged differently; now they are not, but only exist in the
 # ranges up to 50000.
 
-import re
 import os
-from sage.all import ZZ, QQ, RR, EllipticCurve, Integer, prod, factorial, sage_eval, sxrange, primes
+from sage.all import ZZ, EllipticCurve, Integer, prod, factorial, primes
 from sage.databases.cremona import class_to_int, parse_cremona_label
 from trace_hash import TraceHashClass
+from codec import split, parse_int_list, proj_to_point, point_to_weighted_proj, decode, encode, split_galois_image_code
+from red_gens import reduce_gens
 
 HOME = os.getenv("HOME")
 
@@ -28,142 +29,6 @@ DEFAULT_PRECISION=53
 PRECISION=53 # precision of heights, regulator, real period and
              # special value, and hence analytic sha, when these are
              # computed and not just read from the files.
-
-######################################################################
-#
-#   Utility functions
-#
-######################################################################
-
-whitespace = re.compile(r'\s+')
-
-def split(line):
-    return whitespace.split(line.strip())
-
-def parse_int_list(s, delims=True):
-    r"""
-    Given a string like '[a1,a2,a3,a4,a6]' returns the list of integers [a1,a2,a3,a4,a6]
-    """
-    ss = s[1:-1] if delims else s
-    return [] if ss=='' else [int(a) for a in ss.split(',')]
-
-def parse_int_list_list(s, delims=True):
-    r"""
-    Given a string like '[[1,2,3],[4,5,6]]' returns the list of lists of integers [[1,2,3],[4,5,6]]
-    """
-    ss = s.replace(" ","")
-    return [] if ss=='[]' else [parse_int_list(a, False) for a in ss[2:-2].split('],[')]
-
-def proj_to_aff(s):
-    r"""
-    Converts projective coordinate string '[x:y:z]' to affine coordinate string '(x/z,y/z)'
-    """
-    x, y, z = [ZZ(c) for c in s[1:-1].split(":")]
-    return "({},{})".format(x/z,y/z)
-
-def proj_to_weighted_proj(s):
-    r"""Converts projective coordinate string '[x:y:z]' to list [a,b,c]
-    where [x,y,z]=[ac,b,c^3] and [x/z,y/z]=[a/c^2,b/c^3]
-    """
-    x, b, z = [ZZ(c) for c in s[1:-1].split(":")]
-    c = x.gcd(z)
-    a = x//c
-    return [a,b,c]
-
-def point_to_weighted_proj(P):
-    r"""Converts rational point P=(x,y) to weighted projective coordinates [a,b,c]
-    where x=a/c^2, y=b/c^3
-    """
-    x, y = P.xy()
-    a = x.numerator()
-    b = y.numerator()
-    c = y.denominator() // x.denominator()
-    return [a,b,c]
-
-def proj_to_point(s, E):
-    r"""
-    Converts projective coordinate string '[x:y:z]' to a point on E
-    """
-    return E.point([ZZ(c) for c in s[1:-1].split(":")])
-
-def split_galois_image_code(s):
-    """Each code starts with a prime (1-3 digits but we allow for more)
-    followed by an image code for that prime.  This function returns
-    two substrings, the prefix number and the rest.
-    """
-    p = re.findall(r'\d+', s)[0]
-    return p, s[len(p):]
-
-######################################################################
-#
-# Coding and decoding functions
-#
-
-str_type = type('abc')
-bool_type = type(True)
-list_type = type([1,2,3])
-int_type = type(int(1))
-ZZ_type = type(Integer(1))
-QQ_type = type(QQ(1))
-RR_type = type(RR(1))
-number_types = [int_type, ZZ_type, RR_type]
-
-def encode(col):
-    t = type(col)
-    if t is str_type:
-        return col
-    if t is bool_type:
-        return str(int(col))
-    if t in number_types:
-        return str(col)
-    if t is QQ_type:
-        return str([col.numer(),col.denom()]).replace(" ","")
-    if t is list_type:
-        return str(col).replace(" ","")
-    print("no encoding for type {}".format(t))
-    return col
-
-str_cols = ['label', 'iso', 'isoclass', 'lmfdb_label', 'lmfdb_isoclass', 'lmfdb_iso']
-int_cols = ['number', 'lmfdb_number', 'iso_nlabel', 'faltings_index',
-            'faltings_ratio', 'conductor', 'cm', 'signD',
-            'min_quad_twist_disc', 'rank', 'analytic_rank', 'ngens',
-            'torsion', 'tamagawa_product', 'sha', 'class_size', 'class_deg']
-bigint_cols = ['trace_hash']
-int_list_cols = ['ainvs', 'isogeny_degrees', 'min_quad_twist_ainvs',
-                 'bad_primes', 'tamagawa_numbers', 'kodaira_symbols',
-                 'reduction_types', 'root_numbers', 'conductor_valuations',
-                 'discriminant_valuations',
-                 'j_denominator_valuations', 'rank_bounds',
-                 'torsion_structure',
-                 'aplist', 'anlist']
-int_list_list_cols = ['isogeny_matrix', 'gens', 'torsion_generators']
-bool_cols = ['semistable']
-QQ_cols = ['jinv']
-RR_cols = ['regulator', 'real_period', 'area', 'faltings_height', 'special_value', 'sha_an']
-RR_list_cols = ['heights']
-
-def decode(colname, data):
-    if colname in str_cols:
-        return data
-    elif colname in bigint_cols:
-        return ZZ(data)
-    elif colname in int_cols:
-        return int(data)
-    elif colname in int_list_cols:
-        return parse_int_list(data)
-    elif colname in bool_cols:
-        return bool(int(data))
-    elif colname in int_list_list_cols:
-        return parse_int_list_list(data)
-    elif colname in RR_cols:
-        return sage_eval(data)
-    elif colname in QQ_cols:
-        return QQ(tuple(parse_int_list(data)))
-    elif colname in RR_list_cols:
-        return [] if data=='[]' else [sage_eval(d) for d in data[1:-1].split(",")]
-    #
-    print("No decoder set for column {} (data = {})".format(colname, data))
-    return data
 
 ######################################################################
 #
@@ -1014,10 +879,16 @@ def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges)
 #
 # Function to output files which can be uploaded to the database using copy_from() or update_from_file()
 #
+# NB postgresql has various integer types of different *fixed*
+# bit-lengths, of which te largest if 'bigint' but even that is too
+# big for a 20-digit integer, so quite a few of the columns have to
+# use the 'numeric' type.  The website code will cast to integers
+# where necessary.
+#
 
-schemas = { 'ec_q_curvedata': {'label': 'text', 'lmfdb_label': 'text', 'iso': 'text', 'lmfdb_iso': 'text',
+schemas = { 'ec_curvedata': {'label': 'text', 'lmfdb_label': 'text', 'iso': 'text', 'lmfdb_iso': 'text',
                                'iso_nlabel': 'smallint', 'number': 'smallint', 'lmfdb_number': 'smallint',
-                               'ainvs': 'bigint[]', 'jinv': 'bigint[]', 'conductor': 'integer',
+                               'ainvs': 'numeric[]', 'jinv': 'numeric[]', 'conductor': 'integer',
                                'cm': 'smallint', 'isogeny_degrees': 'smallint[]',
                                'nonmax_primes': 'smallint[]', 'nonmax_rad': 'integer',
                                'bad_primes': 'integer[]', 'num_bad_primes': 'smallint',
@@ -1025,44 +896,44 @@ schemas = { 'ec_q_curvedata': {'label': 'text', 'lmfdb_label': 'text', 'iso': 't
                                'num_int_pts': 'integer', 'torsion': 'smallint',
                                'torsion_structure': 'smallint[]', 'torsion_primes': 'smallint[]',
                                'rank': 'smallint', 'analytic_rank': 'smallint',
-                               'sha': 'smallint',  'sha_primes': 'smallint[]', 'regulator': 'numeric',
-                               'signD': 'smallint', 'degree': 'integer', 'class_deg': 'smallint',
-                               'min_quad_twist_ainvs': 'bigint[]', 'min_quad_twist_disc': 'smallint',
+                               'sha': 'integer',  'sha_primes': 'smallint[]', 'regulator': 'numeric',
+                               'signD': 'smallint', 'degree': 'bigint', 'class_deg': 'smallint',
+                               'min_quad_twist_ainvs': 'numeric[]', 'min_quad_twist_disc': 'smallint',
                                'faltings_index': 'smallint', 'faltings_ratio': 'smallint'},
 
             # local data: one row per (curve, bad prime)
-            'ec_q_localdata': {'label': 'text', 'lmfdb_label': 'text',
+            'ec_localdata': {'label': 'text', 'lmfdb_label': 'text',
                                'prime': 'smallint', 'tamagawa_number': 'smallint', 'kodaira_symbol': 'smallint',
                                'reduction_type': 'smallint', 'root_number': 'smallint',
                                'conductor_valuation': 'smallint', 'discriminant_valuation': 'smallint',
                                'j_denominator_valuation': 'smallint'},
 
-            'ec_q_mwbsd': {'label': 'text', 'lmfdb_label': 'text',
-                                'torsion_generators': 'integer[]', 'xcoord_integral_points': 'integer[]',
+            'ec_mwbsd': {'label': 'text', 'lmfdb_label': 'text',
+                                'torsion_generators': 'numeric[]', 'xcoord_integral_points': 'numeric[]',
                                 'special_value': 'numeric', 'real_period': 'numeric', 'area': 'numeric',
-                                'tamagawa_product': 'smallint', 'sha_an': 'numeric', 'rank_bounds': 'smallint[]',
-                                'ngens': 'smallint', 'gens': 'integer[]', 'heights': 'numeric[]'},
+                                'tamagawa_product': 'integer', 'sha_an': 'numeric', 'rank_bounds': 'smallint[]',
+                                'ngens': 'smallint', 'gens': 'numeric[]', 'heights': 'numeric[]'},
 
             # class data: one row per isogeny class
-            'ec_q_classdata': {'iso': 'text', 'lmfdb_iso': 'text',
+            'ec_classdata': {'iso': 'text', 'lmfdb_iso': 'text',
                                'trace_hash': 'bigint', 'class_size': 'smallint', 'class_deg': 'smallint',
                                'isogeny_matrix': 'smallint[]',
                                'aplist': 'smallint[]', 'anlist': 'smallint[]'},
 
-            'ec_q_2adic': {'label': 'text', 'lmfdb_label': 'text',
+            'ec_2adic': {'label': 'text', 'lmfdb_label': 'text',
                            '2adic_label': 'text', '2adic_index': 'smallint', '2adic_log_level': 'smallint',
                            '2adic_gens': 'smallint[]'},
 
             # galrep data: one row per (curve, non-maximal prime)
-            'ec_q_galrep': {'label': 'text', 'lmfdb_label': 'text',
+            'ec_galrep': {'label': 'text', 'lmfdb_label': 'text',
                             'prime': 'smallint', 'image': 'text'},
 
             # torsion growth data: one row per (curve, extension field)
-            'ec_q_torsion_growth': {'label': 'text', 'lmfdb_label': 'text',
-                                    'degree': 'smallint', 'field': 'bigint[]', 'torsion': 'smallint[]'},
+            'ec_torsion_growth': {'label': 'text', 'lmfdb_label': 'text',
+                                  'degree': 'smallint', 'field': 'numeric[]', 'torsion': 'smallint[]'},
 
-            'ec_q_iwasawa': {'label': 'text', 'lmfdb_label': 'text',
-                             'iwdata': 'jsonb',  'iwp0': 'smallint'}
+            'ec_iwasawa': {'label': 'text', 'lmfdb_label': 'text',
+                           'iwdata': 'jsonb',  'iwp0': 'smallint'}
 }
 
 ######################################################################
@@ -1078,27 +949,31 @@ def postgres_encode(col, coltype):
             return "\\N"
     if coltype == "boolean":
         return "t" if col else "f"
+    if type(col) == type(QQ(1)): # to handle the j-invariant
+        col = [col.numer(), col.denom()]
     col = str(col).replace(" ","")
+    if coltype == 'jsonb':
+        col = col.replace("'",'"')
     if '[]' in coltype:
         col = col.replace("[","{").replace("]","}")
     return col
 
-def table_cols(table, include_id=True):
+def table_cols(table, include_id=False):
     """
     Get the list of column names for a table, sorted for consistency,
     with 'label' (or 'iso' for the classdata table) moved to the
     front, and 'id' at the very front if wanted.
     """
-    if table == 'ec_q_galrep':
+    if table == 'ec_galrep':
         return ['label', 'lmfdb_label', 'prime', 'image']
 
-    if table == 'ec_q_torsion_growth':
+    if table == 'ec_torsion_growth':
         return ['label', 'lmfdb_label', 'degree', 'field', 'torsion']
 
     cols = sorted(list(schemas[table].keys()))
 
     # We want the first two columns to be 'id', 'label' or 'id', 'iso' if present
-    if table == 'ec_q_classdata':
+    if table == 'ec_classdata':
         cols.remove('iso')
         cols.remove('lmfdb_iso')
         cols = ['iso', 'lmfdb_iso'] + cols
@@ -1118,39 +993,41 @@ def data_to_string(table, cols, record):
     """
     schema = schemas[table]
     if 'id' in cols:
-        schema['id'] = 'integer'
+        schema['id'] = 'bigint'
 
     return "|".join([postgres_encode(record.get(col, None), schema[col]) for col in cols])
 
 # tables with one row per curve:
 #
-# 'ec_q_curvedata'
-# 'ec_q_mwbsd'
-# 'ec_q_2adic'
-# 'ec_q_iwasawa'
+# 'ec_curvedata'
+# 'ec_mwbsd'
+# 'ec_2adic'
+# 'ec_iwasawa'
 
 # table with one row per isogeny class
 #
-# 'ec_q_classdata'
+# 'ec_classdata'
 
-def make_table_upload_file(data, table, rows=None, include_id = True):
+def make_table_upload_file(data, table, rows=None):
     """This version works when there is one row per curve or one per
     class.  The other cases are passed to special versions.
     """
     if not rows:
         rows = 'all'
 
-    if table == 'ec_q_localdata':
+    if table == 'ec_localdata':
         return make_localdata_upload_file(data, rows)
 
-    if table == 'ec_q_galrep':
+    if table == 'ec_galrep':
         return make_galrep_upload_file(data, rows)
 
-    if table == 'ec_q_torsion_growth':
+    if table == 'ec_torsion_growth':
         return make_torsion_growth_upload_file(data, rows)
 
-    filename = os.path.join(".", ".".join([table,rows]))
-    allcurves = (table != 'ec_q_classdata')
+    include_id = (table == 'ec_curvedata')
+
+    filename = os.path.join(UPLOAD_DIR, ".".join([table,rows]))
+    allcurves = (table != 'ec_classdata')
     with open(filename, 'w') as outfile:
         print("Writing data for table {} to file {}".format(table, filename))
         if not allcurves:
@@ -1159,7 +1036,7 @@ def make_table_upload_file(data, table, rows=None, include_id = True):
         cols = table_cols(table, include_id)
         schema = schemas[table]
         if 'id' in cols:
-            schema['id'] = 'integer'
+            schema['id'] = 'bigint'
 
         # Write header lines: (1) column names; (2) column types; (3) blank
 
@@ -1180,19 +1057,19 @@ def make_table_upload_file(data, table, rows=None, include_id = True):
 
 # tables with more than one row per curve
 #
-# 'ec_q_localdata':      one row per bad prime
-# 'ec_q_galrep':         one row per non-maximal prime
-# 'ec_q_torsion_growth': one row per extension degree
+# 'ec_localdata':      one row per bad prime
+# 'ec_galrep':         one row per non-maximal prime
+# 'ec_torsion_growth': one row per extension degree
 
 def make_localdata_upload_file(data, rows=None):
     """
-    This version is for ec_q_localdata only.  For each curve we output
+    This version is for ec_localdata only.  For each curve we output
     n lines where n is the number of bad primes.
     """
     if not rows:
         rows = 'all'
-    table = 'ec_q_localdata'
-    filename = os.path.join(".", ".".join([table,rows]))
+    table = 'ec_localdata'
+    filename = os.path.join(UPLOAD_DIR, ".".join([table,rows]))
     with open(filename, 'w') as outfile:
         print("Writing data for table {} to file {}".format(table, filename))
 
@@ -1225,7 +1102,7 @@ def make_localdata_upload_file(data, rows=None):
         print("{} lines written to {}".format(n, filename))
 
 def make_galrep_upload_file(data, rows=None):
-    """This version is for ec_q_galrep only.  For each curve we output n
+    """This version is for ec_galrep only.  For each curve we output n
     lines where n is the number of nonmaximal primes, so if there are
     no non-maximal primes for a curve then there is no line output for
     that curve.
@@ -1233,8 +1110,8 @@ def make_galrep_upload_file(data, rows=None):
     """
     if not rows:
         rows = 'all'
-    table = 'ec_q_galrep'
-    filename = os.path.join(".", ".".join([table,rows]))
+    table = 'ec_galrep'
+    filename = os.path.join(UPLOAD_DIR, ".".join([table,rows]))
     with open(filename, 'w') as outfile:
         print("Writing data for table {} to file {}".format(table, filename))
 
@@ -1261,15 +1138,15 @@ def make_galrep_upload_file(data, rows=None):
         print("{} lines written to {}".format(n, filename))
 
 def make_torsion_growth_upload_file(data, rows=None):
-    """This version is for ec_q_torsion_growth only.  For each curve we output one
+    """This version is for ec_torsion_growth only.  For each curve we output one
     line for each field (of degree<24 currently) in which the torsion
     grows.
 
     """
     if not rows:
         rows = 'all'
-    table = 'ec_q_torsion_growth'
-    filename = os.path.join(".", ".".join([table,rows]))
+    table = 'ec_torsion_growth'
+    filename = os.path.join(UPLOAD_DIR, ".".join([table,rows]))
     with open(filename, 'w') as outfile:
         print("Writing data for table {} to file {}".format(table, filename))
 
@@ -1281,8 +1158,6 @@ def make_torsion_growth_upload_file(data, rows=None):
         outfile.write("|".join(cols) + "\n")
         outfile.write("|".join([schema[col] for col in cols]) + "\n\n")
 
-            # 'ec_q_torsion_growth': {'label': 'text', 'lmfdb_label': 'text',
-            #                         'degree': 'smallint', 'field': 'bigint[]', 'torsion': 'smallint[]'},
         n = 1
         for label, record in data.items():
             for degree, dat in record['torsion_growth'].items():
@@ -1298,4 +1173,3 @@ def make_torsion_growth_upload_file(data, rows=None):
                     n += 1
         n -= 1
         print("{} lines written to {}".format(n, filename))
-
