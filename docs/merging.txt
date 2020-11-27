@@ -52,9 +52,9 @@ git add alllabels/
 
 From now on work in data directory (~/ecdata) which is a git
 repository linked to https://github.com/JohnCremona/ecdata.  All files
-are in the master branch; there is a second branch called gh-pages
-which only contains the html files, from which GitHub automatically
-cretes the website at http://johncremona.github.io/ecdata/ .
+are in the master branch. GitHub automatically cretes the website at
+http://johncremona.github.io/ecdata/ from the docs directory in this
+branch.
 
 5. Email Sutherland and ask him to run his script on any new
 allcurves file (e.g. allcurves.400000-409999) and rename his output
@@ -66,15 +66,15 @@ magma -b filename:=allcurves/allcurves.400000-409999 scripts/2adic.m
 mv 2adic.400000-409999 2adic/
 git add 2adic/
 
-6. Files to be edited are: html/table.html, html/shas.html, Makefile,
-html/index.html, doc/manin.txt, doc/release_notes.md.  The first two
+6. Files to be edited are: docs/table.html, docs/shas.html, Makefile,
+docs/index.html, docs/manin.txt, docs/release_notes.md.  The first two
 are now created automatically by Python scripts
 (scripts/sharanktable.py and scripts/summarytable.py), but in each
 case there is a preliminary manual check to see if new Sha values have
 occurred or new ranks (!) in which case the scripts will need to be
 edited.
 
-(6a): html/shas.html (using scripts/sharanktable.py)
+(6a): docs/shas.html (using scripts/sharanktable.py)
 
 Check up on new Sha records using
 
@@ -87,9 +87,9 @@ Use sharanktable.py to create a new version newshas.html:
        sage: %runfile scripts/sharanktable.py
        sage: make_rankshatable(50) # to go up to 499999
 If happy:
-   mv newshas.html html/shas.html
+   mv newshas.html docs/shas.html
 
-(6b): html/table.html (using scripts/summarytable.py)
+(6b): docs/table.html (using scripts/summarytable.py)
 
 Check up on new rank records (!) using
 
@@ -101,13 +101,13 @@ Use scripts/summarytable.py to create a new version newtable.html:
        sage: %runfile scripts/summarytable.py
        sage: make_table(50) # to go up to 409999
 If happy:
-  mv newtable.html html/table.html
+  mv newtable.html docs/table.html
 
-(6c): doc/release_notes.md: Add suitable section at the top.
+(6c): docs/release_notes.md: Add suitable section at the top.
 
 (6d): Makefile: nothing should need doing.
 
-(6e): html/index.html:
+(6e): docs/index.html:
       2 changes in lines with "pdate";
       change "up to ...";
       change record Sha if necessary;
@@ -123,7 +123,7 @@ cat  allbigsha.*9 | awk '$5==3' | wc -l
 cat  allbigsha.*9 | awk '$5==4' | wc -l
 cd ..
 
-(6f) doc/manin.txt needs some real work:
+(6f) docs/manin.txt needs some real work:
 
 [In g0n working dir]
 N=49
@@ -165,14 +165,13 @@ grep -v  "curve is" h1pp/h1pp.conc.20-${N} | grep -v "possible" | wc -l
 # counts for numbers of possible optimal curves (2-6)
 for n in `seq 2 6`; do echo $n; grep -c "$n possible " h1pp/h1pp.conc.20-${N}; done
 
---Now use the above numbers to manually edit doc/manin.txt.
+--Now use the above numbers to manually edit docs/manin.txt.
 
 ===============
 
 1. make commit
 
-This commits all the changes, pushes to github, also updates the
-gh-pages branch and pushes that, so the website is updated too.
+This commits all the changes and pushes to github, so the website is updated too.
 
 2. (a) email Bill Allombert to he can update pari's elldata
    [done to 500000]
