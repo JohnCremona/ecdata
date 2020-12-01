@@ -909,7 +909,7 @@ schemas = { 'ec_curvedata': {'label': 'text', 'lmfdb_label': 'text', 'iso': 'tex
 
             # local data: one row per (curve, bad prime)
             'ec_localdata': {'label': 'text', 'lmfdb_label': 'text',
-                               'prime': 'smallint', 'tamagawa_number': 'smallint', 'kodaira_symbol': 'smallint',
+                               'prime': 'integer', 'tamagawa_number': 'smallint', 'kodaira_symbol': 'smallint',
                                'reduction_type': 'smallint', 'root_number': 'smallint',
                                'conductor_valuation': 'smallint', 'discriminant_valuation': 'smallint',
                                'j_denominator_valuation': 'smallint'},
@@ -1014,7 +1014,7 @@ def data_to_string(table, cols, record):
 #
 # 'ec_classdata'
 
-def make_table_upload_file(data, table, rows=None):
+def make_table_upload_file(data, table, rows=None, include_id=True):
     """This version works when there is one row per curve or one per
     class.  The other cases are passed to special versions.
     """
@@ -1030,7 +1030,7 @@ def make_table_upload_file(data, table, rows=None):
     if table == 'ec_torsion_growth':
         return make_torsion_growth_upload_file(data, rows)
 
-    include_id = (table == 'ec_curvedata')
+    include_id = include_id and (table == 'ec_curvedata')
 
     filename = os.path.join(UPLOAD_DIR, ".".join([table,rows]))
     allcurves = (table != 'ec_classdata')

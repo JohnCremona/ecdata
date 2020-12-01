@@ -32,7 +32,8 @@ db.create_table(name = 'ec_curvedata',
 db.create_table(name = 'ec_localdata',
                 search_columns = {
                     'text': ['label', 'lmfdb_label'],
-                    'smallint': ['prime', 'tamagawa_number', 'kodaira_symbol', 'reduction_type', 'root_number', 'conductor_valuation', 'discriminant_valuation', 'j_denominator_valuation'],
+                    'smallint': ['tamagawa_number', 'kodaira_symbol', 'reduction_type', 'root_number', 'conductor_valuation', 'discriminant_valuation', 'j_denominator_valuation'],
+                    'integer': ['prime']
                 },
                 label_col='label',
                 sort=['label', 'prime'],
