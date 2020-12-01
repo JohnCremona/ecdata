@@ -598,7 +598,11 @@ def read_all_growth_data(base_dir=ECDATA_DIR, degrees=growth_degrees, ranges=gro
     for r in ranges:
         if r=='00000-09999':
             r = '0-9999'
+        if not r in growth_ranges:
+            continue
         for d in degrees:
+            if not d in growth_degrees:
+                continue
             data_filename = os.path.join(base_dir, 'growth/{}/growth{}.{}'.format(d,d,r))
             n = 0
             with open(data_filename) as data:
@@ -871,7 +875,8 @@ def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges)
         print("reading growth data")
         growth_data = read_all_growth_data(ranges=ranges)
         for label, record in all_data.items():
-            record.update(growth_data[label])
+            if label in growth_data:
+                record.update(growth_data[label])
 
     return all_data
 
@@ -1049,7 +1054,7 @@ def make_table_upload_file(data, table, rows=None):
                 record['id'] = n
             if allcurves or record['number']==1:
                 outfile.write(data_to_string(table, cols, record) +"\n")
-            if n%1000==0:
+            if n%10000==0:
                 print("{} lines written so far...".format(n))
             n += 1
         n -= 1
@@ -1095,9 +1100,9 @@ def make_localdata_upload_file(data, rows=None):
                                 'j_denominator_valuation': record['j_denominator_valuations'][i],
                 }
                 outfile.write(data_to_string(table, cols, prime_record) +"\n")
-            if n%1000==0:
-                print("{} lines written so far...".format(n))
-            n += 1
+                n += 1
+                if n%10000==0:
+                    print("{} lines written to {} so far...".format(n, filename))
         n -= 1
         print("{} lines written to {}".format(n, filename))
 
@@ -1131,9 +1136,9 @@ def make_galrep_upload_file(data, rows=None):
                                 'image': im,
                 }
                 outfile.write(data_to_string(table, cols, prime_record) +"\n")
-            if n%1000==0:
-                print("{} lines written so far...".format(n))
-            n += 1
+                n += 1
+                if n%10000==0:
+                    print("{} lines written to {} so far...".format(n, filename))
         n -= 1
         print("{} lines written to {}".format(n, filename))
 
@@ -1160,6 +1165,8 @@ def make_torsion_growth_upload_file(data, rows=None):
 
         n = 1
         for label, record in data.items():
+            if not 'torsion_growth' in record:
+                continue
             for degree, dat in record['torsion_growth'].items():
                 for field, torsion in dat:
                     field_record = {'label': record['label'], 'lmfdb_label': record['lmfdb_label'],
@@ -1168,8 +1175,8 @@ def make_torsion_growth_upload_file(data, rows=None):
                                     'torsion': torsion,
                     }
                     outfile.write(data_to_string(table, cols, field_record) +"\n")
-                    if n%1000==0:
-                        print("{} lines written so far...".format(n))
                     n += 1
+                    if n%10000==0:
+                        print("{} lines written to {} so far...".format(n, filename))
         n -= 1
         print("{} lines written to {}".format(n, filename))
