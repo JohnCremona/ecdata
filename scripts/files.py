@@ -378,23 +378,23 @@ def parse_twoadic_line(line):
     assert len(data)==8
     model = data[7]
     if model == 'CM':
-        record['2adic_index'] = int(0)
-        record['2adic_log_level'] = None
-        record['2adic_gens'] = None
-        record['2adic_label'] = None
+        record['twoadic_index'] = int(0)
+        record['twoadic_log_level'] = None
+        record['twoadic_gens'] = None
+        record['twoadic_label'] = None
         return label, record
 
-    record['2adic_label'] = model
-    record['2adic_index'] = int(data[4])
+    record['twoadic_label'] = model
+    record['twoadic_index'] = int(data[4])
     level = ZZ(data[5])
-    record['2adic_log_level'] = log_level = int(level.valuation(2))
+    record['twoadic_log_level'] = log_level = int(level.valuation(2))
     assert 2**log_level==level
 
     if data[6]=='[]':
-        record['2adic_gens'] = []
+        record['twoadic_gens'] = []
     else:
         gens = data[6][1:-1].replace('],[','];[').split(';')
-        record['2adic_gens'] = [[int(c) for c in g[1:-1].split(',')] for g in gens]
+        record['twoadic_gens'] = [[int(c) for c in g[1:-1].split(',')] for g in gens]
     return label, record
 
 ######################################################################
@@ -873,6 +873,7 @@ def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges)
 
     if 'growth' in file_types:
         print("reading growth data")
+        
         growth_data = read_all_growth_data(ranges=ranges)
         for label, record in all_data.items():
             if label in growth_data:
@@ -926,8 +927,8 @@ schemas = { 'ec_curvedata': {'label': 'text', 'lmfdb_label': 'text', 'iso': 'tex
                                'aplist': 'smallint[]', 'anlist': 'smallint[]'},
 
             'ec_2adic': {'label': 'text', 'lmfdb_label': 'text',
-                           '2adic_label': 'text', '2adic_index': 'smallint', '2adic_log_level': 'smallint',
-                           '2adic_gens': 'smallint[]'},
+                         'twoadic_label': 'text', 'twoadic_index': 'smallint',
+                         'twoadic_log_level': 'smallint', 'twoadic_gens': 'smallint[]'},
 
             # galrep data: one row per (curve, non-maximal prime)
             'ec_galrep': {'label': 'text', 'lmfdb_label': 'text',
