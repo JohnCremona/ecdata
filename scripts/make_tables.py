@@ -67,9 +67,9 @@ db.create_table(name = 'ec_classdata',
 
 db.create_table(name = 'ec_2adic',
                 search_columns = {
-                    'text': ['label', 'lmfdb_label', '2adic_label'],
-                    'smallint': ['2adic_index', '2adic_log_level'],
-                    'smallint[]': ['2adic_gens'],
+                    'text': ['label', 'lmfdb_label', 'twoadic_label'],
+                    'smallint': ['twoadic_index', 'twoadic_log_level'],
+                    'smallint[]': ['twoadic_gens'],
                 },
                 label_col='label',
                 sort=['label'],
