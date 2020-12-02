@@ -26,7 +26,34 @@ def update_range(r, tables=all_tables, base_dir=UPLOAD_DIR):
             t.update_from_file(file)
 
 # Use this one to add rows.  NB They must be new rows, else we end up
-# with duplicate rows.  There should *not* be an 'id' column.?
+# with duplicate rows.  There should *not* be an 'id' column except
+# for ec_curvedata's first batch uploaded.  So a script to update
+# everything from scratch, deleting all the content first, would go
+# like this for all tables in all_tables or a subset.
+#
+# # Delete the old data in each table:
+#
+# for t in tables:
+#     t.delete({})
+#
+# # Read the data files in ranges of 10000, write out the upload data
+# # files, and upload the data in these to each table:
+# 
+# for r in all_ranges:
+#     data = read_data(ranges=[r])
+#     for t in tables:
+#         make_table_upload_file(data, t.search_table, rows=r, include_id=False)
+#     add_data(r, tables=tables)
+#
+# # OR: read the data files in all ranges, write out the upload data
+# # files for the whole range, and upload the data in these to each
+# # table:
+# 
+# data = read_data(ranges=all_ranges)
+# for t in tables:
+#     make_table_upload_file(data, t.search_table, rows='all', include_id=False)
+# add_data('all', tables=tables)
+#
             
 def add_data(r, tables=all_tables, base_dir=UPLOAD_DIR):
     for t in tables:
