@@ -305,6 +305,17 @@ def parse_alldegphi_line(line):
 # intpts parser
 #
 
+def make_y_coords(ainvs,x):
+    a1, a2, a3, a4, a6 = ainvs
+    f = ((x + a2) * x + a4) * x + a6
+    b = (a1*x + a3)
+    d = (ZZ(b*b + 4*f)).isqrt()
+    y = (-b+d)//2
+    return [y, -b-y] if d else [y]
+
+def count_integral_points(ainvs, xs):
+    return sum([len(make_y_coords(ainvs,x)) for x in xs])
+
 def parse_intpts_line(line):
     r""" Parses one line from an intpts file.
 
@@ -316,9 +327,10 @@ def parse_intpts_line(line):
 
     11a1 [0,-1,1,-10,-20] [5,16]
     """
-    label, record = parse_line_label_cols(line, 1, False)
+    label, record = parse_line_label_cols(line, 1, True)
     xs = split(line)[2]
-    record['xcoord_integral_points'] = parse_int_list(xs)
+    record['xcoord_integral_points'] = xs = parse_int_list(xs)
+    record['num_int_pts'] = count_integral_points(record['ainvs'], xs)
     return label, record
 
 ######################################################################
@@ -637,15 +649,12 @@ def parse_curvedata_line(line):
     """
     """
     data = split(line)
-    record = {}
-    n = 0
-    for col in datafile_columns['curvedata']:
-        record[col] = decode(col, data[n])
-        n += 1
+    record = dict([(col, decode(col, data[n])) for n, col in enumerate(datafile_columns['curvedata']) ])
     record['sha_primes'] = [int(p) for p in Integer(record['sha']).prime_divisors()]
     record['num_bad_primes'] = len(record['bad_primes'])
     record['torsion_primes'] = [int(p) for p in Integer(record['torsion']).prime_divisors()]
     record['lmfdb_iso'] = ".".join([str(record['conductor']),record['lmfdb_isoclass']])
+    record['class_size'] = len(record['isogeny_degrees'])
 
     return record['label'], record
 
@@ -870,6 +879,12 @@ def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges)
                     if n%1000==0 and first:
                         print("Read {} classes so far from {}".format(n,data_filename))
             print("Finished reading {} classes from {}".format(n,data_filename))
+
+    if 'curvedata' in file_types and 'classdata' in file_types:
+        print("filling in class_deg from class to curve")
+        for label, record in all_data.items():
+            if record['number'] > 1:
+                record['class_deg'] = all_data[label[:-1]+'1']['class_deg']
 
     if 'growth' in file_types:
         print("reading growth data")
