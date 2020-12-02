@@ -48,12 +48,14 @@ PRECISION=53 # precision of heights, regulator, real period and
 #
 # so there are 1 or 3 label columns, and there may or may not be an ainvs column
 
-def parse_line_label_cols(L, label_cols=3, ainvs=True):
+def parse_line_label_cols(L, label_cols=3, ainvs=True, raw=False):
     r"""
     Parse the first columns of one line to extract label and/or ainvs
 
     If label_cols is 3, the first 3 columns are conductor, iso, number, else the first column is label.
     If ainvs is True, the next columnm is the ainvs.
+
+    If raw is False, 'conductor' is an int and 'ainvs' a list of ints, otherwise they stay as strings.
 
     Cols filled: 'label', 'conductor', 'iso', 'number', and optionally 'ainvs'.
     """
@@ -63,19 +65,20 @@ def parse_line_label_cols(L, label_cols=3, ainvs=True):
     if label_cols == 1:
         record['label'] = label = data[0]
         N, isoclass, num = parse_cremona_label(label)
-        record['conductor'] = N
+        sN = str(N)
+        record['conductor'] = sN if raw else N
         record['isoclass'] = isoclass
-        record['iso'] = ''.join([str(N),isoclass])
-        record['number'] = num
+        record['iso'] = ''.join([sN,isoclass])
+        record['number'] = str(num) if raw else num
     else:
-        record['conductor'] = int(data[0])
+        record['conductor'] = data[0] if raw else int(data[0])
         record['isoclass']  = data[1]
         record['iso']       = ''.join(data[:2])
-        record['number']    = int(data[2])
+        record['number']    = data[2] if raw else int(data[2])
         record['label']     = ''.join(data[:3])
 
     if ainvs:
-        record['ainvs'] = parse_int_list(data[label_cols])
+        record['ainvs'] = data[label_cols] if raw else parse_int_list(data[label_cols])
 
     return record['label'], record
 
@@ -284,7 +287,7 @@ def parse_allisog_line(line):
 # alldegphi parser
 #
 
-def parse_alldegphi_line(line):
+def parse_alldegphi_line(line, raw=False):
     r""" Parses one line from an alldegphi file.
 
     Input line fields:
@@ -295,9 +298,9 @@ def parse_alldegphi_line(line):
 
     11 a 1 [0,-1,1,-10,-20] 1
     """
-    label, record = parse_line_label_cols(line, 3, False)
+    label, record = parse_line_label_cols(line, 3, False, raw=raw)
     deg = split(line)[4]
-    record['degree'] = int(deg)
+    record['degree'] = deg if raw else int(deg)
     return label, record
 
 ######################################################################
@@ -316,7 +319,7 @@ def make_y_coords(ainvs,x):
 def count_integral_points(ainvs, xs):
     return sum([len(make_y_coords(ainvs,x)) for x in xs])
 
-def parse_intpts_line(line):
+def parse_intpts_line(line, raw=False):
     r""" Parses one line from an intpts file.
 
     Input line fields:
@@ -327,10 +330,16 @@ def parse_intpts_line(line):
 
     11a1 [0,-1,1,-10,-20] [5,16]
     """
-    label, record = parse_line_label_cols(line, 1, True)
-    xs = split(line)[2]
-    record['xcoord_integral_points'] = xs = parse_int_list(xs)
-    record['num_int_pts'] = count_integral_points(record['ainvs'], xs)
+    label, record = parse_line_label_cols(line, 1, True, raw=raw)
+    rxs = split(line)[2]
+    xs = parse_int_list(rxs)
+    ainvs = record['ainvs']
+    if raw:
+        ainvs = parse_int_list(ainvs)
+    nip = count_integral_points(ainvs, xs)
+    record['xcoord_integral_points'] = rxs if raw else xs
+    record['num_int_pts'] = str(nip) if raw else nip
+
     return label, record
 
 ######################################################################
@@ -338,7 +347,7 @@ def parse_intpts_line(line):
 # opt_man parser
 #
 
-def parse_opt_man_line(line):
+def parse_opt_man_line(line, raw=False):
     r"""Parses one line from an opt_man file, giving optimality and Manin
     constant data.
 
@@ -364,8 +373,8 @@ def parse_opt_man_line(line):
     """
     label, record = parse_line_label_cols(line, 3, False)
     opt, mc = split(line)[4:]
-    record['optimality'] = int(opt)
-    record['manin_constant'] = int(mc)
+    record['optimality'] = opt if raw else int(opt)
+    record['manin_constant'] = mc if raw else int(mc)
     return label, record
 
 ######################################################################
@@ -373,7 +382,7 @@ def parse_opt_man_line(line):
 # 2adic parser
 #
 
-def parse_twoadic_line(line):
+def parse_twoadic_line(line, raw=False):
     r""" Parses one line from a 2adic file.
 
     Input line fields:
@@ -385,28 +394,31 @@ def parse_twoadic_line(line):
     110005 a 2 [1,-1,1,-185793,29503856] 12 4 [[3,0,0,1],[3,2,2,3],[3,0,0,3]] X24
     27 a 1 [0,0,1,0,-7] inf inf [] CM
     """
-    label, record = parse_line_label_cols(line, 3, False)
+    label, record = parse_line_label_cols(line, 3, False, raw=raw)
     data = split(line)
     assert len(data)==8
     model = data[7]
     if model == 'CM':
-        record['twoadic_index'] = int(0)
+        record['twoadic_index'] = '0' if raw else int(0)
         record['twoadic_log_level'] = None
         record['twoadic_gens'] = None
         record['twoadic_label'] = None
         return label, record
 
     record['twoadic_label'] = model
-    record['twoadic_index'] = int(data[4])
-    level = ZZ(data[5])
-    record['twoadic_log_level'] = log_level = int(level.valuation(2))
-    assert 2**log_level==level
+    record['twoadic_index'] = data[4] if raw else int(data[4])
+    log_level = ZZ(data[5]).valuation(2)
+    record['twoadic_log_level'] = str(log_level) if raw else int(log_level)
 
-    if data[6]=='[]':
-        record['twoadic_gens'] = []
+    rgens = data[6]
+    if raw:
+        record['twoadic_gens'] = rgens
     else:
-        gens = data[6][1:-1].replace('],[','];[').split(';')
-        record['twoadic_gens'] = [[int(c) for c in g[1:-1].split(',')] for g in gens]
+        if rgens=='[]':
+            record['twoadic_gens'] = []
+        else:
+            gens = rgens[1:-1].replace('],[','];[').split(';')
+            record['twoadic_gens'] = [[int(c) for c in g[1:-1].split(',')] for g in gens]
     return label, record
 
 ######################################################################
@@ -414,7 +426,7 @@ def parse_twoadic_line(line):
 # galrep parser
 #
 
-def parse_galrep_line(line):
+def parse_galrep_line(line, raw = False):
     r"""Parses one line from a galrep file.
 
     Codes follow Sutherland's coding scheme for subgroups of GL(2,p).
@@ -430,7 +442,7 @@ def parse_galrep_line(line):
     66c3 2B 5B.1.2
 
     """
-    label, record = parse_line_label_cols(line, 1, False)
+    label, record = parse_line_label_cols(line, 1, False, raw=raw)
     record['modp_images'] = image_codes = split(line)[1:]
     record['nonmax_primes'] = pr = [ int(split_galois_image_code(s)[0]) for s in image_codes]
     record['nonmax_rad'] = prod(pr)
@@ -441,7 +453,7 @@ def parse_galrep_line(line):
 # iwasawa parser
 #
 
-def parse_iwasawa_line_orig(line, debug=0):
+def parse_iwasawa_line(line, debug=0, raw=False):
     r"""Parses one line from an Iwasawa data input file.
 
     Sample line: 11 a 1 0,-1,1,-10,-20 7 1,0 0,1,0 0,0 0,1
@@ -456,66 +468,14 @@ def parse_iwasawa_line_orig(line, debug=0):
 
     """
     if debug: print("Parsing input line {}".format(line[:-1]))
-    label, record = parse_line_label_cols(line, 3, False)
+    label, record = parse_line_label_cols(line, 3, False, raw=raw)
     badp = Integer(record['conductor']).support()
     nbadp = len(badp)
 
     data = split(line)
-    p0 = int(data[4])
-    record['iwp0'] = p0
-    if debug: print("p0={}".format(p0))
-
-    
-    iwdata = {}
-
-    # read data for bad primes
-
-    for p,pdat in zip(badp,data[5:5+nbadp]):
-        p = str(p)
-        if debug>1: print("p={}, pdat={}".format(p,pdat))
-        if pdat in ['o?','a']:
-            iwdata[p] = pdat
-        else:
-            iwdata[p] = parse_int_list(pdat, delims=False)
-
-    # read data for all primes
-
-    # NB Current data has p<50: if this increases to over 1000, change the next line.
-
-    for p,pdat in zip(primes(1000),data[5+nbadp:]):
-        p = str(p)
-        if debug>1: print("p={}, pdat={}".format(p,pdat))
-        if pdat in ['s?','o?','a']:
-            iwdata[p] = pdat
-        else:
-            iwdata[p] = parse_int_list(pdat, delims=False)
-
-    record['iwdata'] = iwdata
-    if debug: print("label {}, data {}".format(label,record))
-    return label, record
-
-def parse_iwasawa_line(line, debug=0):
-    r"""Parses one line from an Iwasawa data input file.
-
-    Sample line: 11 a 1 0,-1,1,-10,-20 7 1,0 0,1,0 0,0 0,1
-
-    Fields: label (3 fields)
-            a-invariants (1 field but no brackets)
-            p0
-            For each bad  prime:  'a'                if additive
-                                  lambda,mu          if multiplicative (or 'o?' if unknown)
-            For each good prime:  lambda,mu          if ordinary (or 'o?' if unknown)
-                                  lambda+,lambda-,mu if supersingular (or 's?' if unknown)
-
-    """
-    if debug: print("Parsing input line {}".format(line[:-1]))
-    label, record = parse_line_label_cols(line, 3, False)
-    badp = Integer(record['conductor']).support()
-    nbadp = len(badp)
-
-    data = split(line)
-    p0 = int(data[4])
-    record['iwp0'] = p0
+    rp0 = data[4]
+    p0 = int(rp0)
+    record['iwp0'] = rp0 if raw else p0
     if debug: print("p0={}".format(p0))
 
     iwdata = {}
@@ -551,7 +511,7 @@ def parse_iwasawa_line(line, debug=0):
 # growth parser
 #
 
-def parse_growth_line(line):
+def parse_growth_line(line, raw=False):
     r"""Parses one line from a torsion growth file.
 
     Sample line: 14a1 [3,6][1,1,1] [2,6][2,-1,1]
@@ -578,7 +538,7 @@ def parse_growth_line(line):
     different degrees.
 
     """
-    label, record = parse_line_label_cols(line, 1, False)
+    label, record = parse_line_label_cols(line, 1, False, raw=raw)
     data = [[parse_int_list(F,delims=False),parse_int_list(T,delims=False)]
             for T,F in [s[1:-1].split("][") for s in split(line)[1:]]]
     degree = len(data[0][0])-1
@@ -598,7 +558,7 @@ growth_degrees = [2,3,4,5,6,7,8,9,10,12,14,15,16,18,20,21]
 #NB the 0'th range is usually '00000-09999' but for growth files it's just '0-9999'
 growth_ranges = ["0-9999"] + ["{}0000-{}9999".format(k,k) for k in range(1,40)]
 
-def read_all_growth_data(base_dir=ECDATA_DIR, degrees=growth_degrees, ranges=growth_ranges):
+def read_all_growth_data(base_dir=ECDATA_DIR, degrees=growth_degrees, ranges=growth_ranges, raw=False):
     r"""Read all the data in files base_dir/growth/<d>/growth.<r> where d
     is a list of degrees and r is a range.
 
@@ -619,7 +579,7 @@ def read_all_growth_data(base_dir=ECDATA_DIR, degrees=growth_degrees, ranges=gro
             n = 0
             with open(data_filename) as data:
                 for L in data:
-                    label, record = parse_growth_line(L)
+                    label, record = parse_growth_line(L, raw=raw)
                     n+=1
                     if label in all_data:
                         all_data[label]['torsion_growth'].update(record['torsion_growth'])
@@ -645,28 +605,32 @@ datafile_columns = {
                   'class_size', 'class_deg', 'isogeny_matrix', 'aplist', 'anlist'],
     }
 
-def parse_curvedata_line(line):
+def parse_curvedata_line(line, raw=False):
     """
     """
     data = split(line)
-    record = dict([(col, decode(col, data[n])) for n, col in enumerate(datafile_columns['curvedata']) ])
+    if raw:
+        record = dict([(col, data[n]) for n, col in enumerate(datafile_columns['curvedata']) ])
+    else:
+        record = dict([(col, decode(col, data[n])) for n, col in enumerate(datafile_columns['curvedata']) ])
     record['sha_primes'] = [int(p) for p in Integer(record['sha']).prime_divisors()]
-    record['num_bad_primes'] = len(record['bad_primes'])
+    badp = record['bad_primes']
+    record['num_bad_primes'] = str(1+badp.count(",")) if raw else len(badp)
     record['torsion_primes'] = [int(p) for p in Integer(record['torsion']).prime_divisors()]
     record['lmfdb_iso'] = ".".join([str(record['conductor']),record['lmfdb_isoclass']])
-    record['class_size'] = len(record['isogeny_degrees'])
+    isodegs = record['isogeny_degrees']
+    record['class_size'] = str(1+isodegs.count(",")) if raw else len(isodegs)
 
     return record['label'], record
 
-def parse_classdata_line(line):
+def parse_classdata_line(line, raw=False):
     """
     """
     data = split(line)
-    record = {}
-    n = 0
-    for col in datafile_columns['classdata']:
-        record[col] = decode(col, data[n])
-        n += 1
+    if raw:
+        record = dict([(col, data[n]) for n, col in enumerate(datafile_columns['classdata']) ])
+    else:
+        record = dict([(col, decode(col, data[n])) for n, col in enumerate(datafile_columns['classdata']) ])
     return record['iso']+'1', record
 
 ######################################################################
@@ -846,7 +810,7 @@ def make_curvedata(base_dir=ECDATA_DIR, ranges=all_ranges, prec=DEFAULT_PRECISIO
                         n += 1
                 print("{} lines written to {}".format(n, filename))
 
-def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges):
+def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges, raw=True):
     r"""Read all the data in files base_dir/<ft>/<ft>.<r> where ft is a file type
     and r is a range.
 
@@ -867,8 +831,8 @@ def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges)
             n = 0
             with open(data_filename) as data:
                 for L in data:
-                    label, record = parser(L)
-                    first = (ft=='classdata') or (record['number']==1)
+                    label, record = parser(L, raw=raw)
+                    first = (ft=='classdata') or (int(record['number'])==1)
                     if label:
                         if first:
                             n += 1
@@ -876,14 +840,14 @@ def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges)
                             all_data[label].update(record)
                         else:
                             all_data[label] = record
-                    if n%1000==0 and first:
+                    if n%10000==0 and first:
                         print("Read {} classes so far from {}".format(n,data_filename))
             print("Finished reading {} classes from {}".format(n,data_filename))
 
     if 'curvedata' in file_types and 'classdata' in file_types:
         print("filling in class_deg from class to curve")
         for label, record in all_data.items():
-            if record['number'] > 1:
+            if int(record['number']) > 1:
                 record['class_deg'] = all_data[label[:-1]+'1']['class_deg']
 
     if 'growth' in file_types:
@@ -1002,6 +966,8 @@ def table_cols(table, include_id=False):
         cols.remove('label')
         cols.remove('lmfdb_label')
         cols = ['label', 'lmfdb_label'] + cols
+    if 'id' in cols:
+        cols.remove('id')
     if include_id:
         cols = ['id'] + cols
     return cols
