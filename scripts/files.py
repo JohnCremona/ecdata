@@ -8,7 +8,7 @@
 # ranges up to 50000.
 
 import os
-from sage.all import ZZ, EllipticCurve, Integer, prod, factorial, primes
+from sage.all import ZZ, QQ, EllipticCurve, Integer, prod, factorial, primes
 from sage.databases.cremona import class_to_int, parse_cremona_label
 from trace_hash import TraceHashClass
 from codec import split, parse_int_list, proj_to_point, point_to_weighted_proj, decode, encode, split_galois_image_code
@@ -620,6 +620,8 @@ def parse_curvedata_line(line, raw=False):
     record['lmfdb_iso'] = ".".join([str(record['conductor']),record['lmfdb_isoclass']])
     isodegs = record['isogeny_degrees']
     record['class_size'] = str(1+isodegs.count(",")) if raw else len(isodegs)
+    jinv = parse_int_list(record['jinv']) if raw else record['jinv']
+    record['potential_good_reduction'] = (jinv[1]==1)
 
     return record['label'], record
 
@@ -877,12 +879,13 @@ schemas = { 'ec_curvedata': {'label': 'text', 'lmfdb_label': 'text', 'iso': 'tex
                                'cm': 'smallint', 'isogeny_degrees': 'smallint[]',
                                'nonmax_primes': 'smallint[]', 'nonmax_rad': 'integer',
                                'bad_primes': 'integer[]', 'num_bad_primes': 'smallint',
-                               'semistable': 'boolean', 'optimality': 'smallint', 'manin_constant': 'smallint',
+                               'semistable': 'boolean', 'potential_good_reduction': 'boolean',
+                               'optimality': 'smallint', 'manin_constant': 'smallint',
                                'num_int_pts': 'integer', 'torsion': 'smallint',
                                'torsion_structure': 'smallint[]', 'torsion_primes': 'smallint[]',
                                'rank': 'smallint', 'analytic_rank': 'smallint',
                                'sha': 'integer',  'sha_primes': 'smallint[]', 'regulator': 'numeric',
-                               'signD': 'smallint', 'degree': 'bigint', 'class_deg': 'smallint',
+                               'signD': 'smallint', 'degree': 'bigint', 'class_deg': 'smallint', 'class_size': 'smallint',
                                'min_quad_twist_ainvs': 'numeric[]', 'min_quad_twist_disc': 'smallint',
                                'faltings_index': 'smallint', 'faltings_ratio': 'smallint'},
 
