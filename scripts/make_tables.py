@@ -1,10 +1,6 @@
-from files import schemas, HOME
-
-def table_search_columns():
-    for table in schemas:
-        S = schemas[table]
-        search_columns = dict([(v, [k for k in S if S[k]==v]) for v in Set(S.values())])
-        print("name = '{}',\nsearch_columns = {}".format(table,search_columns))
+import sys
+import os
+from files import HOME
 
 sys.path.append(os.path.join(HOME, 'lmfdb'))
 from lmfdb import db
@@ -16,13 +12,13 @@ db.create_table(name = 'ec_curvedata',
                     'numeric[]': ['ainvs', 'jinv', 'min_quad_twist_ainvs'],
                     'smallint': ['iso_nlabel', 'number', 'lmfdb_number', 'cm', 'num_bad_primes',
                                  'optimality', 'manin_constant', 'torsion', 'rank',
-                                 'analytic_rank', 'signD', 'class_deg',
+                                 'analytic_rank', 'signD', 'class_deg', 'class_size',
                                  'min_quad_twist_disc', 'faltings_index', 'faltings_ratio'],
                     'smallint[]':  ['isogeny_degrees', 'nonmax_primes', 'torsion_structure', 'torsion_primes', 'sha_primes'],
                     'integer': ['conductor', 'nonmax_rad', 'num_int_pts', 'sha'],
                     'integer[]': ['bad_primes'],
                     'bigint': ['degree'],
-                    'boolean': ['semistable'],
+                    'boolean': ['semistable', 'potential_good_reduction'],
                 },
                 label_col='label',
                 sort=['conductor', 'iso_nlabel', 'number'],
@@ -109,3 +105,57 @@ db.create_table(name = 'ec_iwasawa',
                 sort=['label'],
                 id_ordered=False
 )
+
+#######  Indexes ##############
+
+db.ec_curvedata.create_index(['isogeny_degrees'], type='gin')
+db.ec_curvedata.create_index(['nonmax_primes'], type='gin')
+db.ec_curvedata.create_index(['ainvs'], type='btree')
+db.ec_curvedata.create_index(['cm'], type='btree')
+db.ec_curvedata.create_index(['conductor', 'iso_nlabel', 'lmfdb_number'], type='btree')
+db.ec_curvedata.create_index(['iso'], type='btree')
+db.ec_curvedata.create_index(['jinv', 'id'], type='btree')
+db.ec_curvedata.create_index(['label'], type='btree')
+db.ec_curvedata.create_index(['label', 'number'], type='btree')
+db.ec_curvedata.create_index(['lmfdb_label'], type='btree')
+db.ec_curvedata.create_index(['lmfdb_label', 'lmfdb_number'], type='btree')
+db.ec_curvedata.create_index(['lmfdb_label', 'number'], type='btree')
+db.ec_curvedata.create_index(['lmfdb_iso'], type='btree')
+db.ec_curvedata.create_index(['lmfdb_number'], type='btree')
+db.ec_curvedata.create_index(['number'], type='btree')
+db.ec_curvedata.create_index(['rank'], type='btree')
+db.ec_curvedata.create_index(['rank', 'number'], type='btree')
+db.ec_curvedata.create_index(['sha', 'id'], type='btree')
+db.ec_curvedata.create_index(['sha', 'rank', 'id'], type='btree')
+db.ec_curvedata.create_index(['sha', 'rank', 'torsion', 'id'], type='btree')
+db.ec_curvedata.create_index(['torsion'], type='btree')
+db.ec_curvedata.create_index(['torsion_structure'], type='btree')
+db.ec_curvedata.create_index(['nonmax_rad', 'id'], type='btree')
+db.ec_curvedata.create_index(['id'], type='btree')
+db.ec_curvedata.create_index(['semistable'], type='btree')
+db.ec_curvedata.create_index(['semistable', 'conductor', 'iso_nlabel', 'lmfdb_number'], type='btree')
+db.ec_curvedata.create_index(['potential_good_reduction'], type='btree')
+db.ec_curvedata.create_index(['potential_good_reduction', 'conductor', 'iso_nlabel', 'lmfdb_number'], type='btree')
+db.ec_curvedata.create_index(['class_size'], type='btree')
+db.ec_curvedata.create_index(['class_deg'], type='btree')
+
+db.ec_classdata.create_index(['iso'], type='btree')
+db.ec_classdata.create_index(['lmfdb_iso'], type='btree')
+
+db.ec_localdata.create_index(['label'], type='btree')
+db.ec_localdata.create_index(['lmfdb_label'], type='btree')
+
+db.ec_mwbsd.create_index(['label'], type='btree')
+db.ec_mwbsd.create_index(['lmfdb_label'], type='btree')
+
+db.ec_2adic.create_index(['label'], type='btree')
+db.ec_2adic.create_index(['lmfdb_label'], type='btree')
+
+db.ec_galrep.create_index(['label'], type='btree')
+db.ec_galrep.create_index(['lmfdb_label'], type='btree')
+
+db.ec_torsion_growth.create_index(['label'], type='btree')
+db.ec_torsion_growth.create_index(['lmfdb_label'], type='btree')
+
+db.ec_iwasawa.create_index(['label'], type='btree')
+db.ec_iwasawa.create_index(['lmfdb_label'], type='btree')
