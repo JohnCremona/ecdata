@@ -64,124 +64,145 @@ Extra table columns:
  'iwdata'
  'iwp0'
 
-Proposed extra columns to move into main table (small and searchable):
+Proposed replacement with 8 tables, the first of which will be the
+main search table.
 
- 'signD'
- 'degree'
- 'modp_images'
- 'class_deg'
- 'sha_primes'
- 'torsion_primes'
- ?'equation'       was: string of length at most 88; will be: omitted
- ?'min_quad_twist' was: dict with keys 'disc', 'label', 'lmfdb_label'
-                   will be: 2 columns 'min_quad_twist_ainvs', 'min_quad_twist_disc'
+ec_curvedata
+ec_localdata
+ec_classdata
+ec_mwbsd
+ec_galrep
+ec_2adic
+ec_torsion_growth
+ec_iwasawa
 
- NB1 'equation' could be made redundant using a simple custom function
- for converting ainvs.
+schemas:
 
- NB2: 'min_quad_twist' is now a dict like {'disc': 5, 'label': '11a1',
- 'lmfdb_label': '11.a2'} but instead of labels we will instead store
- the disc (twisting discriminant) and ainvs of the twisted curves and
- look up the labels in the WebEC constructor.  The advantage is that
- on upload we would not need to keep track of both sets of labels.
+ec_curvedata: one row per curve, contains all columns used in search
 
-######################################################################
+'label': 'text',
+'lmfdb_label': 'text',
+'iso': 'text',
+'lmfdb_iso': 'text',
+'iso_nlabel': 'smallint',
+'number': 'smallint',
+'lmfdb_number': 'smallint',
+'ainvs': 'numeric[]',
+'jinv': 'numeric[]',
+'conductor': 'integer',
+'cm': 'smallint',
+'isogeny_degrees': 'smallint[]',
+'nonmax_primes': 'smallint[]',
+'nonmax_rad': 'integer',
+'bad_primes': 'integer[]',
+'num_bad_primes': 'smallint',
+'semistable': 'boolean',
+'potential_good_reduction': 'boolean',
+'optimality': 'smallint',
+'manin_constant': 'smallint',
+'num_int_pts': 'integer',
+'torsion': 'smallint',
+'torsion_structure': 'smallint[]',
+'torsion_primes': 'smallint[]',
+'rank': 'smallint',
+'analytic_rank': 'smallint',
+'sha': 'integer',
+'sha_primes': 'smallint[]',
+'regulator': 'numeric',
+'signD': 'smallint',
+'degree': 'bigint',
+'class_deg': 'smallint',
+'class_size': 'smallint',
+'min_quad_twist_ainvs': 'numeric[]',
+'min_quad_twist_disc': 'smallint',
+'faltings_index': 'smallint',
+'faltings_ratio': 'smallint'
 
-New tables:
+NB
+(1) no 'equation' column: constructed on the fly from ainvs
+(2) we store tha ainvs of the minimal quadratic twist and look up its
+    label on the fly.
 
-(1) ec_q_local_data:
+ec_localdata: one row per (curve, bad prime)
 
-refactor current dict with keys
+'label': 'text',
+'lmfdb_label': 'text',
+'prime': 'integer',
+'tamagawa_number': 'smallint',
+'kodaira_symbol': 'smallint',
+'reduction_type': 'smallint',
+'root_number': 'smallint',
+'conductor_valuation': 'smallint',
+'discriminant_valuation': 'smallint',
+'j_denominator_valuation': 'smallint'
 
-['p', 'cp', 'kod', 'red', 'rootno', 'ord_cond', 'ord_disc', 'ord_den_j']
+NB kodaira_symbol uses the pari numerical encoding.  Sage has (thanks
+to David Roe) a suitable class to use to convert these to text via
+latex(KodairaSymbol(n)), and K._pari_code() converts a Sage Kodaira
+Symbol object K to its pari code.
 
-into a separate table with one row per bad prime per curve, labels+8 columns:
+ec_mwbsd: one row per curve
 
- 'prime'
- 'tamagawa_number'
- 'kodaira_symbol'
- 'reduction_type'
- 'root_number'
- 'conductor_valuation'
- 'discriminant_valuation'
- 'j_denominator_valuation'
+'label': 'text',
+'lmfdb_label': 'text',
+'torsion_generators': 'numeric[]',
+'xcoord_integral_points': 'numeric[]',
+'special_value': 'numeric',
+'real_period': 'numeric',
+'area': 'numeric',
+'tamagawa_product': 'integer',
+'sha_an': 'numeric',
+'rank_bounds': 'smallint[]',
+'ngens': 'smallint',
+'gens': 'numeric[]',
+'heights': 'numeric[]'
 
- -all are int, including kodaira_symbol, which uses the pari numerical
-encoding.  Sage has (thanks to David Roe) a suitable class to use to
-convert these:
+ec_classdata: one row per isogeny class
 
-sage: [(n,latex(KodairaSymbol(n))) for n in (-10..10) if n]
+'iso': 'text',
+'lmfdb_iso': 'text',
+'trace_hash': 'bigint',
+'class_size': 'smallint',
+'class_deg': 'smallint',
+'isogeny_matrix': 'smallint[]',
+'aplist': 'smallint[]',
+'anlist': 'smallint[]'
 
-Also, K._pari_code() converts a Sage Kodaira Symbol object K to its pari code.
+ec_2adic: one row per curve (Rouse data)
 
-(2) ec_q_torsion_growth (only exists for conductors <400k):
+'label': 'text',
+'lmfdb_label': 'text',
+'twoadic_label': 'text',
+'twoadic_index': 'smallint',
+'twoadic_log_level': 'smallint',
+'twoadic_gens': 'smallint[]'
 
-refactor current 3 columns for each curve:
+ec_galrep: one row per (curve, nonmaximal prime) (Sutherland data)
 
- 'tor_degs'
- 'tor_fields'
- 'tor_gro'
+'label': 'text',
+'lmfdb_label': 'text',
+'prime': 'smallint',
+'image': 'text'
 
-into  a separate table with one row per growth field per curve, labels+3 columns:
+ec_torsion_growth: one row per (curve, extension field) (Gonzalez-Jimenez--Najman data)
 
- 'degree'   [int]
- 'field'   [list of ints, coeffs of one field polynomial]
- 'torsion' [list of 1 or 2 ints, e.g. [5] or [2,6]]
+[No data for conductors over 400000]
 
-(3) ec_q_iwasawa (only exists for conductors <150k; raw data is in
- https://github.com/rpollack9974/Iwasawa-invariants ):
- 
- 'iwdata'
- 'iwp0'
+'label': 'text',
+'lmfdb_label': 'text',
+'degree': 'smallint',
+'field': 'numeric[]',
+'torsion': 'smallint[]'
 
-(4) ec_q_mwbsd:
+ec_iwasawa: one row per curve (Pollack data)
 
- 'torsion_generators'
- 'xcoord_integral_points'
- 'gens'
- 'heights'
- 'tamagawa_product'
- 'special_value'
- 'real_period'
- 'sha_an'
-+ (new cols to allow for incomplete rank data -- any can be None)
- 'rank_bounds'
- 'analytic_rank'
- 'ngens'
+'label': 'text',
+'lmfdb_label': 'text',
+'iwdata': 'jsonb',
+'iwp0': 'smallint'
 
-(5) ec_q_classdata (only needed for one curve per isogeny class, so the
-label column will be the isogeny class label):
+NB Type jsonb is only used for ec_iwasawa.iwdata, which is a dict with
+keys a variable number of primes.
 
- 'isogeny_matrix'
- 'aplist'
- 'anlist'
-
-(6) ec_2adic:
-
- '2adic_label'
- '2adic_index'
- '2adic_log_level'
- '2adic_gens'
-
-Proposed changes of type, only using jsonb where necessary
-
-@from jsonb to integer[]: xcoord_integral_points, sha_primes,
-                          torsion_primes, tor_degs, aplist, anlist,
-                          ainvs, torsion_structure, isogeny_degrees,
-                          nonmax_primes
-
-@from jsonb to numeric[]: heights
-
-Columns of type jsonb after this:
-
-gens, torsion_generators, modp_images, tor_fields (list of strings)
-isogeny_matrix (list of lists of ints)
-iwdata (dict)
-
-?
-2adic_gens
-
-Columns no longer used:
-tor_gro
-local_data
-min_quad_twist
+See make_tables.py for commands used to create these tables, and also
+the commands for creating indexes for them.
