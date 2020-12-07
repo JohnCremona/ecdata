@@ -86,25 +86,22 @@ def compare_gens(filename1, filename2, base_dir = BASE_DIR):
     nsame_uptosign = 0
     nsame_uptotorsion = 0
     ndiff_really = 0
-    with open('diffs.txt', 'w') as logfile:
+    with open(filename1+'.uptosign.txt', 'w') as logfile2, open(filename1+'.uptotorsion.txt', 'w') as logfile3:
         for label in Egens:
             bothgens = Egens[label]
             gens1 = bothgens[file1]
             gens2 = bothgens[file2]
             if gens1 == gens2:
                 nsame+=1
-                logfile.write("{} gens: {}".format(label, gens1) +"\n")
             else:
                 ndiff+=1
                 if all([(P==Q) or (P==-Q) for P,Q in zip(gens1, gens2)]):
                     nsame_uptosign += 1
-                    #print("{} gens1: {}".format(label, gens1))
-                    #print("{} gens2: {}".format(label, gens2))
+                    logfile2.write("{} gens1: {}\n{} gens2: {}\n".format(label, gens1, label, gens2))
                 else:
                     if all([(P-Q).has_finite_order() or (P+Q).has_finite_order() for P,Q in zip(gens1, gens2)]):
                         nsame_uptotorsion += 1
-                        #print("{} gens1: {}".format(label, gens1))
-                        #print("{} gens2: {}".format(label, gens2))
+                        logfile3.write("{} gens1: {}\n{} gens2: {}\n".format(label, gens1, label, gens2))
                     else:
                         ndiff_really += 1
     print("gens equal in {} cases, different in {} cases".format(nsame, ndiff))
