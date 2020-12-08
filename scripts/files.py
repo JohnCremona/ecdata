@@ -854,7 +854,6 @@ def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges,
 
     if 'growth' in file_types:
         print("reading growth data")
-        
         growth_data = read_all_growth_data(ranges=ranges)
         for label, record in all_data.items():
             if label in growth_data:
@@ -987,16 +986,14 @@ def data_to_string(table, cols, record):
 
     return "|".join([postgres_encode(record.get(col, None), schema[col]) for col in cols])
 
-# tables with one row per curve:
-#
-# 'ec_curvedata'
-# 'ec_mwbsd'
-# 'ec_2adic'
-# 'ec_iwasawa'
+tables1 = ['ec_curvedata', 'ec_mwbsd', 'ec_2adic', 'ec_iwasawa'] # tables with one row per curve
+tables2 = ['ec_classdata']                                       # table with one row per isogeny class
+tables3 = ['ec_localdata',      # one row per bad prime
+           'ec_galrep',         # one row per non-maximal prime
+           'ec_torsion_growth', # one row per extension degree
+]
 
-# table with one row per isogeny class
-#
-# 'ec_classdata'
+all_tables = tables1 + tables2 + tables3
 
 def make_table_upload_file(data, table, rows=None, include_id=True):
     """This version works when there is one row per curve or one per
@@ -1035,6 +1032,8 @@ def make_table_upload_file(data, table, rows=None, include_id=True):
 
         n = 1
         for label, record in data.items():
+            if table=='ec_iwasawa' and not 'iwdata' in record:
+                continue
             if include_id:
                 record['id'] = n
             if allcurves or record['number']==1:
@@ -1044,12 +1043,6 @@ def make_table_upload_file(data, table, rows=None, include_id=True):
             n += 1
         n -= 1
         print("{} lines written to {}".format(n, filename))
-
-# tables with more than one row per curve
-#
-# 'ec_localdata':      one row per bad prime
-# 'ec_galrep':         one row per non-maximal prime
-# 'ec_torsion_growth': one row per extension degree
 
 def make_localdata_upload_file(data, rows=None):
     """
@@ -1073,7 +1066,7 @@ def make_localdata_upload_file(data, rows=None):
 
         n = 1
         for label, record in data.items():
-            for i in range(record['num_bad_primes']):
+            for i in range(int(record['num_bad_primes'])):
                 prime_record = {'label': record['label'], 'lmfdb_label': record['lmfdb_label'],
                                 'prime': record['bad_primes'][i],
                                 'tamagawa_number': record['tamagawa_numbers'][i],
@@ -1165,3 +1158,8 @@ def make_torsion_growth_upload_file(data, rows=None):
                         print("{} lines written to {} so far...".format(n, filename))
         n -= 1
         print("{} lines written to {}".format(n, filename))
+
+def make_all_upload_files(data, tables=all_tables, rows=None, include_id=False):
+    for table in tables:
+        make_table_upload_file(data, table, rows=rows, include_id=include_id)
+

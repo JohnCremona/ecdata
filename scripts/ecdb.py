@@ -3,6 +3,7 @@ from sage.all import EllipticCurve, Integer, ZZ, QQ, Set, magma, prime_range, fa
 from red_gens import reduce_tgens, reduce_gens
 from trace_hash import TraceHashClass
 from files import make_line, datafile_columns, HOME
+from codec import parse_int_list, point_to_weighted_proj
 
 # Data files derived from https://github.com/bmatschke/s-unit-equations/tree/master/elliptic-curve-tables
 MATSCHKE_DIR = os.path.join(HOME, "MatschkeCurves")
@@ -821,8 +822,6 @@ def curve_from_inv_string(s):
         raise ValueError("{}: invariant list must have length 2 or 5".format(s))
     return E
 
-from codec import parse_int_list
-
 def process_raw_curves(infilename, outfilename, base_dir='.', verbose=1):
     """File infilename should contain one curve per line, with
     a-ainvariants or c-invariants as a list (with no internal spaces),
@@ -1052,7 +1051,7 @@ def make_new_data(infilename, base_dir, PRECISION=100, verbose=1):
         tgens.sort(key=lambda P:P.order())
         tgens = reduce_tgens(tgens)
         tor_struct = [P.order() for P in tgens]
-        record['torsion_generators'] = tgens
+        record['torsion_generators'] = [point_to_weighted_proj(gen) for gen in tgens]
         record['torsion_structure'] = tor_struct
         record['torsion'] = torsion = prod(tor_struct)
         record['torsion_primes'] = [int(p) for p in Integer(torsion).support()]
@@ -1138,17 +1137,17 @@ def make_new_data(infilename, base_dir, PRECISION=100, verbose=1):
                     else:
                         if verbose>1:
                             print("...done, generators are {}".format(gens))
-                record['gens'] = gens
                 record['rank_bounds'] = [ngens, ar]
                 record['rank'] = ngens if ngens == ar else None
 
                 # so the other curves in the class know their gens:
                 record['allgens'] = map_points(isogenies, gens)
             else:
-                record['gens'] = gens = record1['allgens'][number-1]
+                gens = record1['allgens'][number-1]
                 record['rank'] = record1['rank']
                 record['rank_bounds'] = record1['rank_bounds']
 
+            record['gens'] = [point_to_weighted_proj(gen) for gen in gens]
             prec0=mwrank_get_precision()
             mwrank_set_precision(mwrank_saturation_precision)
             maxp = 0 if first else max(record['class_deg'].support())
@@ -1254,7 +1253,7 @@ def write_degphi(data, r, base_dir=MATSCHKE_DIR):
     Write file base_dir/alldegphi/alldegphi.<r>
 
     """
-    cols = ['conductor', 'iso', 'number', 'ainvs', 'degree']
+    cols = ['conductor', 'isoclass', 'number', 'ainvs', 'degree']
     filename = os.path.join(base_dir, 'alldegphi', 'alldegphi.{}'.format(r))
     print("Writing data to {}".format(filename))
     n = 0
