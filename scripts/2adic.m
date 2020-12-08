@@ -10042,3 +10042,5 @@ PrintFile(outputfilename,outstr);
 end if;
 // End the while loop
 end while;
+
+    quit;

@@ -1,6 +1,7 @@
 import os
 HOME = os.getenv("HOME")
 UPLOAD_DIR = os.path.join(HOME, "ecq-upload")
+import sys
 sys.path.append(os.path.join(HOME, 'lmfdb'))
 from lmfdb import db
 

@@ -86,7 +86,7 @@ def compare_gens(filename1, filename2, base_dir = BASE_DIR):
     nsame_uptosign = 0
     nsame_uptotorsion = 0
     ndiff_really = 0
-    with open(filename1+'.uptosign.txt', 'w') as logfile2, open(filename1+'.uptotorsion.txt', 'w') as logfile3:
+    with open(file1+'.uptosign.txt', 'w') as logfile2, open(file1+'.uptotorsion.txt', 'w') as logfile3:
         for label in Egens:
             bothgens = Egens[label]
             gens1 = bothgens[file1]

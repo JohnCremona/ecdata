@@ -1,6 +1,14 @@
-from sage.all import EllipticCurve, Integer, QQ, Set, magma, prime_range, factorial, mwrank_get_precision, mwrank_set_precision, srange, pari
+import os
+from sage.all import EllipticCurve, Integer, ZZ, QQ, Set, magma, prime_range, factorial, mwrank_get_precision, mwrank_set_precision, srange, pari, EllipticCurve_from_c4c6, prod, copy
+from red_gens import reduce_tgens, reduce_gens
+from trace_hash import TraceHashClass
+from files import make_line, datafile_columns, HOME
 
-from sage.databases.cremona import parse_cremona_label, class_to_int
+# Data files derived from https://github.com/bmatschke/s-unit-equations/tree/master/elliptic-curve-tables
+MATSCHKE_DIR = os.path.join(HOME, "MatschkeCurves")
+
+
+from sage.databases.cremona import parse_cremona_label, class_to_int, cremona_letter_code
 try:
     from sage.databases.cremona import cmp_code
 except:
@@ -66,6 +74,10 @@ def pointPtoA(P):
 
 def matstr(m):
     return str(list(m)).replace('(','[').replace(')',']').replace(' ','')
+
+def mat_to_list_list(M):
+    m,n = M.dimensions()
+    return [[M[i][j] for j in range(n)] for i in range(m)]
 
 # Assuming that E is known to have rank 1, returns a point on E
 # computed by Magma's HeegnerPoint command
@@ -798,3 +810,599 @@ def check_sagedb(N1, N2, a4a6bound=100):
                             continue
                         if not list(E.ainvs()) in CDB_curves(N):
                             print("Missing N={}, ai={}".format(N,ai))
+
+def curve_from_inv_string(s):
+    invs = parse_int_list(s)
+    if len(invs)==5:
+        E = EllipticCurve(invs).minimal_model()
+    elif len(invs)==2:
+        E = EllipticCurve_from_c4c6(invs).minimal_model()
+    else:
+        raise ValueError("{}: invariant list must have length 2 or 5".format(s))
+    return E
+
+from codec import parse_int_list
+
+def process_raw_curves(infilename, outfilename, base_dir='.', verbose=1):
+    """File infilename should contain one curve per line, with
+    a-ainvariants or c-invariants as a list (with no internal spaces),
+    optionally preceded by the conductor.
+
+    Sample lines (all defining the same curve):
+
+    [0,-1,1,-10,-20]
+    11 [0,-1,1,-10,-20]
+    [496,20008]
+    11 [496,20008]
+
+    We do not assume minimal or reduced models, and if the conductor
+    is given it is checked for consistency.
+
+    For each input curve we check whether an isogenous curve has
+    already been processed; if not, we compute its isogeny class and
+    process all of them.
+
+    OUTPUT: one line per curve, sorted by conductor and then by
+    isogeny class.  Each line has the format
+
+    N class_code number ainvs lmfdb_number
+
+    where "number" is the index of the curve in its class (counting
+    from 1), sorted by Faltings heights, with the lex. order of
+    a-invariants as a tie-breaker.
+
+    """
+    # allcurves will have conductors as keys, values lists of lists of
+    # ainvs, subdivided by isogeny class
+    allcurves = {}
+    ncurves = ncurves_complete = 0
+
+    with open(os.path.join(base_dir,infilename)) as infile:
+        for L in infile:
+            data = L.split()
+            assert len(data) in [1,2]
+            invs = data[-1]
+            E = curve_from_inv_string(invs)
+            ainvs = E.ainvs()
+            N = E.conductor()
+            if len(data)==2:
+                N1 = ZZ(data[0])
+                if N1!=N:
+                    raise ValueError("curve with invariants {} has conductor {}, not {} as input".format(invs, N, N1))
+            ncurves += 1
+            if ncurves%1000==0 and verbose:
+                print("{} curves read from {} so far...".format(ncurves, infilename))
+
+            # now we have the curve E, check if we have seen it (or an isogenous curve) before
+            repeat = False
+
+            if N in allcurves:
+                if any(ainvs in c for c in allcurves[N]):
+                    repeat = True
+                    if verbose>1:
+                        print("Skipping {} of conductor {}: repeat".format(ainvs,N))
+                else:
+                    if verbose>1:
+                        print("New curve {} of conductor {}".format(ainvs,N))
+            else:
+                allcurves[N] = []
+            if repeat:
+                continue # to next input line
+            newcurves = [E2.ainvs() for E2 in E.isogeny_class().curves]
+            ncurves_complete += len(newcurves)
+            allcurves[N].append(newcurves)
+
+    print("{} curves read from {}".format(ncurves, infilename))
+    if ncurves != ncurves_complete:
+        print("input curves not closed under isogeny! completed list contains {} curves".format(ncurves_complete))
+
+    conductors = list(allcurves.keys())
+    conductors.sort()
+
+    for N in conductors:
+        C = allcurves[N]
+        ncl = len(C)
+        nc = sum([len(cl) for cl in C])
+        print("Conductor {}:\t{} isogeny classes,\t{} curves".format(N,ncl,nc))
+
+    # Now we work out labels and output a new file
+
+    def curve_key_LMFDB(E): # lex order of ainvs
+        return E.ainvs()
+
+    def curve_key_Faltings(E): # Faltings height, with tie-break
+        return [-E.period_lattice().complex_area(), E.ainvs()]
+
+    with open(os.path.join(base_dir,outfilename), 'w') as outfile:
+        for N in conductors:
+            nNcl = nNcu = 0
+            sN = str(N)
+            # construct the curves from their ainvs:
+            CC = [[EllipticCurve(ai) for ai in cl] for cl in allcurves[N]]
+            nap=100
+            ok = False
+            while not ok:
+                aplists = dict([(cl[0],cl[0].aplist(100,python_ints=True)) for cl in CC])
+                aps = list(aplists.values())
+                ok = (len(list(Set(aps))) == len(aps))
+                if not ok:
+                    print("{} ap not enough for conductor {}, increasing...".format(nap,N))
+                nap += 100
+            # sort the isogeny classes:
+            CC.sort(key=lambda cl: aplists[cl[0]])
+            for ncl, cl in enumerate(CC):
+                nNcl += 1
+                class_code = cremona_letter_code(ncl)
+                # sort the curves in two ways (LMFDB, Faltings)
+                cl.sort(key = curve_key_LMFDB)
+                cl_Faltings = copy(cl)
+                cl_Faltings.sort(key=curve_key_Faltings)
+                class_size = len(cl)
+                for nE_F, E in enumerate(cl_Faltings):
+                    nNcu += 1
+                    ainvs = shortstr(E)
+                    nE_L = cl.index(E)
+                    line = " ".join([sN,class_code,str(class_size),str(nE_F+1),str(nE_L+1),ainvs])
+                    #print(line)
+                    outfile.write(line+"\n")
+            print("N={}: {} curves in {} classes output to {}".format(N,nNcu,nNcl,outfilename))
+
+def make_new_data(infilename, base_dir, PRECISION=100, verbose=1):
+    alldata = {}
+    nc = 0
+    with open(os.path.join(base_dir, infilename)) as infile:
+        for L in infile:
+            nc += 1
+            sN, isoclass, class_size, number, lmfdb_number, ainvs = L.split()
+            iso = ''.join([sN,isoclass])
+            label = ''.join([iso,number])
+            lmfdb_number = int(lmfdb_number)
+            lmfdb_isoclass = isoclass
+            lmfdb_iso = '.'.join([sN,isoclass])
+            lmfdb_label = ''.join([lmfdb_iso,number])
+            iso_nlabel = class_to_int(isoclass)
+            number = int(number)
+            class_size = int(class_size)
+            ainvs = parse_int_list(ainvs)
+            N = ZZ(sN)
+            bad_p = N.prime_factors() # will be sorted
+
+            record = {
+                'label': label,
+                'isoclass': isoclass,
+                'iso': iso,
+                'number': number,
+                'iso_nlabel': iso_nlabel,
+                'lmfdb_number': lmfdb_number,
+                'lmfdb_isoclass': lmfdb_isoclass,
+                'lmfdb_iso': lmfdb_iso,
+                'lmfdb_label':lmfdb_label,
+                'faltings_index': number,
+                'class_size': class_size,
+                'ainvs': ainvs,
+                'conductor': N,
+                'bad_primes': bad_p,
+                'num_bad_primes': len(bad_p),
+                }
+            alldata[label] = record
+
+    if verbose:
+        print("{} curves read from {}".format(nc, infilename))
+
+    for label, record in alldata.items():
+        if verbose:
+            print("Processing {}".format(label))
+        N = record['conductor']
+        iso = record['iso']
+        number = record['number']
+        first = (number==1) # tags first curve in each isogeny class
+        ncurves = record['class_size']
+        if first:
+            alllabels = [iso+str(n+1) for n in range(ncurves)]
+            allcurves = [EllipticCurve(alldata[lab]['ainvs']) for lab in alllabels]
+            E = allcurves[0]
+        else:
+            record1 = alldata[iso+'1']
+            E = allcurves[number-1]
+        assert N==E.conductor()
+        if verbose>1:
+            print("E = {}".format(E))
+
+        record['jinv'] = j = E.j_invariant()
+        record['potential_good_reduction'] = (j.denominator()==1)
+        record['signD'] = int(E.discriminant().sign())
+        record['cm'] = int(E.cm_discriminant()) if E.has_cm() else 0
+
+        if first:
+            record['aplist'] = E.aplist(100,python_ints=True)
+            record['anlist'] = E.anlist(20,python_ints=True)
+            record['trace_hash'] = TraceHashClass(record['iso'], E)
+        else:
+            record['aplist'] = record1['aplist']
+            record['anlist'] = record1['anlist']
+            record['trace_hash'] = record1['trace_hash']
+
+        if verbose>1:
+            print("aplist done")
+        local_data = [{'p': int(ld.prime().gen()),
+                       'ord_cond':int(ld.conductor_valuation()),
+                       'ord_disc':int(ld.discriminant_valuation()),
+                       'ord_den_j':int(max(0,-(E.j_invariant().valuation(ld.prime().gen())))),
+                       'red':int(ld.bad_reduction_type()),
+                       'rootno':int(E.root_number(ld.prime().gen())),
+                       'kod':ld.kodaira_symbol()._pari_code(),
+                       'cp':int(ld.tamagawa_number())}
+                      for ld in E.local_data()]
+
+        record['tamagawa_numbers']    = cps = [ld['cp'] for ld in local_data]
+        record['kodaira_symbols']           = [ld['kod'] for ld in local_data]
+        record['reduction_types']           = [ld['red'] for ld in local_data]
+        record['root_numbers']              = [ld['rootno'] for ld in local_data]
+        record['conductor_valuations'] = cv = [ld['ord_cond'] for ld in local_data]
+        record['discriminant_valuations']   = [ld['ord_disc'] for ld in local_data]
+        record['j_denominator_valuations']  = [ld['ord_den_j'] for ld in local_data]
+
+        record['semistable'] = all([v==1 for v in cv])
+        record['tamagawa_product'] = tamprod = prod(cps)
+        if verbose>1:
+            print("local data done")
+
+        T = E.torsion_subgroup()
+        tgens = list(T.gens())
+        tgens.sort(key=lambda P:P.order())
+        tgens = reduce_tgens(tgens)
+        tor_struct = [P.order() for P in tgens]
+        record['torsion_generators'] = tgens
+        record['torsion_structure'] = tor_struct
+        record['torsion'] = torsion = prod(tor_struct)
+        record['torsion_primes'] = [int(p) for p in Integer(torsion).support()]
+        if verbose>1:
+            print("torsion done")
+
+        if first: # else add later to avoid recomputing a.r.
+
+            # Analytic rank and special L-value
+            ar,sv = E.pari_curve().ellanalyticrank(precision=PRECISION)
+            record['analytic_rank'] = ar = ar.sage()
+            record['special_value'] = sv = sv.sage()/factorial(ar)
+
+            # compute isogenies so we can map points from #1 to the rest:
+            cl = E.isogeny_class(order=tuple(allcurves))
+            record['isogeny_matrix'] = mat = mat_to_list_list(cl.matrix())
+            record['class_deg'] = max(max(r) for r in mat)
+            record['isogeny_degrees'] = mat[0]
+            isogenies = cl.isogenies() # for mapping points later
+            record['degree'] = degphi = get_modular_degree(E, label)
+            record['degphilist'] = degphilist = [degphi*mat[0][j] for j in range(ncurves)]
+            if verbose>1: print("degphilist = {}".format(degphilist))
+
+        else:
+
+            record['analytic_rank'] = ar = record1['analytic_rank']
+            record['special_value'] = sv = record1['special_value']
+            record['class_deg'] = record1['class_deg']
+            record['isogeny_degrees'] = record1['isogeny_matrix'][number-1]
+            record['degree'] = record1['degphilist'][number-1]
+
+        if verbose>1:
+            print("analytic rank done: {}".format(ar))
+        if ar==0:
+            record['gens'] = gens = []
+            record['regulator'] = reg = 1
+            record['ngens'] = 0
+            record['heights'] = []
+            record['rank'] = 0
+            record['rank_bounds'] = [0,0]
+
+        else: # positive rank
+            if first:
+                if ar==1:
+                    if verbose>1:
+                        print("finding generator...")
+                    gens = E.point_search(15)
+                    if len(gens)==0:
+                        try:
+                            if verbose>1:
+                                print("using GP's ellheegner() to find generator")
+                            gens = [pari_rank1_gen(E)]
+                            if verbose>1:
+                                print("P = {}".format(gens[0]))
+                        except:  # Magma/pari bug or something
+                            print("Heegner point finding failed for {}, using descent".format(label))
+                            gens = E.gens()
+                    ngens = len(gens)
+                    if ngens==0:
+                        print("Analytic rank = 1 for {} but we found no generator".format(label))
+                    else:
+                        if verbose>1:
+                            print("...done, generator is {}".format(gens[0]))
+                else: #ar >=2
+                    if verbose>1:
+                        print("finding generators (expecting rank {})...".format(ar))
+                    if torsion%2==1: # Simon is faster
+                        try:
+                            if verbose>1:
+                                print("Odd torsion ({}), using simon_two_descent()...".format(torsion))
+                            E.simon_two_descent(lim3=5000)
+                            gens = E.gens()
+                        except:
+                            print("Simon failed for {}, using mwrank: ".format(label))
+                            gens = E.gens()
+                    else:
+                        if verbose>1:
+                            print("2-torsion ({}), using mwrank()...".format(torsion))
+                        gens = E.gens()
+                    ngens = len(gens)
+                    if ngens < ar:
+                        print("Analytic rank = {} for {} but we found only {} generator(s)".format(ar,label,ngens))
+                    else:
+                        if verbose>1:
+                            print("...done, generators are {}".format(gens))
+                record['gens'] = gens
+                record['rank_bounds'] = [ngens, ar]
+                record['rank'] = ngens if ngens == ar else None
+
+                # so the other curves in the class know their gens:
+                record['allgens'] = map_points(isogenies, gens)
+            else:
+                record['gens'] = gens = record1['allgens'][number-1]
+                record['rank'] = record1['rank']
+                record['rank_bounds'] = record1['rank_bounds']
+
+            prec0=mwrank_get_precision()
+            mwrank_set_precision(mwrank_saturation_precision)
+            maxp = 0 if first else max(record['class_deg'].support())
+            if verbose>1:
+                print("Starting saturation (maxp={})...".format(maxp))
+            gens, index, reg = E.saturation(gens, max_prime=maxp)
+            mwrank_set_precision(prec0)
+            if verbose>1:
+                print("... finished saturation (index {}, new reg={}), reducing...".format(index, reg))
+            gens, tgens = reduce_gens(gens, tgens, False, label)
+            record['heights'] = heights = [P.height(precision=PRECISION) for P in gens]
+            reg = E.regulator_of_points(gens, PRECISION)
+            record['ngens'] = len(gens)
+            record['regulator'] = reg
+            if verbose>1:
+                print("... finished reduction, gens are now {}, heights {}, reg={}".format(gens,heights,reg))
+
+        L = E.period_lattice()
+        record['real_period'] = om = L.omega(prec=PRECISION) # includes #R-components factor
+        record['area'] = A = L.complex_area(prec=PRECISION)
+        record['faltings_height'] = -A.log()/2
+
+        # Analytic Sha
+        sha_an = sv*torsion**2 / (tamprod*reg*om)
+        sha = sha_an.round()
+        assert sha>0
+        assert sha.is_square()
+        assert ((sha-sha_an).abs() < 1e-10)
+        record['sha_an'] = sha_an
+        record['sha'] = int(sha)
+        record['faltings_ratio'] = 1 if first else (record1['faltings_ratio']/A).round()
+
+        record['intpts'] = get_integral_points(E, gens)
+
+
+        Etw, Dtw = E.minimal_quadratic_twist()
+        if Etw.conductor()==N:
+            record['min_quad_twist_ainvs'] = record['ainvs']
+            record['min_quad_twist_disc']  = 1
+        else:
+            record['min_quad_twist_ainvs'] = [int(a) for a in Etw.ainvs()]
+            record['min_quad_twist_disc']  = int(Dtw)
+
+        if verbose:
+            print("Finished processing {}".format(label))
+            if verbose>1:
+                print("data for {}:\n{}".format(label,record))
+
+    return alldata
+
+
+def write_curvedata(data, r, base_dir=MATSCHKE_DIR):
+    r"""
+    Write file base_dir/curvedata/curvedata.<r>
+
+    """
+    cols = datafile_columns['curvedata']
+    filename = os.path.join(base_dir, 'curvedata', 'curvedata.{}'.format(r))
+    print("Writing data to {}".format(filename))
+    n = 0
+    with open(filename, 'w') as outfile:
+        for label, record in data.items():
+            line = make_line(record, cols)
+            outfile.write(line +"\n")
+            n += 1
+    print("{} lines written to {}".format(n, filename))
+
+def write_classdata(data, r, base_dir=MATSCHKE_DIR):
+    r"""
+    Write file base_dir/classdata/classdata.<r>
+
+    """
+    cols = datafile_columns['classdata']
+    filename = os.path.join(base_dir, 'classdata', 'classdata.{}'.format(r))
+    print("Writing data to {}".format(filename))
+    n = 0
+    with open(filename, 'w') as outfile:
+        for label, record in data.items():
+            if record['number']==1:
+                line = make_line(record, cols)
+                outfile.write(line +"\n")
+                n += 1
+    print("{} lines written to {}".format(n, filename))
+
+def write_intpts(data, r, base_dir=MATSCHKE_DIR):
+    r"""
+    Write file base_dir/intpts/intpts.<r>
+
+    """
+    cols = ['label', 'ainvs', 'intpts']
+    filename = os.path.join(base_dir, 'intpts', 'intpts.{}'.format(r))
+    print("Writing data to {}".format(filename))
+    n = 0
+    with open(filename, 'w') as outfile:
+        for label, record in data.items():
+            line = make_line(record, cols)
+            outfile.write(line +"\n")
+            n += 1
+    print("{} lines written to {}".format(n, filename))
+
+def write_degphi(data, r, base_dir=MATSCHKE_DIR):
+    r"""
+    Write file base_dir/alldegphi/alldegphi.<r>
+
+    """
+    cols = ['conductor', 'iso', 'number', 'ainvs', 'degree']
+    filename = os.path.join(base_dir, 'alldegphi', 'alldegphi.{}'.format(r))
+    print("Writing data to {}".format(filename))
+    n = 0
+    with open(filename, 'w') as outfile:
+        for label, record in data.items():
+            line = make_line(record, cols)
+            outfile.write(line +"\n")
+            n += 1
+    print("{} lines written to {}".format(n, filename))
+
+def write_datafiles(data, r, base_dir=MATSCHKE_DIR):
+    r"""Write file base_dir/<ft>/<ft>.<r> for ft in ['curvedata',
+    'classdata', 'intpts']
+    """
+    for writer in [write_curvedata, write_classdata, write_intpts, write_degphi]:
+        writer(data, r, base_dir)
+
+def read_write_data(infilename, base_dir=MATSCHKE_DIR):
+    print("Reading from {}".format(infilename))
+    N = infilename.split(".")[-1]
+    data = make_new_data(infilename, base_dir=base_dir)
+    write_datafiles(data, N)
+
+# How to make a 2adic file: run 2adic.m on a file containing one line
+# per curve, where each line has the form
+#
+# N c i [a1,a2,a3,a4,a6] *
+#
+# The magma script only read the a-invariants from what it finds
+# between the first "[" and the first "]", and also copies anything
+# which precedes the first "[" verbatim into the output line (one line
+# per curve).
+#
+# Similarly, Sutherland's script for mod p Galois representations runs
+# the function ComputeQGaloisImages(infilename, outfilename) in
+# ~/galrep/nfgalrep.m, where the format of infilename is
+#
+# label:[a1,a2,a3,a4,a6]
+#
+# To run both on the range r, given a curvedata file in directory d:
+#
+# ~/ecdata/scripts/make_galrep.sh r d
+#
+# from a directory containing curvedata/curvedata.${r}, which will
+# create (or overwrite) the file 2adic/2adic.${r}.
+
+def get_modular_degree(E, label):
+    degphi_magma = 0
+    degphi_sympow = 0
+    try:
+        degphi_magma = E.modular_degree(algorithm='magma')
+    except RuntimeError:
+        print("{}: degphi via magma failed".format(label))
+        try:
+            degphi_sympow = E.modular_degree(algorithm='sympow')
+        except RuntimeError:
+            print("{}: degphi via sympow failed".format(label))
+    if degphi_magma:
+        if degphi_sympow:
+            if degphi_magma==degphi_sympow:
+                return degphi_magma
+            else:
+                print("{}: degphi = {} from magma but {} from sympow!".format(label, degphi_magma, degphi_sympow))
+                return degphi_magma
+        else:
+            return degphi_magma
+    else:
+        if degphi_sympow:
+            return degphi_sympow
+        else:
+            print("{}: no success in computing degphi via magma or sympow".format(label))
+            return 0
+
+
+def make_degrees(infilename, base_dir, verbose=1):
+    alldata = {}
+    nc = 0
+    with open(os.path.join(base_dir, infilename)) as infile:
+        for L in infile:
+            nc += 1
+            sN, isoclass, class_size, number, lmfdb_number, ainvs = L.split()
+            iso = ''.join([sN,isoclass])
+            label = ''.join([iso,number])
+            lmfdb_number = int(lmfdb_number)
+            lmfdb_isoclass = isoclass
+            lmfdb_iso = '.'.join([sN,isoclass])
+            lmfdb_label = ''.join([lmfdb_iso,number])
+            iso_nlabel = class_to_int(isoclass)
+            number = int(number)
+            class_size = int(class_size)
+            ainvs = parse_int_list(ainvs)
+            N = ZZ(sN)
+            bad_p = N.prime_factors() # will be sorted
+
+            record = {
+                'label': label,
+                'isoclass': isoclass,
+                'iso': iso,
+                'number': number,
+                'iso_nlabel': iso_nlabel,
+                'lmfdb_number': lmfdb_number,
+                'lmfdb_isoclass': lmfdb_isoclass,
+                'lmfdb_iso': lmfdb_iso,
+                'lmfdb_label':lmfdb_label,
+                'faltings_index': number,
+                'class_size': class_size,
+                'ainvs': ainvs,
+                'conductor': N,
+                'bad_primes': bad_p,
+                'num_bad_primes': len(bad_p),
+                }
+            alldata[label] = record
+
+    if verbose:
+        print("{} curves read from {}".format(nc, infilename))
+
+    nc=0
+    for label, record in alldata.items():
+        nc += 1
+        if verbose:
+            print("Processing {}".format(label))
+        N = record['conductor']
+        iso = record['iso']
+        number = record['number']
+        first = (number==1) # tags first curve in each isogeny class
+        ncurves = record['class_size']
+
+        if first:
+            alllabels = [iso+str(n+1) for n in range(ncurves)]
+            allcurves = [EllipticCurve(alldata[lab]['ainvs']) for lab in alllabels]
+            E = allcurves[0]
+            cl = E.isogeny_class(order=tuple(allcurves))
+            record['isogeny_matrix'] = mat = mat_to_list_list(cl.matrix())
+            record['class_deg'] = max(max(r) for r in mat)
+            record['isogeny_degrees'] = mat[0]
+            record['degree'] = degphi = get_modular_degree(E, label)
+            record['degphilist'] = degphilist = [degphi*mat[0][j] for j in range(ncurves)]
+            if verbose: print("degphilist = {}".format(degphilist))
+        else:
+            record1 = alldata[iso+'1']
+            E = allcurves[number-1]
+            record['class_deg'] = record1['class_deg']
+            record['isogeny_degrees'] = record1['isogeny_matrix'][number-1]
+            record['degree'] = record1['degphilist'][number-1]
+
+        if verbose:
+            print("Modular degree = {}".format(record['degree']))
+        if nc%1000==0:
+            print("{} curves processed...".format(nc))
+    print("Finished processing {} curves".format(nc))
+    return alldata
