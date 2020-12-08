@@ -2,7 +2,7 @@ import os
 from sage.all import EllipticCurve, Integer, ZZ, QQ, Set, magma, prime_range, factorial, mwrank_get_precision, mwrank_set_precision, srange, pari, EllipticCurve_from_c4c6, prod, copy
 from red_gens import reduce_tgens, reduce_gens
 from trace_hash import TraceHashClass
-from files import make_line, datafile_columns, HOME
+from files import make_line, datafile_columns, HOME, read_data
 from codec import parse_int_list, point_to_weighted_proj
 
 # Data files derived from https://github.com/bmatschke/s-unit-equations/tree/master/elliptic-curve-tables
@@ -817,7 +817,7 @@ def curve_from_inv_string(s):
     if len(invs)==5:
         E = EllipticCurve(invs).minimal_model()
     elif len(invs)==2:
-        E = EllipticCurve_from_c4c6(invs).minimal_model()
+        E = EllipticCurve_from_c4c6(*invs).minimal_model()
     else:
         raise ValueError("{}: invariant list must have length 2 or 5".format(s))
     return E
@@ -1266,7 +1266,7 @@ def write_degphi(data, r, base_dir=MATSCHKE_DIR):
 
 def write_datafiles(data, r, base_dir=MATSCHKE_DIR):
     r"""Write file base_dir/<ft>/<ft>.<r> for ft in ['curvedata',
-    'classdata', 'intpts']
+    'classdata', 'intpts', 'alldegphi']
     """
     for writer in [write_curvedata, write_classdata, write_intpts, write_degphi]:
         writer(data, r, base_dir)
@@ -1298,7 +1298,8 @@ def read_write_data(infilename, base_dir=MATSCHKE_DIR):
 # ~/ecdata/scripts/make_galrep.sh r d
 #
 # from a directory containing curvedata/curvedata.${r}, which will
-# create (or overwrite) the file 2adic/2adic.${r}.
+# create (or overwrite) the files 2adic/2adic.${r} and
+# galrep/galrep.${r}.
 
 def get_modular_degree(E, label):
     degphi_magma = 0
@@ -1405,3 +1406,22 @@ def make_degrees(infilename, base_dir, verbose=1):
             print("{} curves processed...".format(nc))
     print("Finished processing {} curves".format(nc))
     return alldata
+
+# one-off function to fix curvedata encoding of gens and torsion_generators
+# from e.g. [(-5:625:1),(580/9:1250/27:1)]
+
+def fix_gens(r, base_dir=MATSCHKE_DIR):
+    data = read_data(base_dir, ['curvedata'], [r], True)
+
+    def parse_points(s, E):
+        if s=='[]':
+            return []
+        else:
+            return [E([QQ(c) for c in pt.split(":")]) for pt in s[2:-2].split("),(")]
+
+    for label, record in data.items():
+        E = EllipticCurve(parse_int_list(record['ainvs']))
+        for t in ['gens', 'torsion_generators']:
+            record[t] = [point_to_weighted_proj(gen) for gen in parse_points(record[t], E)]
+
+    write_curvedata(data, r+'.new', base_dir=base_dir)

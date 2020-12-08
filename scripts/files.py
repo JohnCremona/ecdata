@@ -620,8 +620,11 @@ def parse_curvedata_line(line, raw=False):
     record['lmfdb_iso'] = ".".join([str(record['conductor']),record['lmfdb_isoclass']])
     isodegs = record['isogeny_degrees']
     record['class_size'] = str(1+isodegs.count(",")) if raw else len(isodegs)
-    jinv = parse_int_list(record['jinv']) if raw else record['jinv']
-    record['potential_good_reduction'] = (jinv[1]==1)
+    jinv = record['jinv']
+    if raw:
+        record['potential_good_reduction'] = (parse_int_list(jinv)[1]==1)
+    else:
+        record['potential_good_reduction'] = (jinv.denominator()==1)
 
     return record['label'], record
 
