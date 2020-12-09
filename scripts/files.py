@@ -25,6 +25,9 @@ UPLOAD_DIR = os.path.join(HOME, "ecq-upload")
 # Iwasawa data from Rob Pollack (https://github.com/rpollack9974/Iwasawa-invariants) but reorganised here:
 IWASAWA_DATA_DIR = ECDATA_DIR
 
+# Data files derived from https://github.com/bmatschke/s-unit-equations/tree/master/elliptic-curve-tables
+MATSCHKE_DIR = os.path.join(HOME, "MatschkeCurves")
+
 DEFAULT_PRECISION=53
 PRECISION=53 # precision of heights, regulator, real period and
              # special value, and hence analytic sha, when these are
@@ -658,6 +661,8 @@ parsers = {'allgens': parse_allgens_line,
 all_file_types = list(parsers.keys())
 old_file_types = ['alllabels', 'allgens', 'allisog']
 new_file_types = [ft for ft in all_file_types if not ft in old_file_types]
+optional_file_types = ['opt_man', 'growth', 'iwasawa']
+main_file_types = [t for t in new_file_types if not t in optional_file_types]
 
 all_ranges = ["{}0000-{}9999".format(n,n) for n in range(50)]
 iwasawa_ranges = ["{}0000-{}9999".format(n,n) for n in range(15)]
@@ -997,6 +1002,8 @@ tables3 = ['ec_localdata',      # one row per bad prime
 ]
 
 all_tables = tables1 + tables2 + tables3
+optional_tables = ['ec_iwasawa', 'ec_torsion_growth']
+main_tables = [t for t in all_tables if not t in optional_tables]
 
 def make_table_upload_file(data, table, rows=None, include_id=True):
     """This version works when there is one row per curve or one per
