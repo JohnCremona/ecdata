@@ -11,7 +11,7 @@ import os
 from sage.all import ZZ, QQ, EllipticCurve, Integer, prod, factorial, primes
 from sage.databases.cremona import class_to_int, parse_cremona_label
 from trace_hash import TraceHashClass
-from codec import split, parse_int_list, proj_to_point, point_to_weighted_proj, decode, encode, split_galois_image_code
+from codec import split, parse_int_list, parse_int_list_list, proj_to_point, point_to_weighted_proj, decode, encode, split_galois_image_code
 from red_gens import reduce_gens
 
 HOME = os.getenv("HOME")
@@ -616,6 +616,14 @@ def parse_curvedata_line(line, raw=False):
         record = dict([(col, data[n]) for n, col in enumerate(datafile_columns['curvedata']) ])
     else:
         record = dict([(col, decode(col, data[n])) for n, col in enumerate(datafile_columns['curvedata']) ])
+
+    # Cremona labels only defined for conductors up to 500000:
+    if ZZ(record['conductor'])<500000:
+        record['Clabel'] = record['label']
+        record['Ciso'] = record['label'][:-1]
+        record['Cnumber'] = record['number']
+        #print("Clabel = {}, Ciso = {}, Cnumber={}".format(record['Clabel'], record['Ciso'], record['Cnumber']))
+
     record['sha_primes'] = [int(p) for p in Integer(record['sha']).prime_divisors()]
     badp = record['bad_primes']
     record['num_bad_primes'] = str(1+badp.count(",")) if raw else len(badp)
@@ -820,12 +828,18 @@ def make_curvedata(base_dir=ECDATA_DIR, ranges=all_ranges, prec=DEFAULT_PRECISIO
                         n += 1
                 print("{} lines written to {}".format(n, filename))
 
-def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges, raw=True):
+
+        
+def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges, raw=True, resort=True):
     r"""Read all the data in files base_dir/<ft>/<ft>.<r> where ft is a file type
     and r is a range.
 
     Return a single dict with keys labels and values complete
     curve records.
+
+    Resort permutes the rows/columns of the isogeny matrix to be index
+    by LMFDB numbers.
+
     """
     all_data = {}
 
@@ -860,6 +874,31 @@ def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges,
             if int(record['number']) > 1:
                 record['class_deg'] = all_data[label[:-1]+'1']['class_deg']
 
+    if 'classdata' in file_types and resort:
+        print("permuting isogeny matrices")
+        for label, record in all_data.items():
+            n = int(record['class_size'])
+            number = int(record['number'])
+            if n<=2 or number>1:
+                continue
+            isomat = record['isogeny_matrix']
+            if raw:
+                isomat = parse_int_list_list(isomat)
+            def num2Lnum(i):
+                return int(all_data[label[:-1]+str(i)]['lmfdb_number'])
+
+            # perm = lambda i: next(c for c in self.curves if c['number']==i+1)['lmfdb_number']-1
+            # newmat = [[isomat[perm(i)][perm(j)] for i in range(n)] for j in range(n)]
+            newmat = [[0 for _ in range(n)] for _ in range(n)]
+            for i in range(n):
+                ri = num2Lnum(i+1)-1
+                for j in range(n):
+                    rj = num2Lnum(j+1)-1
+                    newmat[ri][rj] = isomat[i][j]
+            if raw:
+                newmat = str(newmat).replace(' ','')
+            record['isogeny_matrix'] = newmat
+                
     if 'growth' in file_types:
         print("reading growth data")
         growth_data = read_all_growth_data(ranges=ranges)
@@ -879,9 +918,16 @@ def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges,
 # use the 'numeric' type.  The website code will cast to integers
 # where necessary.
 #
+# NB The LMFDB table ec_curvedata columns 'label', 'iso', 'number'
+# have been renamed 'Clabel', 'Ciso', 'Cnumber' and will only be
+# filled for conductor<500000 for which Cremona labels exist.  Our
+# data files currently still have these fields as they are used to
+# create labels for data processing purposes. None of the other tables
+# have these columns (any more).
 
-schemas = { 'ec_curvedata': {'label': 'text', 'lmfdb_label': 'text', 'iso': 'text', 'lmfdb_iso': 'text',
-                               'iso_nlabel': 'smallint', 'number': 'smallint', 'lmfdb_number': 'smallint',
+
+schemas = { 'ec_curvedata': {'Clabel': 'text', 'lmfdb_label': 'text', 'Ciso': 'text', 'lmfdb_iso': 'text',
+                               'iso_nlabel': 'smallint', 'Cnumber': 'smallint', 'lmfdb_number': 'smallint',
                                'ainvs': 'numeric[]', 'jinv': 'numeric[]', 'conductor': 'integer',
                                'cm': 'smallint', 'isogeny_degrees': 'smallint[]',
                                'nonmax_primes': 'smallint[]', 'nonmax_rad': 'integer',
@@ -897,37 +943,37 @@ schemas = { 'ec_curvedata': {'label': 'text', 'lmfdb_label': 'text', 'iso': 'tex
                                'faltings_index': 'smallint', 'faltings_ratio': 'smallint'},
 
             # local data: one row per (curve, bad prime)
-            'ec_localdata': {'label': 'text', 'lmfdb_label': 'text',
-                               'prime': 'integer', 'tamagawa_number': 'smallint', 'kodaira_symbol': 'smallint',
-                               'reduction_type': 'smallint', 'root_number': 'smallint',
-                               'conductor_valuation': 'smallint', 'discriminant_valuation': 'smallint',
-                               'j_denominator_valuation': 'smallint'},
+            'ec_localdata': {'lmfdb_label': 'text',
+                             'prime': 'integer', 'tamagawa_number': 'smallint', 'kodaira_symbol': 'smallint',
+                             'reduction_type': 'smallint', 'root_number': 'smallint',
+                             'conductor_valuation': 'smallint', 'discriminant_valuation': 'smallint',
+                             'j_denominator_valuation': 'smallint'},
 
-            'ec_mwbsd': {'label': 'text', 'lmfdb_label': 'text',
-                                'torsion_generators': 'numeric[]', 'xcoord_integral_points': 'numeric[]',
-                                'special_value': 'numeric', 'real_period': 'numeric', 'area': 'numeric',
-                                'tamagawa_product': 'integer', 'sha_an': 'numeric', 'rank_bounds': 'smallint[]',
-                                'ngens': 'smallint', 'gens': 'numeric[]', 'heights': 'numeric[]'},
+            'ec_mwbsd': {'lmfdb_label': 'text',
+                         'torsion_generators': 'numeric[]', 'xcoord_integral_points': 'numeric[]',
+                         'special_value': 'numeric', 'real_period': 'numeric', 'area': 'numeric',
+                         'tamagawa_product': 'integer', 'sha_an': 'numeric', 'rank_bounds': 'smallint[]',
+                         'ngens': 'smallint', 'gens': 'numeric[]', 'heights': 'numeric[]'},
 
             # class data: one row per isogeny class
-            'ec_classdata': {'iso': 'text', 'lmfdb_iso': 'text',
-                               'trace_hash': 'bigint', 'class_size': 'smallint', 'class_deg': 'smallint',
-                               'isogeny_matrix': 'smallint[]',
-                               'aplist': 'smallint[]', 'anlist': 'smallint[]'},
+            'ec_classdata': {'lmfdb_iso': 'text',
+                             'trace_hash': 'bigint', 'class_size': 'smallint', 'class_deg': 'smallint',
+                             'isogeny_matrix': 'smallint[]',
+                             'aplist': 'smallint[]', 'anlist': 'smallint[]'},
 
-            'ec_2adic': {'label': 'text', 'lmfdb_label': 'text',
+            'ec_2adic': {'lmfdb_label': 'text',
                          'twoadic_label': 'text', 'twoadic_index': 'smallint',
                          'twoadic_log_level': 'smallint', 'twoadic_gens': 'smallint[]'},
 
             # galrep data: one row per (curve, non-maximal prime)
-            'ec_galrep': {'label': 'text', 'lmfdb_label': 'text',
-                            'prime': 'smallint', 'image': 'text'},
+            'ec_galrep': {'lmfdb_label': 'text',
+                          'prime': 'smallint', 'image': 'text'},
 
             # torsion growth data: one row per (curve, extension field)
-            'ec_torsion_growth': {'label': 'text', 'lmfdb_label': 'text',
+            'ec_torsion_growth': {'lmfdb_label': 'text',
                                   'degree': 'smallint', 'field': 'numeric[]', 'torsion': 'smallint[]'},
 
-            'ec_iwasawa': {'label': 'text', 'lmfdb_label': 'text',
+            'ec_iwasawa': {'lmfdb_label': 'text',
                            'iwdata': 'jsonb',  'iwp0': 'smallint'}
 }
 
@@ -960,22 +1006,20 @@ def table_cols(table, include_id=False):
     front, and 'id' at the very front if wanted.
     """
     if table == 'ec_galrep':
-        return ['label', 'lmfdb_label', 'prime', 'image']
+        return ['lmfdb_label', 'prime', 'image']
 
     if table == 'ec_torsion_growth':
-        return ['label', 'lmfdb_label', 'degree', 'field', 'torsion']
+        return ['lmfdb_label', 'degree', 'field', 'torsion']
 
     cols = sorted(list(schemas[table].keys()))
 
-    # We want the first two columns to be 'id', 'label' or 'id', 'iso' if present
+    # We want the first two columns to be 'id', 'lmfdb_label' or 'id', 'lmfdb_iso' if present
     if table == 'ec_classdata':
-        cols.remove('iso')
         cols.remove('lmfdb_iso')
-        cols = ['iso', 'lmfdb_iso'] + cols
+        cols = ['lmfdb_iso'] + cols
     else:
-        cols.remove('label')
         cols.remove('lmfdb_label')
-        cols = ['label', 'lmfdb_label'] + cols
+        cols = ['lmfdb_label'] + cols
     if 'id' in cols:
         cols.remove('id')
     if include_id:
