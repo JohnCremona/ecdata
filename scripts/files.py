@@ -1005,25 +1005,25 @@ all_tables = tables1 + tables2 + tables3
 optional_tables = ['ec_iwasawa', 'ec_torsion_growth']
 main_tables = [t for t in all_tables if not t in optional_tables]
 
-def make_table_upload_file(data, table, rows=None, include_id=True):
+def make_table_upload_file(data, table, NN=None, include_id=True):
     """This version works when there is one row per curve or one per
     class.  The other cases are passed to special versions.
     """
-    if not rows:
-        rows = 'all'
+    if not NN:
+        NN = 'all'
 
     if table == 'ec_localdata':
-        return make_localdata_upload_file(data, rows)
+        return make_localdata_upload_file(data, NN)
 
     if table == 'ec_galrep':
-        return make_galrep_upload_file(data, rows)
+        return make_galrep_upload_file(data, NN)
 
     if table == 'ec_torsion_growth':
-        return make_torsion_growth_upload_file(data, rows)
+        return make_torsion_growth_upload_file(data, NN)
 
     include_id = include_id and (table == 'ec_curvedata')
 
-    filename = os.path.join(UPLOAD_DIR, ".".join([table,rows]))
+    filename = os.path.join(UPLOAD_DIR, ".".join([table, NN]))
     allcurves = (table != 'ec_classdata')
     with open(filename, 'w') as outfile:
         print("Writing data for table {} to file {}".format(table, filename))
@@ -1046,23 +1046,23 @@ def make_table_upload_file(data, table, rows=None, include_id=True):
                 continue
             if include_id:
                 record['id'] = n
-            if allcurves or record['number']==1:
+            if allcurves or int(record['number'])==1:
                 outfile.write(data_to_string(table, cols, record) +"\n")
+                n += 1
             if n%10000==0:
                 print("{} lines written so far...".format(n))
-            n += 1
         n -= 1
         print("{} lines written to {}".format(n, filename))
 
-def make_localdata_upload_file(data, rows=None):
+def make_localdata_upload_file(data, NN=None):
     """
     This version is for ec_localdata only.  For each curve we output
     n lines where n is the number of bad primes.
     """
-    if not rows:
-        rows = 'all'
+    if not NN:
+        NN = 'all'
     table = 'ec_localdata'
-    filename = os.path.join(UPLOAD_DIR, ".".join([table,rows]))
+    filename = os.path.join(UPLOAD_DIR, ".".join([table, NN]))
     with open(filename, 'w') as outfile:
         print("Writing data for table {} to file {}".format(table, filename))
 
@@ -1077,6 +1077,16 @@ def make_localdata_upload_file(data, rows=None):
         n = 1
         for label, record in data.items():
             for i in range(int(record['num_bad_primes'])):
+                # NB if the data is in raw form then we have 8 strongs
+                # representing lists of ints, otherwise we actually
+                # have 8 lists of ints, so we must paerse the strongs
+                # in the first case.
+                for ld in ['bad_primes', 'tamagawa_numbers', 'kodaira_symbols',
+                           'reduction_types', 'root_numbers', 'conductor_valuations',
+                           'discriminant_valuations', 'j_denominator_valuations']:
+                    if record[ld][0] == '[':
+                        record[ld] = parse_int_list(record[ld])
+
                 prime_record = {'label': record['label'], 'lmfdb_label': record['lmfdb_label'],
                                 'prime': record['bad_primes'][i],
                                 'tamagawa_number': record['tamagawa_numbers'][i],
@@ -1087,24 +1097,25 @@ def make_localdata_upload_file(data, rows=None):
                                 'discriminant_valuation': record['discriminant_valuations'][i],
                                 'j_denominator_valuation': record['j_denominator_valuations'][i],
                 }
-                outfile.write(data_to_string(table, cols, prime_record) +"\n")
+                line = data_to_string(table, cols, prime_record)
+                outfile.write(line +"\n")
                 n += 1
                 if n%10000==0:
                     print("{} lines written to {} so far...".format(n, filename))
         n -= 1
         print("{} lines written to {}".format(n, filename))
 
-def make_galrep_upload_file(data, rows=None):
+def make_galrep_upload_file(data, NN=None):
     """This version is for ec_galrep only.  For each curve we output n
     lines where n is the number of nonmaximal primes, so if there are
     no non-maximal primes for a curve then there is no line output for
     that curve.
 
     """
-    if not rows:
-        rows = 'all'
+    if not NN:
+        NN = 'all'
     table = 'ec_galrep'
-    filename = os.path.join(UPLOAD_DIR, ".".join([table,rows]))
+    filename = os.path.join(UPLOAD_DIR, ".".join([table,NN]))
     with open(filename, 'w') as outfile:
         print("Writing data for table {} to file {}".format(table, filename))
 
@@ -1130,16 +1141,16 @@ def make_galrep_upload_file(data, rows=None):
         n -= 1
         print("{} lines written to {}".format(n, filename))
 
-def make_torsion_growth_upload_file(data, rows=None):
+def make_torsion_growth_upload_file(data, NN=None):
     """This version is for ec_torsion_growth only.  For each curve we output one
     line for each field (of degree<24 currently) in which the torsion
     grows.
 
     """
-    if not rows:
-        rows = 'all'
+    if not NN:
+        NN = 'all'
     table = 'ec_torsion_growth'
-    filename = os.path.join(UPLOAD_DIR, ".".join([table,rows]))
+    filename = os.path.join(UPLOAD_DIR, ".".join([table,NN]))
     with open(filename, 'w') as outfile:
         print("Writing data for table {} to file {}".format(table, filename))
 
@@ -1169,7 +1180,7 @@ def make_torsion_growth_upload_file(data, rows=None):
         n -= 1
         print("{} lines written to {}".format(n, filename))
 
-def make_all_upload_files(data, tables=all_tables, rows=None, include_id=False):
+def make_all_upload_files(data, tables=all_tables, NN=None, include_id=False):
     for table in tables:
-        make_table_upload_file(data, table, rows=rows, include_id=include_id)
+        make_table_upload_file(data, table, NN=NN, include_id=include_id)
 

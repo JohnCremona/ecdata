@@ -5,7 +5,6 @@ from trace_hash import TraceHashClass
 from files import make_line, datafile_columns, MATSCHKE_DIR
 from codec import parse_int_list, point_to_weighted_proj
 
-
 from sage.databases.cremona import parse_cremona_label, class_to_int, cremona_letter_code
 
 mwrank_saturation_precision = 300
@@ -75,8 +74,8 @@ def mat_to_list_list(M):
 
 # Assuming that E is known to have rank 1, returns a point on E
 # computed by Magma's HeegnerPoint command
-def magma_rank1_gen(E):
-    mP = magma(E).HeegnerPoint(nvals=2)[1]
+def magma_rank1_gen(E, mE):
+    mP = mE.HeegnerPoint(nvals=2)[1]
     P = E([mP[i].sage() for i in [1,2,3]])
     return P
 
@@ -99,6 +98,45 @@ def pari_rank1_gen_old(E, stacksize=1024000000):
 
 def pari_rank1_gen(E):
     return E(pari(E).ellheegner().sage())
+
+def get_magma_gens(E, mE):
+    MS = mE.MordellWeilShaInformation(nvals=3)
+    rank_bounds = [r.sage() for r in MS[0]]
+    gens = [E(P.Eltseq().sage()) for P in MS[1]]
+    return rank_bounds, gens
+
+def get_gens_mwrank(E):
+    return E.gens(algorithm='mwrank_lib', descent_second_limit=15, sat_bound=2)
+
+def get_rank1_gens(E, mE):
+    rb, gens = get_magma_gens(E, mE)
+    if gens:
+        return gens
+    gens = E.point_search(15)
+    if gens:
+        return gens
+    gens = [pari_rank1_gen(E)]
+    if gens:
+        return gens
+    try:
+        return [magma_rank1_gen(E, mE)]
+    except:
+        return get_gens_mwrank(E)
+
+def get_gens_simon(E):
+    E.simon_two_descent(lim3=5000)
+    return E.gens()
+
+
+def get_gens(E, ar):
+    if ar==0:
+        return []
+    mE = magma(E)
+    if ar==1:
+        return get_rank1_gens(E,mE)
+    # else ar >=2
+    rb, gens = get_magma_gens(E, mE)
+    return gens
 
 # Given a matrix of isogenies and a list of points on the initial
 # curve returns a# list of their images on each other curve.  The
@@ -261,42 +299,11 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
         omlist  = [F.real_components()*F.period_lattice().real_period() for F in Elist]
 
         Lr1 = E.pari_curve().ellanalyticrank()[1].sage() / factorial(r)
-        # LE = E.lseries()
-        # LEdok = LE.dokchitser(100) # bits precision (default is 53)
         if r==0:
             genlist = [[] for F in Elist]
             reglist = [1 for F in Elist]
-            # Lr1 = LEdok(1)
         else:
-            # Lr1 = LEdok.derivative(1,r) / factorial(r)
-            # #Lr1 = E.lseries().dokchitser().derivative(1,r)/factorial(r)
-            if r==1:
-                Plist = E.point_search(15)
-                if len(Plist)==0:
-                    try:
-                        #Plist = [magma_rank1_gen(E)]
-                        print("using GP's ellheegner() to find generator")
-                        Plist = [pari_rank1_gen(E)]
-                        print("P = {}".format(Plist[0]))
-                    except:  # Magma/pari bug or something
-                        Plist = E.gens()
-            else:
-                if torlist[0]%2==1:
-                    if N+cl=="322074i":
-                        P1 = E(QQ(95209997)/361, QQ(-796563345544)/6859)
-                        P2 = E(QQ(67511363092960062552491477869533612821)/167548532744324594465910917052304,
-                               QQ(-546962755962107290021339666753477014846325372323086316509)/2168757247628325524167944948382918905481652710592)
-                        Plist = [P1,P2]
-                        print("Special case gens for {}{}: {}".format(N,cl,Plist))
-                    else:
-                        try:
-                            s = E.simon_two_descent(lim3=5000)
-                            Plist = E.gens()
-                        except:
-                            print("Simon failed, using mwrank: ")
-                            Plist = E.gens()
-                else:
-                    Plist = E.gens()
+            Plist = get_gens(E, r)
             genlist = map_points(maps,Plist)
             prec0=mwrank_get_precision()
             mwrank_set_precision(mwrank_saturation_precision)
@@ -611,45 +618,45 @@ def check_sagedb(N1, N2, a4a6bound=100):
 # From here on, functions to process a set of "raw" curves, to create
 # all the data files needed for LMFDB upload
 
-# Assume that in directory CURVE_DIR there is a file 'curves.range'
+# Assume that in directory CURVE_DIR there is a file 'curves.NN'
 # containing one curve per line (valid formats: as in
 # process_raw_curves() below).  For correct isogeny class labelling it
 # is necessary that for every conductor present, at least one curve
 # from each isogeny class is present.  The input list need not be
-# closed under isogeny: if it is not then the 'allcurves.range' file
+# closed under isogeny: if it is not then the 'allcurves.NN' file
 # will contain more curves than the input file, otherwise they will
-# contain the same curves. The file suffix 'range' can be anything
+# contain the same curves. The file suffix 'NN' can be anything
 # (nonempty) to identify the dataset, e.g. it could be a single
 # conductor, or a range of conductors.
 #
 # Step 1: sort and label.  Run sage from ecdata/scripts:
 #
 # sage: %runfile ecdb.py
-# sage: range = '2357' # (say)
-# sage: curves_file = 'curves.{}'.format(range)
-# sage: allcurves_file = 'allcurves.{}'.format(range)
+# sage: NN = '2357' # (say)
+# sage: curves_file = 'curves.{}'.format(NN)
+# sage: allcurves_file = 'allcurves.{}'.format(NN)
 # sage: process_raw_curves(curves_file, allcurves_file, base_dir=CURVE_DIR)
 #
 # Step 2: compute most of the data, run also in ecdb/scripts after reading ecdb.py:
 #
 # sage: read_write_data(allcurves_file, CURVE_DIR)
 #
-# We now have files CURVE_DIR/ft/ft.range for ft in ['curvedata', 'classdata', 'intpts', 'alldegphi'].
+# We now have files CURVE_DIR/ft/ft.NN for ft in ['curvedata', 'classdata', 'intpts', 'alldegphi'].
 #
 # Step 3: run magma scripts to compute galrep and 2adic data. From ecdata/scripts:
-# ./make_galrep.sh range CURVE_DIR
+# ./make_galrep.sh NN CURVE_DIR
 #
-# This creates CURVE_DIR/ft/ft.range for ft in ['galrep', '2adic'].
+# This creates CURVE_DIR/ft/ft.NN for ft in ['galrep', '2adic'].
 #
 # Step 4: create 6 files in UPLOAD_DIR (default ${HOME}/ecq-upload):
 #
-# ec_curvedata.range, ec_classdata.range, ec_localdata.range,
-# ec_mwbsd.range, ec_galrep.range, ec_2adic.range
+# ec_curvedata.NN, ec_classdata.NN, ec_localdata.NN,
+# ec_mwbsd.NN, ec_galrep.NN, ec_2adic.NN
 #
 # In ecdata/scripts run sage:
 # sage: %runfile files.py
-# sage: data = read_data(CURVE_DIR, file_types=main_file_types, ranges=[range])
-# sage: make_all_upload_files(data, tables = main_tables, rows=[range])
+# sage: data = read_data(CURVE_DIR, file_types=main_file_types, ranges=[NN])
+# sage: make_all_upload_files(data, tables = main_tables, NN=NN)
 #
 # ready for upload to LMFDB's db.ec_curvedata (etc) using
 #
@@ -939,51 +946,17 @@ def make_new_data(infilename, base_dir, PRECISION=100, verbose=1):
 
         else: # positive rank
             if first:
-                if ar==1:
+                if verbose>1:
+                    print("{}: an.rk.={}, finding generators".format(label, ar))
+                gens = get_gens(E, ar)
+                ngens = len(gens)
+                if ngens <ar:
+                    print("{}: analytic rank = {} but we only found {} generators".format(label,ar,ngens))
+                else:
                     if verbose>1:
-                        print("finding generator...")
-                    gens = E.point_search(15)
-                    if len(gens)==0:
-                        try:
-                            if verbose>1:
-                                print("using GP's ellheegner() to find generator")
-                            gens = [pari_rank1_gen(E)]
-                            if verbose>1:
-                                print("P = {}".format(gens[0]))
-                        except:  # Magma/pari bug or something
-                            print("Heegner point finding failed for {}, using descent".format(label))
-                            gens = E.gens()
-                    ngens = len(gens)
-                    if ngens==0:
-                        print("Analytic rank = 1 for {} but we found no generator".format(label))
-                    else:
-                        if verbose>1:
-                            print("...done, generator is {}".format(gens[0]))
-                else: #ar >=2
-                    if verbose>1:
-                        print("finding generators (expecting rank {})...".format(ar))
-                    if torsion%2==1: # Simon is faster
-                        try:
-                            if verbose>1:
-                                print("Odd torsion ({}), using simon_two_descent()...".format(torsion))
-                            E.simon_two_descent(lim3=5000)
-                            gens = E.gens()
-                        except:
-                            print("Simon failed for {}, using mwrank: ".format(label))
-                            gens = E.gens()
-                    else:
-                        if verbose>1:
-                            print("2-torsion ({}), using mwrank()...".format(torsion))
-                        gens = E.gens()
-                    ngens = len(gens)
-                    if ngens < ar:
-                        print("Analytic rank = {} for {} but we found only {} generator(s)".format(ar,label,ngens))
-                    else:
-                        if verbose>1:
-                            print("...done, generators are {}".format(gens))
+                        print("...done, generators {}".format(gens))
                 record['rank_bounds'] = [ngens, ar]
                 record['rank'] = ngens if ngens == ar else None
-
                 # so the other curves in the class know their gens:
                 record['allgens'] = map_points(isogenies, gens)
             else:
@@ -1115,10 +1088,10 @@ def write_datafiles(data, r, base_dir=MATSCHKE_DIR):
     for writer in [write_curvedata, write_classdata, write_intpts, write_degphi]:
         writer(data, r, base_dir)
 
-def read_write_data(infilename, base_dir=MATSCHKE_DIR):
+def read_write_data(infilename, base_dir=MATSCHKE_DIR, verbose=1):
     print("Reading from {}".format(infilename))
     N = infilename.split(".")[-1]
-    data = make_new_data(infilename, base_dir=base_dir)
+    data = make_new_data(infilename, base_dir=base_dir, verbose=verbose)
     write_datafiles(data, N)
 
 # How to make a 2adic file: run 2adic.m on a file containing one line
@@ -1137,9 +1110,9 @@ def read_write_data(infilename, base_dir=MATSCHKE_DIR):
 #
 # label:[a1,a2,a3,a4,a6]
 #
-# To run both on the range r, given a curvedata file in directory d:
+# To run both on the range NN, given a file  curvedata/ curvedata.NN in directory D:
 #
-# ~/ecdata/scripts/make_galrep.sh r d
+# ~/ecdata/scripts/make_galrep.sh NN D
 #
 # from a directory containing curvedata/curvedata.${r}, which will
 # create (or overwrite) the files 2adic/2adic.${r} and
