@@ -110,15 +110,15 @@ def get_gens_mwrank(E):
 
 def get_rank1_gens(E, mE, verbose=False):
     if verbose:
-        print("trying Magma...")
-    rb, gens = get_magma_gens(E, mE)
+        print(" - trying a point search...")
+    gens = E.point_search(15)
     if gens:
         if verbose:
             print("--success: P = {}".format(gens[0]))
         return gens
     if verbose:
-        print("--failed.  Trying a point search...")
-    gens = E.point_search(15)
+        print("-- failed. Trying Magma...")
+    rb, gens = get_magma_gens(E, mE)
     if gens:
         if verbose:
             print("--success: P = {}".format(gens[0]))
@@ -190,12 +190,15 @@ def get_integral_points_with_sage(E, gens):
     return [P[0] for P in E.integral_points(mw_base=gens)]
 
 def get_integral_points_with_magma(E, gens):
-    magma.eval('E:=EllipticCurve({});'.format(list(E.ainvs())))
-    magma.eval('pts:=[];')
-    for P in gens:
-        magma.eval('Append(~pts,E!{});'.format(list(P)))
-    res = magma.eval('IntegralPoints(E : FBasis:=pts);')
-    return [p[0] for p in eval(res.split("\n")[0].replace(":",","))]
+    mE = magma(E)
+    return [E(P.Eltseq().sage())[0] for P in mE.IntegralPoints(FBasis=[mE(list(P)) for P in gens])]
+
+    # magma.eval('E:=EllipticCurve({});'.format(list(E.ainvs())))
+    # magma.eval('pts:=[];')
+    # for P in gens:
+    #     magma.eval('Append(~pts,E!{});'.format(list(P)))
+    # res = magma.eval('IntegralPoints(E : FBasis:=pts);')
+    # return [p[0] for p in eval(res.split("\n")[0].replace(":",","))]
 
 def get_integral_points(E, gens, verbose=True):
     x_list_magma = get_integral_points_with_magma(E, gens)
@@ -212,6 +215,7 @@ def get_integral_points(E, gens, verbose=True):
 def get_modular_degree(E, label):
     degphi_magma = 0
     degphi_sympow = 0
+    #return E.modular_degree(algorithm='sympow')
     try:
         degphi_magma = E.modular_degree(algorithm='magma')
     except RuntimeError:
@@ -1019,9 +1023,13 @@ def make_new_data(infilename, base_dir, PRECISION=100, verbose=1):
         assert ((sha-sha_an).abs() < 1e-10)
         record['sha_an'] = sha_an
         record['sha'] = int(sha)
-        record['faltings_ratio'] = 1 if first else (record1['faltings_ratio']/A).round()
+        record['faltings_ratio'] = 1 if first else (record1['area']/A).round()
 
+        if verbose>1:
+            print(" -- getting integral points...")
         record['intpts'] = get_integral_points(E, gens)
+        if verbose>1:
+            print(" ...done: {}".format(record['intpts']))
 
 
         Etw, Dtw = E.minimal_quadratic_twist()
