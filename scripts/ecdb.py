@@ -108,33 +108,57 @@ def get_magma_gens(E, mE):
 def get_gens_mwrank(E):
     return E.gens(algorithm='mwrank_lib', descent_second_limit=15, sat_bound=2)
 
-def get_rank1_gens(E, mE):
+def get_rank1_gens(E, mE, verbose=False):
+    if verbose:
+        print("trying Magma...")
     rb, gens = get_magma_gens(E, mE)
     if gens:
+        if verbose:
+            print("--success: P = {}".format(gens[0]))
         return gens
+    if verbose:
+        print("--failed.  Trying a point search...")
     gens = E.point_search(15)
     if gens:
+        if verbose:
+            print("--success: P = {}".format(gens[0]))
         return gens
+    if verbose:
+        print("--failed.  Trying a pari's ellheegner...")
     gens = [pari_rank1_gen(E)]
     if gens:
+        if verbose:
+            print("--success: P = {}".format(gens[0]))
         return gens
+    if verbose:
+        print("--failed.  Trying a Magma's HeegnerPoint...")
     try:
-        return [magma_rank1_gen(E, mE)]
+        gens = [magma_rank1_gen(E, mE)]
+        if gens:
+            if verbose:
+                print("--success: P = {}".format(gens[0]))
+            return gens
     except:
-        return get_gens_mwrank(E)
+        pass
+    if verbose:
+        print("--failed.  Trying mwrank...")
+    return get_gens_mwrank(E)
 
 def get_gens_simon(E):
     E.simon_two_descent(lim3=5000)
     return E.gens()
 
-
-def get_gens(E, ar):
+def get_gens(E, ar, verbose=False):
     if ar==0:
         return []
     mE = magma(E)
     if ar==1:
-        return get_rank1_gens(E,mE)
+        if verbose:
+            print("a.r.=1, finding a generator")
+        return get_rank1_gens(E,mE, verbose)
     # else ar >=2
+    if verbose:
+        print("a.r.={}, finding generators using Magma".format(ar))
     rb, gens = get_magma_gens(E, mE)
     return gens
 
@@ -303,7 +327,7 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
             genlist = [[] for F in Elist]
             reglist = [1 for F in Elist]
         else:
-            Plist = get_gens(E, r)
+            Plist = get_gens(E, r, verbose)
             genlist = map_points(maps,Plist)
             prec0=mwrank_get_precision()
             mwrank_set_precision(mwrank_saturation_precision)
@@ -948,7 +972,7 @@ def make_new_data(infilename, base_dir, PRECISION=100, verbose=1):
             if first:
                 if verbose>1:
                     print("{}: an.rk.={}, finding generators".format(label, ar))
-                gens = get_gens(E, ar)
+                gens = get_gens(E, ar, verbose)
                 ngens = len(gens)
                 if ngens <ar:
                     print("{}: analytic rank = {} but we only found {} generators".format(label,ar,ngens))
