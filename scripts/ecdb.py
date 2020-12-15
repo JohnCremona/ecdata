@@ -1,5 +1,5 @@
 import os
-from sage.all import EllipticCurve, Integer, ZZ, QQ, Set, magma, prime_range, factorial, mwrank_get_precision, mwrank_set_precision, srange, pari, EllipticCurve_from_c4c6, prod, copy
+from sage.all import EllipticCurve, Integer, ZZ, QQ, Set, Magma, prime_range, factorial, mwrank_get_precision, mwrank_set_precision, srange, pari, EllipticCurve_from_c4c6, prod, copy
 from red_gens import reduce_tgens, reduce_gens
 from trace_hash import TraceHashClass
 from files import make_line, datafile_columns, MATSCHKE_DIR
@@ -151,15 +151,17 @@ def get_gens_simon(E):
 def get_gens(E, ar, verbose=False):
     if ar==0:
         return []
-    mE = magma(E)
+    mag = Magma()
+    mE = mag(E)
     if ar==1:
         if verbose:
             print("a.r.=1, finding a generator")
-        return get_rank1_gens(E,mE, verbose)
-    # else ar >=2
-    if verbose:
-        print("a.r.={}, finding generators using Magma".format(ar))
-    rb, gens = get_magma_gens(E, mE)
+        gens = get_rank1_gens(E,mE, verbose)
+    else: # ar >=2
+        if verbose:
+            print("a.r.={}, finding generators using Magma".format(ar))
+        rb, gens = get_magma_gens(E, mE)
+    mag.quit()
     return gens
 
 # Given a matrix of isogenies and a list of points on the initial
@@ -190,15 +192,11 @@ def get_integral_points_with_sage(E, gens):
     return [P[0] for P in E.integral_points(mw_base=gens)]
 
 def get_integral_points_with_magma(E, gens):
-    mE = magma(E)
-    return [E(P.Eltseq().sage())[0] for P in mE.IntegralPoints(FBasis=[mE(list(P)) for P in gens])]
-
-    # magma.eval('E:=EllipticCurve({});'.format(list(E.ainvs())))
-    # magma.eval('pts:=[];')
-    # for P in gens:
-    #     magma.eval('Append(~pts,E!{});'.format(list(P)))
-    # res = magma.eval('IntegralPoints(E : FBasis:=pts);')
-    # return [p[0] for p in eval(res.split("\n")[0].replace(":",","))]
+    mag = Magma()
+    mE = mag(E)
+    xs = [E(P.Eltseq().sage())[0] for P in mE.IntegralPoints(FBasis=[mE(list(P)) for P in gens])]
+    mag.quit()
+    return xs
 
 def get_integral_points(E, gens, verbose=True):
     x_list_magma = get_integral_points_with_magma(E, gens)
@@ -701,7 +699,7 @@ def curve_from_inv_string(s):
         raise ValueError("{}: invariant list must have length 2 or 5".format(s))
     return E
 
-def process_raw_curves(infilename, outfilename, base_dir='.', verbose=1):
+def process_raw_curves(infilename, outfilename, base_dir='.', split_by_N=False, verbose=1):
     """File infilename should contain one curve per line, with
     a-ainvariants or c-invariants as a list (with no internal spaces),
     optionally preceded by the conductor.
@@ -728,6 +726,10 @@ def process_raw_curves(infilename, outfilename, base_dir='.', verbose=1):
     where "number" is the index of the curve in its class (counting
     from 1), sorted by Faltings heights, with the lex. order of
     a-invariants as a tie-breaker.
+
+    If split_by_N is False, the output will be all in one file.  If
+    True, there will be one output file per conductor N, whose name is
+    allcurves file with suffix ".{N}".
 
     """
     # allcurves will have conductors as keys, values lists of lists of
@@ -791,39 +793,51 @@ def process_raw_curves(infilename, outfilename, base_dir='.', verbose=1):
     def curve_key_Faltings(E): # Faltings height, with tie-break
         return [-E.period_lattice().complex_area(), E.ainvs()]
 
-    with open(os.path.join(base_dir,outfilename), 'w') as outfile:
+    def output_one_conductor(N, allcurves_N, outfile):
+        nNcl = nNcu = 0
+        sN = str(N)
+        # construct the curves from their ainvs:
+        CC = [[EllipticCurve(ai) for ai in cl] for cl in allcurves_N]
+        nap=100
+        ok = False
+        while not ok:
+            aplists = dict([(cl[0],cl[0].aplist(100,python_ints=True)) for cl in CC])
+            aps = list(aplists.values())
+            ok = (len(list(Set(aps))) == len(aps))
+            if not ok:
+                print("{} ap not enough for conductor {}, increasing...".format(nap,N))
+            nap += 100
+        # sort the isogeny classes:
+        CC.sort(key=lambda cl: aplists[cl[0]])
+        for ncl, cl in enumerate(CC):
+            nNcl += 1
+            class_code = cremona_letter_code(ncl)
+            # sort the curves in two ways (LMFDB, Faltings)
+            cl.sort(key = curve_key_LMFDB)
+            cl_Faltings = copy(cl)
+            cl_Faltings.sort(key=curve_key_Faltings)
+            class_size = len(cl)
+            for nE_F, E in enumerate(cl_Faltings):
+                nNcu += 1
+                ainvs = shortstr(E)
+                nE_L = cl.index(E)
+                line = " ".join([sN,class_code,str(class_size),str(nE_F+1),str(nE_L+1),ainvs])
+                #print(line)
+                outfile.write(line+"\n")
+        return nNcu, nNcl
+
+    if split_by_N:
         for N in conductors:
-            nNcl = nNcu = 0
-            sN = str(N)
-            # construct the curves from their ainvs:
-            CC = [[EllipticCurve(ai) for ai in cl] for cl in allcurves[N]]
-            nap=100
-            ok = False
-            while not ok:
-                aplists = dict([(cl[0],cl[0].aplist(100,python_ints=True)) for cl in CC])
-                aps = list(aplists.values())
-                ok = (len(list(Set(aps))) == len(aps))
-                if not ok:
-                    print("{} ap not enough for conductor {}, increasing...".format(nap,N))
-                nap += 100
-            # sort the isogeny classes:
-            CC.sort(key=lambda cl: aplists[cl[0]])
-            for ncl, cl in enumerate(CC):
-                nNcl += 1
-                class_code = cremona_letter_code(ncl)
-                # sort the curves in two ways (LMFDB, Faltings)
-                cl.sort(key = curve_key_LMFDB)
-                cl_Faltings = copy(cl)
-                cl_Faltings.sort(key=curve_key_Faltings)
-                class_size = len(cl)
-                for nE_F, E in enumerate(cl_Faltings):
-                    nNcu += 1
-                    ainvs = shortstr(E)
-                    nE_L = cl.index(E)
-                    line = " ".join([sN,class_code,str(class_size),str(nE_F+1),str(nE_L+1),ainvs])
-                    #print(line)
-                    outfile.write(line+"\n")
-            print("N={}: {} curves in {} classes output to {}".format(N,nNcu,nNcl,outfilename))
+            outfilename_N = ".".join([outfilename,str(N)])
+            with open(os.path.join(base_dir,outfilename_N), 'w') as outfile:
+                nNcu, nNcl = output_one_conductor(N, allcurves[N], outfile)
+                print("N={}: {} curves in {} classes output to {}".format(N,nNcu,nNcl,outfilename_N))
+
+    else:
+        with open(os.path.join(base_dir,outfilename), 'w') as outfile:
+            for N in conductors:
+                nNcu, nNcl = output_one_conductor(N, allcurves[N], outfile)
+                print("N={}: {} curves in {} classes output to {}".format(N,nNcu,nNcl,outfilename))
 
 def make_new_data(infilename, base_dir, PRECISION=100, verbose=1):
     alldata = {}
@@ -926,7 +940,7 @@ def make_new_data(infilename, base_dir, PRECISION=100, verbose=1):
             print("local data done")
 
         T = E.torsion_subgroup()
-        tgens = list(T.gens())
+        tgens = [P.element() for P in T.gens()]
         tgens.sort(key=lambda P:P.order())
         tgens = reduce_tgens(tgens)
         tor_struct = [P.order() for P in tgens]
