@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# != 2 ]; then
- echo "Usage: ./make_2adic.sh <range> <src_dir>"
+ echo "Usage: ./make_galrep.sh <range> <src_dir>"
  exit 1
 else
     r=$1

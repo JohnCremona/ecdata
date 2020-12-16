@@ -1,4 +1,7 @@
 import os
+import sys
+HOME = os.getenv("HOME")
+sys.path.append(os.path.join(HOME, 'ecdata', 'scripts'))
 from sage.all import EllipticCurve, Integer, ZZ, QQ, Set, Magma, prime_range, factorial, mwrank_get_precision, mwrank_set_precision, srange, pari, EllipticCurve_from_c4c6, prod, copy
 from red_gens import reduce_tgens, reduce_gens
 from trace_hash import TraceHashClass
@@ -117,13 +120,6 @@ def get_rank1_gens(E, mE, verbose=False):
             print("--success: P = {}".format(gens[0]))
         return gens
     if verbose:
-        print("-- failed. Trying Magma...")
-    rb, gens = get_magma_gens(E, mE)
-    if gens:
-        if verbose:
-            print("--success: P = {}".format(gens[0]))
-        return gens
-    if verbose:
         print("--failed.  Trying a pari's ellheegner...")
     gens = [pari_rank1_gen(E)]
     if gens:
@@ -140,6 +136,13 @@ def get_rank1_gens(E, mE, verbose=False):
             return gens
     except:
         pass
+    if verbose:
+        print("-- failed. Trying Magma...")
+    rb, gens = get_magma_gens(E, mE)
+    if gens:
+        if verbose:
+            print("--success: P = {}".format(gens[0]))
+        return gens
     if verbose:
         print("--failed.  Trying mwrank...")
     return get_gens_mwrank(E)
@@ -1138,7 +1141,7 @@ def read_write_data(infilename, base_dir=MATSCHKE_DIR, verbose=1):
     print("Reading from {}".format(infilename))
     N = infilename.split(".")[-1]
     data = make_new_data(infilename, base_dir=base_dir, verbose=verbose)
-    write_datafiles(data, N)
+    write_datafiles(data, N, base_dir)
 
 # How to make a 2adic file: run 2adic.m on a file containing one line
 # per curve, where each line has the form
