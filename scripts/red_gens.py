@@ -55,7 +55,7 @@ def reduce_tgens(tgens, verbose=False):
     rtgens = list(gen_pairs[0])
     # for structure [2,2] we swap the two gens over so that the first has smallest x-coordinate
     if n2==2:
-        rtgens.sort(key = lambda P: P.element().xy()[0])
+        rtgens.sort(key = lambda P: list(P)[0])
     if rtgens != tgens and verbose:
         print("Replacing torsion [{},{}] generators {} with {}".format(n1,n2,tgens,rtgens))
     return rtgens
