@@ -103,7 +103,7 @@ def pari_rank1_gen(E):
     return E(pari(E).ellheegner().sage())
 
 def get_magma_gens(E, mE):
-    MS = mE.MordellWeilShaInformation(nvals=3)
+    MS = mE.MordellWeilShaInformation(RankOnly=True, nvals=3)
     rank_bounds = [r.sage() for r in MS[0]]
     gens = [E(P.Eltseq().sage()) for P in MS[1]]
     return rank_bounds, gens
@@ -120,14 +120,14 @@ def get_rank1_gens(E, mE, verbose=False):
             print("--success: P = {}".format(gens[0]))
         return gens
     if verbose:
-        print("--failed.  Trying a pari's ellheegner...")
+        print("--failed.  Trying pari's ellheegner...")
     gens = [pari_rank1_gen(E)]
     if gens:
         if verbose:
             print("--success: P = {}".format(gens[0]))
         return gens
     if verbose:
-        print("--failed.  Trying a Magma's HeegnerPoint...")
+        print("--failed.  Trying Magma's HeegnerPoint...")
     try:
         gens = [magma_rank1_gen(E, mE)]
         if gens:
@@ -830,11 +830,13 @@ def process_raw_curves(infilename, outfilename, base_dir='.', split_by_N=False, 
         return nNcu, nNcl
 
     if split_by_N:
-        for N in conductors:
-            outfilename_N = ".".join([outfilename,str(N)])
-            with open(os.path.join(base_dir,outfilename_N), 'w') as outfile:
-                nNcu, nNcl = output_one_conductor(N, allcurves[N], outfile)
-                print("N={}: {} curves in {} classes output to {}".format(N,nNcu,nNcl,outfilename_N))
+        with open(os.path.join(base_dir,infilename+".conductors"), 'w') as Nfile:
+            for N in conductors:
+                Nfile.write("{}\n".format(N))
+                outfilename_N = "allcurves/allcurves.{}".format(N)
+                with open(os.path.join(base_dir,outfilename_N), 'w') as outfile:
+                    nNcu, nNcl = output_one_conductor(N, allcurves[N], outfile)
+                    print("N={}: {} curves in {} classes output to {}".format(N,nNcu,nNcl,outfilename_N))
 
     else:
         with open(os.path.join(base_dir,outfilename), 'w') as outfile:
@@ -864,24 +866,28 @@ def parse_allgens_line_simple(line):
     record['gens'] = [proj_to_point(gen, E) for gen in data[6:6 + rank]]
     return label,  record
 
-def make_new_data(infilename, base_dir, PRECISION=100, verbose=1, allgensfilename=None):
+def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, verbose=1, allgensfilename=None):
     alldata = {}
     nc = 0
     with open(os.path.join(base_dir, infilename)) as infile:
         for L in infile:
-            nc += 1
             sN, isoclass, class_size, number, lmfdb_number, ainvs = L.split()
+            N = ZZ(sN)
+            if Nmin and N<Nmin:
+                continue
+            if Nmax and N>Nmax:
+                continue
+            nc += 1
             iso = ''.join([sN,isoclass])
             label = ''.join([iso,number])
             lmfdb_number = int(lmfdb_number)
             lmfdb_isoclass = isoclass
             lmfdb_iso = '.'.join([sN,isoclass])
-            lmfdb_label = ''.join([lmfdb_iso,number])
+            lmfdb_label = ''.join([lmfdb_iso,lmfdb_number])
             iso_nlabel = class_to_int(isoclass)
             number = int(number)
             class_size = int(class_size)
             ainvs = parse_int_list(ainvs)
-            N = ZZ(sN)
             bad_p = N.prime_factors() # will be sorted
 
             record = {
@@ -911,6 +917,14 @@ def make_new_data(infilename, base_dir, PRECISION=100, verbose=1, allgensfilenam
         n = 0
         with open(os.path.join(base_dir, allgensfilename)) as allgensfile:
             for L in allgensfile:
+                n+=1
+                if Nmin or Nmax:
+                    label, record = parse_line_label_cols(L)
+                    N = record['conductor']
+                    if Nmin and N<Nmin:
+                        continue
+                    if Nmax and N>Nmax:
+                        continue
                 n+=1
                 label, record = parse_allgens_line_simple(L)
                 if label in alldata:
@@ -1182,6 +1196,8 @@ def write_datafiles(data, r, base_dir=MATSCHKE_DIR):
 def read_write_data(infilename, base_dir=MATSCHKE_DIR, verbose=1):
     print("Reading from {}".format(infilename))
     N = infilename.split(".")[-1]
+    N = ".".join(infilename.split(".")[1:])
+    print(N)
     data = make_new_data(infilename, base_dir=base_dir, verbose=verbose)
     write_datafiles(data, N, base_dir)
 
