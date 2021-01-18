@@ -1,4 +1,7 @@
 import os
+import sys
+HOME = os.getenv("HOME")
+sys.path.append(os.path.join(HOME, 'ecdata', 'scripts'))
 from sage.all import EllipticCurve, Integer, ZZ, QQ, Set, Magma, prime_range, factorial, mwrank_get_precision, mwrank_set_precision, srange, pari, EllipticCurve_from_c4c6, prod, copy
 from red_gens import reduce_tgens, reduce_gens
 from trace_hash import TraceHashClass
@@ -663,6 +666,15 @@ def check_sagedb(N1, N2, a4a6bound=100):
 # sage: allcurves_file = 'allcurves.{}'.format(NN)
 # sage: process_raw_curves(curves_file, allcurves_file, base_dir=CURVE_DIR)
 #
+# If you add split_by_N=True to process_raw_curves() then instead of
+# one allcurves file you will get one per conductor N, each of the
+# form allcurves.<N>.  This can be useful for using parallel
+# processing in the next step, after which you have to concatenate all
+# the output files.  In this case allcurves_file will be ignored, and
+# a file <curves_file>.conductors will also be written containing the
+# distinct conductors in the input file.
+#
+#
 # Step 2: compute most of the data, run also in ecdb/scripts after reading ecdb.py:
 #
 # sage: read_write_data(allcurves_file, CURVE_DIR)
@@ -827,11 +839,13 @@ def process_raw_curves(infilename, outfilename, base_dir='.', split_by_N=False, 
         return nNcu, nNcl
 
     if split_by_N:
-        for N in conductors:
-            outfilename_N = ".".join([outfilename,str(N)])
-            with open(os.path.join(base_dir,outfilename_N), 'w') as outfile:
-                nNcu, nNcl = output_one_conductor(N, allcurves[N], outfile)
-                print("N={}: {} curves in {} classes output to {}".format(N,nNcu,nNcl,outfilename_N))
+        with open(os.path.join(base_dir,infilename+".conductors"), 'w') as Nfile:
+            for N in conductors:
+                Nfile.write("{}\n".format(N))
+                outfilename_N = "allcurves.{}".format(N)
+                with open(os.path.join(base_dir,outfilename_N), 'w') as outfile:
+                    nNcu, nNcl = output_one_conductor(N, allcurves[N], outfile)
+                    print("N={}: {} curves in {} classes output to {}".format(N,nNcu,nNcl,outfilename_N))
 
     else:
         with open(os.path.join(base_dir,outfilename), 'w') as outfile:
@@ -1136,7 +1150,7 @@ def write_datafiles(data, r, base_dir=MATSCHKE_DIR):
 
 def read_write_data(infilename, base_dir=MATSCHKE_DIR, verbose=1):
     print("Reading from {}".format(infilename))
-    N = infilename.split(".")[-1]
+    N = ".".join(infilename.split(".")[1:])
     data = make_new_data(infilename, base_dir=base_dir, verbose=verbose)
     write_datafiles(data, N)
 
