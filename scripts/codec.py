@@ -46,7 +46,7 @@ def point_to_weighted_proj(P):
     r"""Converts rational point P=(x,y) to weighted projective coordinates [a,b,c]
     where x=a/c^2, y=b/c^3
     """
-    x, y = P.xy()
+    x, y, _ = list(P)
     a = x.numerator()
     b = y.numerator()
     c = y.denominator() // x.denominator()
@@ -56,7 +56,7 @@ def point_to_proj(P):
     r"""Converts rational point P=(x,y) to projective coordinates [a,b,c]
     where x=a/c, y=b/c
     """
-    x, y = P.xy()
+    x, y, _ = list(P)
     c = y.denominator()
     a = ZZ(c*x)
     b = ZZ(c*y)
