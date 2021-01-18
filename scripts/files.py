@@ -837,7 +837,7 @@ def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges,
     Return a single dict with keys labels and values complete
     curve records.
 
-    Resort permutes the rows/columns of the isogeny matrix to be index
+    Resort permutes the rows/columns of the isogeny matrix to be indexed
     by LMFDB numbers.
 
     """
@@ -1224,7 +1224,17 @@ def make_torsion_growth_upload_file(data, NN=None):
         n -= 1
         print("{} lines written to {}".format(n, filename))
 
+def fix_labels(data):
+    for label, record in data.items():
+        lmfdb_label = "".join(record['lmfdb_iso'], record['lmfdb_number'])
+        if lmfdb_label != record['lmfdb_label']:
+            print("changing {} to {}".format(record['lmfdb_label'], lmfdb_label))
+            record['lmfdb_label'] = lmfdb_label
+    return data
+
+        
 def make_all_upload_files(data, tables=all_tables, NN=None, include_id=False):
+    data = fix_labels(data)
     for table in tables:
         make_table_upload_file(data, table, NN=NN, include_id=include_id)
 

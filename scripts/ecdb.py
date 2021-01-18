@@ -666,6 +666,15 @@ def check_sagedb(N1, N2, a4a6bound=100):
 # sage: allcurves_file = 'allcurves.{}'.format(NN)
 # sage: process_raw_curves(curves_file, allcurves_file, base_dir=CURVE_DIR)
 #
+# If you add split_by_N=True to process_raw_curves() then instead of
+# one allcurves file you will get one per conductor N, each of the
+# form allcurves.<N>.  This can be useful for using parallel
+# processing in the next step, after which you have to concatenate all
+# the output files.  In this case allcurves_file will be ignored, and
+# a file <curves_file>.conductors will also be written containing the
+# distinct conductors in the input file.
+#
+#
 # Step 2: compute most of the data, run also in ecdb/scripts after reading ecdb.py:
 #
 # sage: read_write_data(allcurves_file, CURVE_DIR)
@@ -1195,9 +1204,7 @@ def write_datafiles(data, r, base_dir=MATSCHKE_DIR):
 
 def read_write_data(infilename, base_dir=MATSCHKE_DIR, verbose=1):
     print("Reading from {}".format(infilename))
-    N = infilename.split(".")[-1]
     N = ".".join(infilename.split(".")[1:])
-    print(N)
     data = make_new_data(infilename, base_dir=base_dir, verbose=verbose)
     write_datafiles(data, N, base_dir)
 
