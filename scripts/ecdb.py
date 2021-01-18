@@ -5,8 +5,8 @@ sys.path.append(os.path.join(HOME, 'ecdata', 'scripts'))
 from sage.all import EllipticCurve, Integer, ZZ, QQ, Set, Magma, prime_range, factorial, mwrank_get_precision, mwrank_set_precision, srange, pari, EllipticCurve_from_c4c6, prod, copy
 from red_gens import reduce_tgens, reduce_gens
 from trace_hash import TraceHashClass
-from files import make_line, datafile_columns, MATSCHKE_DIR
-from codec import parse_int_list, point_to_weighted_proj
+from files import make_line, datafile_columns, MATSCHKE_DIR, parse_line_label_cols, split
+from codec import parse_int_list, point_to_weighted_proj, proj_to_point
 
 from sage.databases.cremona import parse_cremona_label, class_to_int, cremona_letter_code
 
@@ -120,13 +120,6 @@ def get_rank1_gens(E, mE, verbose=False):
             print("--success: P = {}".format(gens[0]))
         return gens
     if verbose:
-        print("-- failed. Trying Magma...")
-    rb, gens = get_magma_gens(E, mE)
-    if gens:
-        if verbose:
-            print("--success: P = {}".format(gens[0]))
-        return gens
-    if verbose:
         print("--failed.  Trying a pari's ellheegner...")
     gens = [pari_rank1_gen(E)]
     if gens:
@@ -143,6 +136,13 @@ def get_rank1_gens(E, mE, verbose=False):
             return gens
     except:
         pass
+    if verbose:
+        print("-- failed. Trying Magma...")
+    rb, gens = get_magma_gens(E, mE)
+    if gens:
+        if verbose:
+            print("--success: P = {}".format(gens[0]))
+        return gens
     if verbose:
         print("--failed.  Trying mwrank...")
     return get_gens_mwrank(E)
@@ -853,7 +853,29 @@ def process_raw_curves(infilename, outfilename, base_dir='.', split_by_N=False, 
                 nNcu, nNcl = output_one_conductor(N, allcurves[N], outfile)
                 print("N={}: {} curves in {} classes output to {}".format(N,nNcu,nNcl,outfilename))
 
-def make_new_data(infilename, base_dir, PRECISION=100, verbose=1):
+def parse_allgens_line_simple(line):
+    r"""
+    Parse one line from an allgens file
+
+    Lines contain 6+t+r fields (columns)
+
+    conductor iso number ainvs r torsion_structure <tgens> <gens>
+
+    where:
+
+    torsion_structure is a list of t = 0,1,2 ints
+    <tgens> is t fields containing torsion generators
+    <gens> is r fields containing generators mod torsion
+
+    """
+    label, record = parse_line_label_cols(line, 3, True)
+    E = EllipticCurve(record['ainvs'])
+    data = split(line)
+    rank = int(data[4])
+    record['gens'] = [proj_to_point(gen, E) for gen in data[6:6 + rank]]
+    return label,  record
+
+def make_new_data(infilename, base_dir, PRECISION=100, verbose=1, allgensfilename=None):
     alldata = {}
     nc = 0
     with open(os.path.join(base_dir, infilename)) as infile:
@@ -894,6 +916,21 @@ def make_new_data(infilename, base_dir, PRECISION=100, verbose=1):
 
     if verbose:
         print("{} curves read from {}".format(nc, infilename))
+
+    if allgensfilename:
+        print("Reading from {}".format(allgensfilename))
+        n = 0
+        with open(os.path.join(base_dir, allgensfilename)) as allgensfile:
+            for L in allgensfile:
+                n+=1
+                label, record = parse_allgens_line_simple(L)
+                if label in alldata:
+                    alldata[label].update(record)
+                else:
+                    print("ignoring allgens data for {}".format(label))
+                if n%1000==0:
+                    print("Read {} curves from {}".format(n,allgensfilename))
+
 
     for label, record in alldata.items():
         if verbose:
@@ -1004,7 +1041,12 @@ def make_new_data(infilename, base_dir, PRECISION=100, verbose=1):
             if first:
                 if verbose>1:
                     print("{}: an.rk.={}, finding generators".format(label, ar))
-                gens = get_gens(E, ar, verbose)
+                if 'gens' in record:
+                    gens = record['gens']
+                    if verbose>1:
+                        print("..already have gens {}".format(gens))
+                else:
+                    gens = get_gens(E, ar, verbose)
                 ngens = len(gens)
                 if ngens <ar:
                     print("{}: analytic rank = {} but we only found {} generators".format(label,ar,ngens))
@@ -1152,7 +1194,7 @@ def read_write_data(infilename, base_dir=MATSCHKE_DIR, verbose=1):
     print("Reading from {}".format(infilename))
     N = ".".join(infilename.split(".")[1:])
     data = make_new_data(infilename, base_dir=base_dir, verbose=verbose)
-    write_datafiles(data, N)
+    write_datafiles(data, N, base_dir)
 
 # How to make a 2adic file: run 2adic.m on a file containing one line
 # per curve, where each line has the form

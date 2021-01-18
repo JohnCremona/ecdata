@@ -9,6 +9,9 @@ all_tables = [db.ec_curvedata, db.ec_localdata, db.ec_mwbsd,
           db.ec_classdata, db.ec_2adic, db.ec_galrep,
           db.ec_torsion_growth, db.ec_iwasawa]
 
+main_tables = [db.ec_curvedata, db.ec_localdata, db.ec_mwbsd,
+          db.ec_classdata, db.ec_2adic, db.ec_galrep]
+
 all_ranges = ["{}0000-{}9999".format(n,n) for n in range(50)]
 iwasawa_ranges = all_ranges[:15]
 growth_ranges = all_ranges[:40]
