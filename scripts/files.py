@@ -614,28 +614,25 @@ def parse_curvedata_line(line, raw=False):
     data = split(line)
     if raw:
         record = dict([(col, data[n]) for n, col in enumerate(datafile_columns['curvedata']) ])
+        record['semistable'] = bool(int(record['semistable']))
+        record['potential_good_reduction'] = (parse_int_list(record['jinv'])[1]==1)
+        record['num_bad_primes'] = str(1+record['bad_primes'].count(","))
+        record['class_size']     = str(1+record['isogeny_degrees'].count(","))
     else:
         record = dict([(col, decode(col, data[n])) for n, col in enumerate(datafile_columns['curvedata']) ])
+        record['potential_good_reduction'] = (record['jinv'].denominator()==1)
+        record['num_bad_primes'] = len(record['bad_primes'])
+        record['class_size']     = len(record['isogeny_degrees'])
 
     # Cremona labels only defined for conductors up to 500000:
     if ZZ(record['conductor'])<500000:
         record['Clabel'] = record['label']
         record['Ciso'] = record['label'][:-1]
         record['Cnumber'] = record['number']
-        #print("Clabel = {}, Ciso = {}, Cnumber={}".format(record['Clabel'], record['Ciso'], record['Cnumber']))
 
-    record['sha_primes'] = [int(p) for p in Integer(record['sha']).prime_divisors()]
-    badp = record['bad_primes']
-    record['num_bad_primes'] = str(1+badp.count(",")) if raw else len(badp)
+    record['sha_primes']     = [int(p) for p in Integer(record['sha']).prime_divisors()]
     record['torsion_primes'] = [int(p) for p in Integer(record['torsion']).prime_divisors()]
-    record['lmfdb_iso'] = ".".join([str(record['conductor']),record['lmfdb_isoclass']])
-    isodegs = record['isogeny_degrees']
-    record['class_size'] = str(1+isodegs.count(",")) if raw else len(isodegs)
-    jinv = record['jinv']
-    if raw:
-        record['potential_good_reduction'] = (parse_int_list(jinv)[1]==1)
-    else:
-        record['potential_good_reduction'] = (jinv.denominator()==1)
+    record['lmfdb_iso']      = ".".join([str(record['conductor']),record['lmfdb_isoclass']])
 
     return record['label'], record
 
@@ -829,7 +826,7 @@ def make_curvedata(base_dir=ECDATA_DIR, ranges=all_ranges, prec=DEFAULT_PRECISIO
                 print("{} lines written to {}".format(n, filename))
 
 
-        
+
 def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges, raw=True, resort=True):
     r"""Read all the data in files base_dir/<ft>/<ft>.<r> where ft is a file type
     and r is a range.
@@ -943,37 +940,37 @@ schemas = { 'ec_curvedata': {'Clabel': 'text', 'lmfdb_label': 'text', 'Ciso': 't
                                'faltings_index': 'smallint', 'faltings_ratio': 'smallint'},
 
             # local data: one row per (curve, bad prime)
-            'ec_localdata': {'lmfdb_label': 'text',
+            'ec_localdata': {'lmfdb_label': 'text', 'conductor': 'integer',
                              'prime': 'integer', 'tamagawa_number': 'smallint', 'kodaira_symbol': 'smallint',
                              'reduction_type': 'smallint', 'root_number': 'smallint',
                              'conductor_valuation': 'smallint', 'discriminant_valuation': 'smallint',
                              'j_denominator_valuation': 'smallint'},
 
-            'ec_mwbsd': {'lmfdb_label': 'text',
+            'ec_mwbsd': {'lmfdb_label': 'text', 'conductor': 'integer',
                          'torsion_generators': 'numeric[]', 'xcoord_integral_points': 'numeric[]',
                          'special_value': 'numeric', 'real_period': 'numeric', 'area': 'numeric',
                          'tamagawa_product': 'integer', 'sha_an': 'numeric', 'rank_bounds': 'smallint[]',
                          'ngens': 'smallint', 'gens': 'numeric[]', 'heights': 'numeric[]'},
 
             # class data: one row per isogeny class
-            'ec_classdata': {'lmfdb_iso': 'text',
+            'ec_classdata': {'lmfdb_iso': 'text', 'conductor': 'integer',
                              'trace_hash': 'bigint', 'class_size': 'smallint', 'class_deg': 'smallint',
                              'isogeny_matrix': 'smallint[]',
                              'aplist': 'smallint[]', 'anlist': 'smallint[]'},
 
-            'ec_2adic': {'lmfdb_label': 'text',
+            'ec_2adic': {'lmfdb_label': 'text', 'conductor': 'integer',
                          'twoadic_label': 'text', 'twoadic_index': 'smallint',
                          'twoadic_log_level': 'smallint', 'twoadic_gens': 'smallint[]'},
 
             # galrep data: one row per (curve, non-maximal prime)
-            'ec_galrep': {'lmfdb_label': 'text',
+            'ec_galrep': {'lmfdb_label': 'text', 'conductor': 'integer',
                           'prime': 'smallint', 'image': 'text'},
 
             # torsion growth data: one row per (curve, extension field)
-            'ec_torsion_growth': {'lmfdb_label': 'text',
+            'ec_torsion_growth': {'lmfdb_label': 'text', 'conductor': 'integer',
                                   'degree': 'smallint', 'field': 'numeric[]', 'torsion': 'smallint[]'},
 
-            'ec_iwasawa': {'lmfdb_label': 'text',
+            'ec_iwasawa': {'lmfdb_label': 'text', 'conductor': 'integer',
                            'iwdata': 'jsonb',  'iwp0': 'smallint'}
 }
 
@@ -1006,10 +1003,10 @@ def table_cols(table, include_id=False):
     front, and 'id' at the very front if wanted.
     """
     if table == 'ec_galrep':
-        return ['lmfdb_label', 'prime', 'image']
+        return ['lmfdb_label', 'conductor', 'prime', 'image']
 
     if table == 'ec_torsion_growth':
-        return ['lmfdb_label', 'degree', 'field', 'torsion']
+        return ['lmfdb_label', 'conductor', 'degree', 'field', 'torsion']
 
     cols = sorted(list(schemas[table].keys()))
 
@@ -1132,6 +1129,7 @@ def make_localdata_upload_file(data, NN=None):
                         record[ld] = parse_int_list(record[ld])
 
                 prime_record = {'label': record['label'], 'lmfdb_label': record['lmfdb_label'],
+                                'conductor': record['conductor'],
                                 'prime': record['bad_primes'][i],
                                 'tamagawa_number': record['tamagawa_numbers'][i],
                                 'kodaira_symbol': record['kodaira_symbols'][i],
@@ -1175,6 +1173,7 @@ def make_galrep_upload_file(data, NN=None):
         for label, record in data.items():
             for p, im in zip(record['nonmax_primes'], record['modp_images']):
                 prime_record = {'label': record['label'], 'lmfdb_label': record['lmfdb_label'],
+                                'conductor': record['conductor'],
                                 'prime': p,
                                 'image': im,
                 }
@@ -1224,15 +1223,35 @@ def make_torsion_growth_upload_file(data, NN=None):
         n -= 1
         print("{} lines written to {}".format(n, filename))
 
-def fix_labels(data):
+def fix_labels(data, verbose=True):
     for label, record in data.items():
-        lmfdb_label = "".join(record['lmfdb_iso'], record['lmfdb_number'])
+        lmfdb_label = "".join([record['lmfdb_iso'], record['lmfdb_number']])
         if lmfdb_label != record['lmfdb_label']:
-            print("changing {} to {}".format(record['lmfdb_label'], lmfdb_label))
+            if verbose:
+                print("changing {} to {}".format(record['lmfdb_label'], lmfdb_label))
             record['lmfdb_label'] = lmfdb_label
     return data
 
-        
+def fix_faltings_ratios(data, verbose=True):
+    for label, record in data.items():
+        if label[-1]=='1':
+            Fratio = '1'
+            if record['faltings_ratio'] != Fratio:
+                if verbose:
+                    print("{}: changing F-ratio from {} to {}".format(label,record['faltings_ratio'],Fratio))
+                record['faltings_ratio'] = Fratio
+        else:
+            label1 = label[:-1]+"1"
+            record1 = data[label1]
+            Fratio = (RR(record1['area'])/RR(record['area'])).round()
+            assert Fratio<=163
+            Fratio = str(Fratio)
+            if Fratio!=record['faltings_ratio']:
+                if verbose:
+                    print("{}: changing F-ratio from {} to {}".format(label,record['faltings_ratio'],Fratio))
+                record['faltings_ratio'] = str(Fratio)
+    return data
+
 def make_all_upload_files(data, tables=all_tables, NN=None, include_id=False):
     data = fix_labels(data)
     for table in tables:

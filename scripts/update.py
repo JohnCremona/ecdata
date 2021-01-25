@@ -58,7 +58,7 @@ def update_range(r, tables=all_tables, base_dir=UPLOAD_DIR):
 #     make_table_upload_file(data, t.search_table, rows='all', include_id=False)
 # add_data('all', tables=tables)
 #
-            
+
 def add_data(r, tables=all_tables, base_dir=UPLOAD_DIR):
     for t in tables:
         basefile = ".".join([t.search_table,r])

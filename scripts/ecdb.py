@@ -889,12 +889,12 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
             nc += 1
             iso = ''.join([sN,isoclass])
             label = ''.join([iso,number])
-            lmfdb_number = int(lmfdb_number)
             lmfdb_isoclass = isoclass
             lmfdb_iso = '.'.join([sN,isoclass])
             lmfdb_label = ''.join([lmfdb_iso,lmfdb_number])
             iso_nlabel = class_to_int(isoclass)
             number = int(number)
+            lmfdb_number = int(lmfdb_number)
             class_size = int(class_size)
             ainvs = parse_int_list(ainvs)
             bad_p = N.prime_factors() # will be sorted
@@ -1109,9 +1109,9 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
 
         if verbose>1:
             print(" -- getting integral points...")
-        record['intpts'] = get_integral_points(E, gens)
+        record['xcoord_integral_points'] = get_integral_points(E, gens)
         if verbose>1:
-            print(" ...done: {}".format(record['intpts']))
+            print(" ...done: {}".format(record['xcoord_integral_points']))
 
 
         Etw, Dtw = E.minimal_quadratic_twist()
@@ -1157,7 +1157,7 @@ def write_classdata(data, r, base_dir=MATSCHKE_DIR):
     n = 0
     with open(filename, 'w') as outfile:
         for label, record in data.items():
-            if record['number']==1:
+            if int(record['number']) == 1:
                 line = make_line(record, cols)
                 outfile.write(line +"\n")
                 n += 1
@@ -1168,7 +1168,7 @@ def write_intpts(data, r, base_dir=MATSCHKE_DIR):
     Write file base_dir/intpts/intpts.<r>
 
     """
-    cols = ['label', 'ainvs', 'intpts']
+    cols = ['label', 'ainvs', 'xcoord_integral_points']
     filename = os.path.join(base_dir, 'intpts', 'intpts.{}'.format(r))
     print("Writing data to {}".format(filename))
     n = 0

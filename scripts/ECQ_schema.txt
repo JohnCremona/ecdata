@@ -1,4 +1,4 @@
-Current schema for ECQ: table ec_curves with extra table
+Old (pre-December 2020) schema for ECQ: table ec_curves with extra table
 
 Search table columns (* indicates "used for searching Nov 2020"):
 
@@ -64,8 +64,8 @@ Extra table columns:
  'iwdata'
  'iwp0'
 
-Proposed replacement with 8 tables, the first of which will be the
-main search table.
+New tables (since December 2020): 8 tables, the first of which will be
+the main search table.
 
 ec_curvedata
 ec_localdata
@@ -127,6 +127,7 @@ ec_localdata: one row per (curve, bad prime)
 
 'label': 'text',
 'lmfdb_label': 'text',
+'conductor': 'integer',
 'prime': 'integer',
 'tamagawa_number': 'smallint',
 'kodaira_symbol': 'smallint',
@@ -145,6 +146,7 @@ ec_mwbsd: one row per curve
 
 'label': 'text',
 'lmfdb_label': 'text',
+'conductor': 'integer',
 'torsion_generators': 'numeric[]',
 'xcoord_integral_points': 'numeric[]',
 'special_value': 'numeric',
@@ -161,6 +163,7 @@ ec_classdata: one row per isogeny class
 
 'iso': 'text',
 'lmfdb_iso': 'text',
+'conductor': 'integer',
 'trace_hash': 'bigint',
 'class_size': 'smallint',
 'class_deg': 'smallint',
@@ -172,6 +175,7 @@ ec_2adic: one row per curve (Rouse data)
 
 'label': 'text',
 'lmfdb_label': 'text',
+'conductor': 'integer',
 'twoadic_label': 'text',
 'twoadic_index': 'smallint',
 'twoadic_log_level': 'smallint',
@@ -181,6 +185,7 @@ ec_galrep: one row per (curve, nonmaximal prime) (Sutherland data)
 
 'label': 'text',
 'lmfdb_label': 'text',
+'conductor': 'integer',
 'prime': 'smallint',
 'image': 'text'
 
@@ -190,6 +195,7 @@ ec_torsion_growth: one row per (curve, extension field) (Gonzalez-Jimenez--Najma
 
 'label': 'text',
 'lmfdb_label': 'text',
+'conductor': 'integer',
 'degree': 'smallint',
 'field': 'numeric[]',
 'torsion': 'smallint[]'
@@ -198,6 +204,7 @@ ec_iwasawa: one row per curve (Pollack data)
 
 'label': 'text',
 'lmfdb_label': 'text',
+'conductor': 'integer',
 'iwdata': 'jsonb',
 'iwp0': 'smallint'
 

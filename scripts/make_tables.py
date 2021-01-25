@@ -137,20 +137,28 @@ db.ec_curvedata.create_index(['potential_good_reduction'], type='btree')
 db.ec_curvedata.create_index(['potential_good_reduction', 'conductor', 'iso_nlabel', 'lmfdb_number'], type='btree')
 db.ec_curvedata.create_index(['class_size'], type='btree')
 db.ec_curvedata.create_index(['class_deg'], type='btree')
+db.ec_curvedata.create_index(['conductor'], type='btree')
 
 db.ec_classdata.create_index(['lmfdb_iso'], type='btree')
+db.ec_classdata.create_index(['conductor'], type='btree')
 
 db.ec_localdata.create_index(['lmfdb_label'], type='btree')
 db.ec_localdata.create_index(['lmfdb_label', 'prime'], type='btree')
+db.ec_localdata.create_index(['conductor'], type='btree')
 
 db.ec_mwbsd.create_index(['lmfdb_label'], type='btree')
+db.ec_mwbsd.create_index(['conductor'], type='btree')
 
 db.ec_2adic.create_index(['lmfdb_label'], type='btree')
+db.ec_2adic.create_index(['conductor'], type='btree')
 
 db.ec_galrep.create_index(['lmfdb_label'], type='btree')
 db.ec_galrep.create_index(['lmfdb_label', 'prime'], type='btree')
+db.ec_galrep.create_index(['conductor'], type='btree')
 
 db.ec_torsion_growth.create_index(['lmfdb_label'], type='btree')
 db.ec_torsion_growth.create_index(['lmfdb_label', 'degree'], type='btree')
+db.ec_torsion_growth.create_index(['conductor'], type='btree')
 
 db.ec_iwasawa.create_index(['lmfdb_label'], type='btree')
+db.ec_iwasawa.create_index(['conductor'], type='btree')
