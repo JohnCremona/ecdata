@@ -14,6 +14,26 @@ mwrank_saturation_precision = 300
 mwrank_saturation_maxprime = 200000
 GP = '/usr/local/bin/gp'
 
+FR_values = srange(1,20) + [21, 25, 37, 43, 67, 163] # possible values of Faltings ratio
+
+magma = Magma()
+magma_count = 0
+magma_count_max = 100 # restart magma after this number of uses
+
+def get_magma(verbose=False):
+    global magma, magma_count, magma_count_max
+    if magma_count == magma_count_max:
+        if verbose:
+            print("Restarting Magma")
+        magma.quit()
+        magma = Magma()
+        magma_count = 1
+    else:
+        if verbose:
+            print("Reusing Magma (count={})".format(magma_count))
+        magma_count += 1
+    return magma
+
 def print_data(outfile, code, ainvs, r, t):
     print("Code = {}".format(code))
     print("Curve = {}".format(EllipticCurve(ainvs)))
@@ -154,7 +174,7 @@ def get_gens_simon(E):
 def get_gens(E, ar, verbose=False):
     if ar==0:
         return []
-    mag = Magma()
+    mag = get_magma()
     mE = mag(E)
     if ar==1:
         if verbose:
@@ -164,29 +184,58 @@ def get_gens(E, ar, verbose=False):
         if verbose:
             print("a.r.={}, finding generators using Magma".format(ar))
         rb, gens = get_magma_gens(E, mE)
-    mag.quit()
+
+    # Now we have independent gens, and saturate them
+
+    prec0=mwrank_get_precision()
+    mwrank_set_precision(mwrank_saturation_precision)
+    if verbose>1:
+        print("Starting saturation ...")
+    gens, index, reg = E.saturation(gens, max_prime=0)
+    mwrank_set_precision(prec0)
+    if verbose>1:
+        print("... finished saturation (index {}, new reg={})".format(index, reg))
+
     return gens
 
 # Given a matrix of isogenies and a list of points on the initial
 # curve returns a# list of their images on each other curve.  The
 # complication is that the isogenies will only exist when they have
 # prime degree.
+
+# Here we assume that the points in Plist are saturated, and only
+# resaturate their images at primes up to the masimum prime dividing
+# an isogeny degree.
+
 def map_points(maps, Plist):
     ncurves = len(maps)
     if len(Plist)==0:
         return [[] for _ in range(ncurves)]
     if ncurves==1:
         return [Plist]
+    print("in map_points with degrees {}".format([[phi.degree() if phi else 0 for phi in r] for r in maps]))
+    maxp = max([max([max(phi.degree().support(), default=0) if phi else 0 for phi in r], default=0) for r in maps], default=0)
+    print("  maxp = {}".format(maxp))
+
     Qlists = [Plist] + [[]]*(ncurves-1)
     nfill = 1
     for i in range(ncurves):
         if nfill==ncurves:
-            return Qlists
+          break
         for j in range(1,ncurves):
             if not (maps[i][j] == 0) and Qlists[j]==[]:
                 Qlists[j] = [maps[i][j](P) for P in Qlists[i]]
                 nfill += 1
-
+    # now we saturate the points just computed at all primes up to maxp
+    prec0=mwrank_get_precision()
+    mwrank_set_precision(mwrank_saturation_precision)
+    for i in range(1,ncurves):
+        E = Qlists[i][0].curve()
+        Qlists[i], n, r = E.saturation(Qlists[i], max_prime=maxp)
+        if n>1:
+          print("On curve {}, gained index {}".format(i,n))
+    mwrank_set_precision(prec0)
+    return Qlists
 
 # Find integral points in a fail-safe way uing both Sage and Magma,
 # comparing, returning the union in all cases and outputting a warning
@@ -195,10 +244,9 @@ def get_integral_points_with_sage(E, gens):
     return [P[0] for P in E.integral_points(mw_base=gens)]
 
 def get_integral_points_with_magma(E, gens):
-    mag = Magma()
+    mag = get_magma()
     mE = mag(E)
     xs = [E(P.Eltseq().sage())[0] for P in mE.IntegralPoints(FBasis=[mE(list(P)) for P in gens])]
-    mag.quit()
     return xs
 
 def get_integral_points(E, gens, verbose=True):
@@ -206,7 +254,7 @@ def get_integral_points(E, gens, verbose=True):
     x_list_sage = get_integral_points_with_sage(E, gens)
     if x_list_magma != x_list_sage:
         if verbose:
-            print("Curve {} = {}: \n".format(E.ainvs))
+            print("Curve {}: \n".format(E.ainvs))
             print("Integral points via Magma: {}".format(x_list_magma))
             print("Integral points via Sage: {}".format(x_list_sage))
     x_list = list(Set(x_list_sage)+Set(x_list_magma))
@@ -733,7 +781,7 @@ def process_raw_curves(infilename, outfilename, base_dir='.', split_by_N=False, 
     OUTPUT: one line per curve, sorted by conductor and then by
     isogeny class.  Each line has the format
 
-    N class_code number ainvs lmfdb_number
+    N class_code class_size number lmfdb_number ainvs
 
     where "number" is the index of the curve in its class (counting
     from 1), sorted by Faltings heights, with the lex. order of
@@ -1056,9 +1104,15 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
                 if 'gens' in record:
                     gens = record['gens']
                     if verbose>1:
-                        print("..already have gens {}".format(gens))
+                        print("..already have gens {}, just saturating...".format(gens))
+                    gens, n, r = E.saturation(gens)
+                    if verbose>1:
+                        if n>1:
+                            print("..saturation index was {}, new gens: ".format(n, gens))
+                        else:
+                            print("..saturated already")
                 else:
-                    gens = get_gens(E, ar, verbose)
+                    gens = get_gens(E, ar, verbose) # this returns saturated points
                 ngens = len(gens)
                 if ngens <ar:
                     print("{}: analytic rank = {} but we only found {} generators".format(label,ar,ngens))
@@ -1068,23 +1122,14 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
                 record['rank_bounds'] = [ngens, ar]
                 record['rank'] = ngens if ngens == ar else None
                 # so the other curves in the class know their gens:
-                record['allgens'] = map_points(isogenies, gens)
+                record['allgens'] = map_points(isogenies, gens) # returns saturated sets of gens
             else:
                 gens = record1['allgens'][number-1]
                 record['rank'] = record1['rank']
                 record['rank_bounds'] = record1['rank_bounds']
 
-            record['gens'] = [point_to_weighted_proj(gen) for gen in gens]
-            prec0=mwrank_get_precision()
-            mwrank_set_precision(mwrank_saturation_precision)
-            maxp = 0 if first else max(record['class_deg'].support())
-            if verbose>1:
-                print("Starting saturation (maxp={})...".format(maxp))
-            gens, index, reg = E.saturation(gens, max_prime=maxp)
-            mwrank_set_precision(prec0)
-            if verbose>1:
-                print("... finished saturation (index {}, new reg={}), reducing...".format(index, reg))
             gens, tgens = reduce_gens(gens, tgens, False, label)
+            record['gens'] = [point_to_weighted_proj(gen) for gen in gens]
             record['heights'] = heights = [P.height(precision=PRECISION) for P in gens]
             reg = E.regulator_of_points(gens, PRECISION)
             record['ngens'] = len(gens)
@@ -1100,12 +1145,15 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
         # Analytic Sha
         sha_an = sv*torsion**2 / (tamprod*reg*om)
         sha = sha_an.round()
-        assert sha>0
-        assert sha.is_square()
-        assert ((sha-sha_an).abs() < 1e-10)
+        warn = "sha_an = {}, rounds to {}".format(sha_an,sha)
+        assert sha>0, warn
+        assert sha.is_square(), warn
+        assert ((sha-sha_an).abs() < 1e-10), warn
         record['sha_an'] = sha_an
         record['sha'] = int(sha)
-        record['faltings_ratio'] = 1 if first else (record1['area']/A).round()
+        FR = 1 if first else (record1['area']/A).round()
+        assert FR in FR_values, "F ratio = {}/{} = {}".format(record1['area'], A, FR)
+        record['faltings_ratio'] = FR
 
         if verbose>1:
             print(" -- getting integral points...")

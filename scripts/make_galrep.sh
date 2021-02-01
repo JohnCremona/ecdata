@@ -8,7 +8,7 @@ else
     d=$2
 fi
 
-echo 'running 2-adic Magma script on '${r} in ${d}
+echo 'running Magma 2-adic script on '${r} in ${d}
 
 # Here we need the label in 3 parts then the a-invariant list, space-separated
 # - in curvedata files this is fields 10,2,3,11
@@ -18,6 +18,9 @@ awk '{print $1,$2,$4,$6;}' ${d}/allcurves/allcurves.${r} > temp.${r}
 #awk '{print $10,$2,$3,$11;}' ${d}/curvedata/curvedata.${r} > temp.${r}
 magma -b filename:=temp.${r} $HOME/ecdata/scripts/2adic.m
 mv 2adic.${r} ${d}/2adic/
+/bin/rm temp.${r}
+
+echo 'running Magma galrep script on '${r} in ${d}
 
 pushd ${HOME}/galrep
 
@@ -31,6 +34,6 @@ echo "ComputeQGaloisImages(\"temp.$r\", \"galrep.$r\"); quit;" > magma_temp.m
 cat magma_temp.m
 magma $HOME/galrep/nfgalrep.m magma_temp.m > /dev/null
 mv galrep.${r} ${d}/galrep/
-rm -f temp.${r} magma_temp.m
+/bin/rm temp.${r} magma_temp.m
 popd
 

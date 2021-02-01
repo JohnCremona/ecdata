@@ -8,7 +8,7 @@
 # ranges up to 50000.
 
 import os
-from sage.all import ZZ, QQ, EllipticCurve, Integer, prod, factorial, primes
+from sage.all import ZZ, QQ, RR, EllipticCurve, Integer, prod, factorial, primes
 from sage.databases.cremona import class_to_int, parse_cremona_label
 from trace_hash import TraceHashClass
 from codec import split, parse_int_list, parse_int_list_list, proj_to_point, point_to_weighted_proj, decode, encode, split_galois_image_code
@@ -1253,7 +1253,7 @@ def fix_faltings_ratios(data, verbose=True):
     return data
 
 def make_all_upload_files(data, tables=all_tables, NN=None, include_id=False):
-    data = fix_labels(data)
+    #data = fix_labels(data)
     for table in tables:
         make_table_upload_file(data, table, NN=NN, include_id=include_id)
 
