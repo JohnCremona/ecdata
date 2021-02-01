@@ -19,21 +19,26 @@ growth_ranges = all_ranges[:40]
 # This one updates existing rows with revised data.  Any new rows are
 # ignored!
 
+# NB This can *only* be used for tables where the label uniquely identifies the row to be changed!  These are:
+
+# db.ec_curvedata, db.ec_mwbsd, db.ec_classdata, db.ec_2adic, db.ec_iwasawa
+
+# but NOT: db.ec_localdata, db.ec_galrep, db.ec_torsion_growth
+
+# To update the latter it is necessary to delete the old rows and then use copy_from() instead of update_from_file().
+
+
 def update_range(r, tables=all_tables, base_dir=UPLOAD_DIR):
     for t in tables:
         basefile = ".".join([t.search_table,r])
         file = os.path.join(UPLOAD_DIR, basefile)
         print("updating {} from {}".format(t.search_table,file))
-        if t.search_table == 'ec_curvedata':
-            t.update_from_file(file, label_col = 'id')
-        else:
-            t.update_from_file(file)
+        t.update_from_file(file)
 
 # Use this one to add rows.  NB They must be new rows, else we end up
-# with duplicate rows.  There should *not* be an 'id' column except
-# for ec_curvedata's first batch uploaded.  So a script to update
-# everything from scratch, deleting all the content first, would go
-# like this for all tables in all_tables or a subset.
+# with duplicate rows.  There should *not* be an 'id' column.  So a
+# script to update everything from scratch, deleting all the content
+# first, would go like this for all tables in all_tables or a subset.
 #
 # # Delete the old data in each table:
 #
