@@ -76,6 +76,13 @@ def split_galois_image_code(s):
     p = re.findall(r'\d+', s)[0]
     return p, s[len(p):]
 
+def weighted_proj_to_affine_point(P):
+    r""" Converts a triple of integers representing a point in weighted
+    projective coordinates [a,b,c] to a tuple of rationals (a/c^2,b/c^3).
+    """
+    a, b, c = [ZZ(x) for x in P]
+    return (a/c**2, b/c**3)
+
 ######################################################################
 #
 # Coding and decoding functions
