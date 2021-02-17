@@ -5,16 +5,18 @@ sys.path.append(os.path.join(HOME, 'ecdata', 'scripts'))
 from sage.all import EllipticCurve, Integer, ZZ, QQ, Set, Magma, prime_range, factorial, mwrank_get_precision, mwrank_set_precision, srange, pari, EllipticCurve_from_c4c6, prod, copy
 from red_gens import reduce_tgens, reduce_gens
 from trace_hash import TraceHashClass
-from files import make_line, datafile_columns, MATSCHKE_DIR, parse_line_label_cols, split
-from codec import parse_int_list, point_to_weighted_proj, proj_to_point
+from files import make_line, datafile_columns, MATSCHKE_DIR, parse_line_label_cols, split, parse_curvedata_line
+from codec import parse_int_list, point_to_weighted_proj, proj_to_point, weighted_proj_to_affine_point
 
 from sage.databases.cremona import parse_cremona_label, class_to_int, cremona_letter_code
 
 mwrank_saturation_precision = 300
-mwrank_saturation_maxprime = 200000
+mwrank_saturation_maxprime = 1000
 GP = '/usr/local/bin/gp'
 
 FR_values = srange(1,20) + [21, 25, 37, 43, 67, 163] # possible values of Faltings ratio
+
+modular_degree_bound = 1000000 # do not compute modular degree if conductor greater than this
 
 magma = Magma()
 magma_count = 0
@@ -190,8 +192,8 @@ def get_gens(E, ar, verbose=False):
     prec0=mwrank_get_precision()
     mwrank_set_precision(mwrank_saturation_precision)
     if verbose>1:
-        print("Starting saturation ...")
-    gens, index, reg = E.saturation(gens, max_prime=0)
+        print("Starting saturation (p<{})...".format(mwrank_saturation_maxprime))
+    gens, index, reg = E.saturation(gens, max_prime=mwrank_saturation_maxprime)
     mwrank_set_precision(prec0)
     if verbose>1:
         print("... finished saturation (index {}, new reg={})".format(index, reg))
@@ -384,13 +386,15 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
             genlist = map_points(maps,Plist)
             prec0=mwrank_get_precision()
             mwrank_set_precision(mwrank_saturation_precision)
-#            genlist = [Elist[i].saturation(genlist[i], max_prime=mwrank_saturation_maxprime)[0] for i in range(ncurves)]
-            if verbose: print("genlist (before saturation) = {}".format(genlist))
-            genlist = [Elist[i].saturation(genlist[i])[0] for i in range(ncurves)]
-            if verbose: print("genlist (before reduction) = {}".format(genlist))
+            if verbose:
+                print("genlist (before saturation) = {}".format(genlist))
+            genlist = [Elist[i].saturation(genlist[i], max_prime=mwrank_saturation_maxprime)[0] for i in range(ncurves)]
+            if verbose:
+                print("genlist (before reduction) = {}".format(genlist))
             genlist = [Elist[i].lll_reduce(genlist[i])[0] for i in range(ncurves)]
             mwrank_set_precision(prec0)
-            if verbose: print("genlist  (after reduction)= {}".format(genlist))
+            if verbose:
+                print("genlist  (after reduction)= {}".format(genlist))
             reglist = [Elist[i].regulator_of_points(genlist[i]) for i in range(ncurves)]
         shalist = [Lr1*torlist[i]**2/(cplist[i]*omlist[i]*reglist[i]) for i in range(ncurves)]
         squares = [n*n for n in srange(1,100)]
@@ -923,9 +927,11 @@ def parse_allgens_line_simple(line):
     record['gens'] = [proj_to_point(gen, E) for gen in data[6:6 + rank]]
     return label,  record
 
-def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, verbose=1, allgensfilename=None):
+def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, verbose=1,
+                  allgensfilename=None, oldcurvedatafile=None):
     alldata = {}
     nc = 0
+    labels_by_conductor = {}
     with open(os.path.join(base_dir, infilename)) as infile:
         for L in infile:
             sN, isoclass, class_size, number, lmfdb_number, ainvs = L.split()
@@ -964,17 +970,23 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
                 'bad_primes': bad_p,
                 'num_bad_primes': len(bad_p),
                 }
+            if label in alldata:
+                raise RuntimeError("duplicate label {} in {}".format(label, infilename))
             alldata[label] = record
+            if N in labels_by_conductor:
+                labels_by_conductor[N].append(label)
+            else:
+                labels_by_conductor[N] = [label]
 
     if verbose:
-        print("{} curves read from {}".format(nc, infilename))
+        print("{} curves read from {}, with {} distinct conductors".format(nc, infilename, len(labels_by_conductor)))
 
+    gens_dict = {}
     if allgensfilename:
         print("Reading from {}".format(allgensfilename))
         n = 0
         with open(os.path.join(base_dir, allgensfilename)) as allgensfile:
             for L in allgensfile:
-                n+=1
                 if Nmin or Nmax:
                     label, record = parse_line_label_cols(L)
                     N = record['conductor']
@@ -984,197 +996,238 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
                         continue
                 n+=1
                 label, record = parse_allgens_line_simple(L)
-                if label in alldata:
-                    alldata[label].update(record)
-                else:
-                    print("ignoring allgens data for {}".format(label))
-                if n%1000==0:
+                gens_dict[tuple(record['ainvs'])] = record['gens']
+                if n%10000==0:
                     print("Read {} curves from {}".format(n,allgensfilename))
 
+    if oldcurvedatafile:
+        print("Reading from {}".format(oldcurvedatafile))
+        n = 0
+        with open(os.path.join(base_dir, "curvedata", oldcurvedatafile)) as oldfile:
+            for L in oldfile:
+                label, record = parse_curvedata_line(L)
+                N = int(record['conductor'])
+                if Nmin and N<Nmin:
+                    continue
+                if Nmax and N>Nmax:
+                    continue
+                n+=1
+                gens = [weighted_proj_to_affine_point(P) for P in record['gens']]
+                gens_dict[tuple(record['ainvs'])] = gens
+                print("curve {} has gens {} --> {}".format(record['ainvs'], record['gens'], gens))
+                if n%10000==0:
+                    print("Read {} curves from {}".format(n,allgensfilename))
 
-    for label, record in alldata.items():
+    N0 = 0
+    for N, labels in labels_by_conductor.items():
+        if N!=N0 and N0:
+            # extract from alldata the labels for conductor N0, and output it
+            if verbose:
+                print("Finished conductor {}".format(N0))
+                print("Writing data files for conductor {}".format(N0))
+            write_datafiles(dict([(lab, alldata[lab]) for lab in labels_by_conductor[N0]]),
+                            N0, base_dir)
+        N0 = N
         if verbose:
-            print("Processing {}".format(label))
-        N = record['conductor']
-        iso = record['iso']
-        number = record['number']
-        first = (number==1) # tags first curve in each isogeny class
-        ncurves = record['class_size']
-        if first:
-            alllabels = [iso+str(n+1) for n in range(ncurves)]
-            allcurves = [EllipticCurve(alldata[lab]['ainvs']) for lab in alllabels]
-            E = allcurves[0]
-        else:
-            record1 = alldata[iso+'1']
-            E = allcurves[number-1]
-        assert N==E.conductor()
-        if verbose>1:
-            print("E = {}".format(E))
-
-        record['jinv'] = j = E.j_invariant()
-        record['potential_good_reduction'] = (j.denominator()==1)
-        record['signD'] = int(E.discriminant().sign())
-        record['cm'] = int(E.cm_discriminant()) if E.has_cm() else 0
-
-        if first:
-            record['aplist'] = E.aplist(100,python_ints=True)
-            record['anlist'] = E.anlist(20,python_ints=True)
-            record['trace_hash'] = TraceHashClass(record['iso'], E)
-        else:
-            record['aplist'] = record1['aplist']
-            record['anlist'] = record1['anlist']
-            record['trace_hash'] = record1['trace_hash']
-
-        if verbose>1:
-            print("aplist done")
-        local_data = [{'p': int(ld.prime().gen()),
-                       'ord_cond':int(ld.conductor_valuation()),
-                       'ord_disc':int(ld.discriminant_valuation()),
-                       'ord_den_j':int(max(0,-(E.j_invariant().valuation(ld.prime().gen())))),
-                       'red':int(ld.bad_reduction_type()),
-                       'rootno':int(E.root_number(ld.prime().gen())),
-                       'kod':ld.kodaira_symbol()._pari_code(),
-                       'cp':int(ld.tamagawa_number())}
-                      for ld in E.local_data()]
-
-        record['tamagawa_numbers']    = cps = [ld['cp'] for ld in local_data]
-        record['kodaira_symbols']           = [ld['kod'] for ld in local_data]
-        record['reduction_types']           = [ld['red'] for ld in local_data]
-        record['root_numbers']              = [ld['rootno'] for ld in local_data]
-        record['conductor_valuations'] = cv = [ld['ord_cond'] for ld in local_data]
-        record['discriminant_valuations']   = [ld['ord_disc'] for ld in local_data]
-        record['j_denominator_valuations']  = [ld['ord_den_j'] for ld in local_data]
-
-        record['semistable'] = all([v==1 for v in cv])
-        record['tamagawa_product'] = tamprod = prod(cps)
-        if verbose>1:
-            print("local data done")
-
-        T = E.torsion_subgroup()
-        tgens = [P.element() for P in T.gens()]
-        tgens.sort(key=lambda P:P.order())
-        tgens = reduce_tgens(tgens)
-        tor_struct = [P.order() for P in tgens]
-        record['torsion_generators'] = [point_to_weighted_proj(gen) for gen in tgens]
-        record['torsion_structure'] = tor_struct
-        record['torsion'] = torsion = prod(tor_struct)
-        record['torsion_primes'] = [int(p) for p in Integer(torsion).support()]
-        if verbose>1:
-            print("torsion done")
-
-        if first: # else add later to avoid recomputing a.r.
-
-            # Analytic rank and special L-value
-            ar,sv = E.pari_curve().ellanalyticrank(precision=PRECISION)
-            record['analytic_rank'] = ar = ar.sage()
-            record['special_value'] = sv = sv.sage()/factorial(ar)
-
-            # compute isogenies so we can map points from #1 to the rest:
-            cl = E.isogeny_class(order=tuple(allcurves))
-            record['isogeny_matrix'] = mat = mat_to_list_list(cl.matrix())
-            record['class_deg'] = max(max(r) for r in mat)
-            record['isogeny_degrees'] = mat[0]
-            isogenies = cl.isogenies() # for mapping points later
-            record['degree'] = degphi = get_modular_degree(E, label)
-            record['degphilist'] = degphilist = [degphi*mat[0][j] for j in range(ncurves)]
-            if verbose>1: print("degphilist = {}".format(degphilist))
-
-        else:
-
-            record['analytic_rank'] = ar = record1['analytic_rank']
-            record['special_value'] = sv = record1['special_value']
-            record['class_deg'] = record1['class_deg']
-            record['isogeny_degrees'] = record1['isogeny_matrix'][number-1]
-            record['degree'] = record1['degphilist'][number-1]
-
-        if verbose>1:
-            print("analytic rank done: {}".format(ar))
-        if ar==0:
-            record['gens'] = gens = []
-            record['regulator'] = reg = 1
-            record['ngens'] = 0
-            record['heights'] = []
-            record['rank'] = 0
-            record['rank_bounds'] = [0,0]
-
-        else: # positive rank
+            print("Processing conductor {}".format(N))
+        for label in labels:
+            record = alldata[label]
+            if verbose:
+                print("Processing curve {}".format(label))
+            iso = record['iso']
+            number = record['number']
+            first = (number==1) # tags first curve in each isogeny class
+            ncurves = record['class_size']
             if first:
-                if verbose>1:
-                    print("{}: an.rk.={}, finding generators".format(label, ar))
-                if 'gens' in record:
-                    gens = record['gens']
-                    if verbose>1:
-                        print("..already have gens {}, just saturating...".format(gens))
-                    gens, n, r = E.saturation(gens)
-                    if verbose>1:
-                        if n>1:
-                            print("..saturation index was {}, new gens: ".format(n, gens))
-                        else:
-                            print("..saturated already")
-                else:
-                    gens = get_gens(E, ar, verbose) # this returns saturated points
-                ngens = len(gens)
-                if ngens <ar:
-                    print("{}: analytic rank = {} but we only found {} generators".format(label,ar,ngens))
-                else:
-                    if verbose>1:
-                        print("...done, generators {}".format(gens))
-                record['rank_bounds'] = [ngens, ar]
-                record['rank'] = ngens if ngens == ar else None
-                # so the other curves in the class know their gens:
-                record['allgens'] = map_points(isogenies, gens) # returns saturated sets of gens
+                alllabels = [iso+str(n+1) for n in range(ncurves)]
+                allcurves = [EllipticCurve(alldata[lab]['ainvs']) for lab in alllabels]
+                E = allcurves[0]
             else:
-                gens = record1['allgens'][number-1]
-                record['rank'] = record1['rank']
-                record['rank_bounds'] = record1['rank_bounds']
-
-            gens, tgens = reduce_gens(gens, tgens, False, label)
-            record['gens'] = [point_to_weighted_proj(gen) for gen in gens]
-            record['heights'] = heights = [P.height(precision=PRECISION) for P in gens]
-            reg = E.regulator_of_points(gens, PRECISION)
-            record['ngens'] = len(gens)
-            record['regulator'] = reg
+                record1 = alldata[iso+'1']
+                E = allcurves[number-1]
+            assert N==E.conductor()
             if verbose>1:
-                print("... finished reduction, gens are now {}, heights {}, reg={}".format(gens,heights,reg))
+                print("E = {}".format(E.ainvs()))
 
-        L = E.period_lattice()
-        record['real_period'] = om = L.omega(prec=PRECISION) # includes #R-components factor
-        record['area'] = A = L.complex_area(prec=PRECISION)
-        record['faltings_height'] = -A.log()/2
+            record['jinv'] = j = E.j_invariant()
+            record['potential_good_reduction'] = (j.denominator()==1)
+            record['signD'] = int(E.discriminant().sign())
+            record['cm'] = int(E.cm_discriminant()) if E.has_cm() else 0
 
-        # Analytic Sha
-        sha_an = sv*torsion**2 / (tamprod*reg*om)
-        sha = sha_an.round()
-        warn = "sha_an = {}, rounds to {}".format(sha_an,sha)
-        assert sha>0, warn
-        assert sha.is_square(), warn
-        assert ((sha-sha_an).abs() < 1e-10), warn
-        record['sha_an'] = sha_an
-        record['sha'] = int(sha)
-        FR = 1 if first else (record1['area']/A).round()
-        assert FR in FR_values, "F ratio = {}/{} = {}".format(record1['area'], A, FR)
-        record['faltings_ratio'] = FR
+            if first:
+                record['aplist'] = E.aplist(100,python_ints=True)
+                record['anlist'] = E.anlist(20,python_ints=True)
+                record['trace_hash'] = TraceHashClass(record['iso'], E)
+            else:
+                record['aplist'] = record1['aplist']
+                record['anlist'] = record1['anlist']
+                record['trace_hash'] = record1['trace_hash']
 
-        if verbose>1:
-            print(" -- getting integral points...")
-        record['xcoord_integral_points'] = get_integral_points(E, gens)
-        if verbose>1:
-            print(" ...done: {}".format(record['xcoord_integral_points']))
-
-
-        Etw, Dtw = E.minimal_quadratic_twist()
-        if Etw.conductor()==N:
-            record['min_quad_twist_ainvs'] = record['ainvs']
-            record['min_quad_twist_disc']  = 1
-        else:
-            record['min_quad_twist_ainvs'] = [int(a) for a in Etw.ainvs()]
-            record['min_quad_twist_disc']  = int(Dtw)
-
-        if verbose:
-            print("Finished processing {}".format(label))
             if verbose>1:
-                print("data for {}:\n{}".format(label,record))
+                print("aplist done")
+            local_data = [{'p': int(ld.prime().gen()),
+                           'ord_cond':int(ld.conductor_valuation()),
+                           'ord_disc':int(ld.discriminant_valuation()),
+                           'ord_den_j':int(max(0,-(E.j_invariant().valuation(ld.prime().gen())))),
+                           'red':int(ld.bad_reduction_type()),
+                           'rootno':int(E.root_number(ld.prime().gen())),
+                           'kod':ld.kodaira_symbol()._pari_code(),
+                           'cp':int(ld.tamagawa_number())}
+                          for ld in E.local_data()]
 
+            record['tamagawa_numbers']    = cps = [ld['cp'] for ld in local_data]
+            record['kodaira_symbols']           = [ld['kod'] for ld in local_data]
+            record['reduction_types']           = [ld['red'] for ld in local_data]
+            record['root_numbers']              = [ld['rootno'] for ld in local_data]
+            record['conductor_valuations'] = cv = [ld['ord_cond'] for ld in local_data]
+            record['discriminant_valuations']   = [ld['ord_disc'] for ld in local_data]
+            record['j_denominator_valuations']  = [ld['ord_den_j'] for ld in local_data]
+
+            record['semistable'] = all([v==1 for v in cv])
+            record['tamagawa_product'] = tamprod = prod(cps)
+            if verbose>1:
+                print("local data done")
+
+            T = E.torsion_subgroup()
+            tgens = [P.element() for P in T.gens()]
+            tgens.sort(key=lambda P:P.order())
+            tgens = reduce_tgens(tgens)
+            tor_struct = [P.order() for P in tgens]
+            record['torsion_generators'] = [point_to_weighted_proj(gen) for gen in tgens]
+            record['torsion_structure'] = tor_struct
+            record['torsion'] = torsion = prod(tor_struct)
+            record['torsion_primes'] = [int(p) for p in Integer(torsion).support()]
+            if verbose>1:
+                print("torsion done")
+
+            if first: # else add later to avoid recomputing a.r.
+
+                # Analytic rank and special L-value
+                ar,sv = E.pari_curve().ellanalyticrank(precision=PRECISION)
+                record['analytic_rank'] = ar = ar.sage()
+                record['special_value'] = sv = sv.sage()/factorial(ar)
+
+                # compute isogenies so we can map points from #1 to the rest:
+                cl = E.isogeny_class(order=tuple(allcurves))
+                record['isogeny_matrix'] = mat = mat_to_list_list(cl.matrix())
+                record['class_deg'] = max(max(r) for r in mat)
+                record['isogeny_degrees'] = mat[0]
+                isogenies = cl.isogenies() # for mapping points later
+                if N <= modular_degree_bound:
+                    record['degree'] = degphi = get_modular_degree(E, label)
+                    if verbose>1:
+                        print("degphi = {}".format(degphi))
+                else:
+                    record['degree'] = degphi = 0
+                    if verbose>1:
+                        print("degphi not computed as conductor > {}".format(modular_degree_bound))
+                record['degphilist'] = [degphi*mat[0][j] for j in range(ncurves)]
+            else:
+
+                record['analytic_rank'] = ar = record1['analytic_rank']
+                record['special_value'] = sv = record1['special_value']
+                record['class_deg'] = record1['class_deg']
+                record['isogeny_degrees'] = record1['isogeny_matrix'][number-1]
+                record['degree'] = record1['degphilist'][number-1]
+
+            if verbose>1:
+                print("analytic rank done: {}".format(ar))
+            if ar==0:
+                record['gens'] = gens = []
+                record['regulator'] = reg = 1
+                record['ngens'] = 0
+                record['heights'] = []
+                record['rank'] = 0
+                record['rank_bounds'] = [0,0]
+
+            else: # positive rank
+                if first:
+                    if verbose>1:
+                        print("{}: an.rk.={}, finding generators".format(label, ar))
+                    #if 'gens' in record:
+                    ainvs = tuple(record['ainvs'])
+                    if ainvs in gens_dict:
+                        #print(E.ainvs(), record['gens'])
+                        gens = [E(P) for P in gens_dict[ainvs]]
+                        #gens = gens_dict[ainvs]
+                        if verbose>1:
+                            print("..already have gens {}, just saturating (p<{})...".format(gens, mwrank_saturation_maxprime))
+                        gens, n, r = E.saturation(gens, max_prime=mwrank_saturation_maxprime)
+                        if verbose>1:
+                            if n>1:
+                                print("..saturation index was {}, new gens: ".format(n, gens))
+                            else:
+                                print("..saturated already")
+                    else:
+                        gens = get_gens(E, ar, verbose) # this returns saturated points
+                    ngens = len(gens)
+                    if ngens <ar:
+                        print("{}: analytic rank = {} but we only found {} generators".format(label,ar,ngens))
+                    else:
+                        if verbose>1:
+                            print("...done, generators {}".format(gens))
+                    record['rank_bounds'] = [ngens, ar]
+                    record['rank'] = ngens if ngens == ar else None
+                    # so the other curves in the class know their gens:
+                    record['allgens'] = map_points(isogenies, gens) # returns saturated sets of gens
+                else:
+                    gens = record1['allgens'][number-1]
+                    record['rank'] = record1['rank']
+                    record['rank_bounds'] = record1['rank_bounds']
+
+                gens, tgens = reduce_gens(gens, tgens, False, label)
+                record['gens'] = [point_to_weighted_proj(gen) for gen in gens]
+                record['heights'] = heights = [P.height(precision=PRECISION) for P in gens]
+                reg = E.regulator_of_points(gens, PRECISION)
+                record['ngens'] = len(gens)
+                record['regulator'] = reg
+                if verbose>1:
+                    print("... finished reduction, gens are now {}, heights {}, reg={}".format(gens,heights,reg))
+
+            L = E.period_lattice()
+            record['real_period'] = om = L.omega(prec=PRECISION) # includes #R-components factor
+            record['area'] = A = L.complex_area(prec=PRECISION)
+            record['faltings_height'] = -A.log()/2
+
+            # Analytic Sha
+            sha_an = sv*torsion**2 / (tamprod*reg*om)
+            sha = sha_an.round()
+            warn = "sha_an = {}, rounds to {}".format(sha_an,sha)
+            assert sha>0, warn
+            assert sha.is_square(), warn
+            assert ((sha-sha_an).abs() < 1e-10), warn
+            record['sha_an'] = sha_an
+            record['sha'] = int(sha)
+            FR = 1 if first else (record1['area']/A).round()
+            assert FR in FR_values, "F ratio = {}/{} = {}".format(record1['area'], A, FR)
+            record['faltings_ratio'] = FR
+
+            if verbose>1:
+                print(" -- getting integral points...")
+            record['xcoord_integral_points'] = get_integral_points(E, gens)
+            if verbose>1:
+                print(" ...done: {}".format(record['xcoord_integral_points']))
+
+
+            Etw, Dtw = E.minimal_quadratic_twist()
+            if Etw.conductor()==N:
+                record['min_quad_twist_ainvs'] = record['ainvs']
+                record['min_quad_twist_disc']  = 1
+            else:
+                record['min_quad_twist_ainvs'] = [int(a) for a in Etw.ainvs()]
+                record['min_quad_twist_disc']  = int(Dtw)
+
+            if verbose:
+                print("Finished processing {}".format(label))
+                if verbose>1:
+                    print("data for {}:\n{}".format(label,record))
+
+    # don't forget to output last conductor
+    if verbose:
+        print("Finished conductor {}".format(N0))
+        print("Writing data files for conductor {}".format(N0))
+    write_datafiles(dict([(lab, alldata[lab]) for lab in labels_by_conductor[N0]]),
+                        N0, base_dir)
     return alldata
 
 
@@ -1238,9 +1291,10 @@ def write_degphi(data, r, base_dir=MATSCHKE_DIR):
     n = 0
     with open(filename, 'w') as outfile:
         for label, record in data.items():
-            line = make_line(record, cols)
-            outfile.write(line +"\n")
-            n += 1
+            if record['degree']:
+                line = make_line(record, cols)
+                outfile.write(line +"\n")
+                n += 1
     print("{} lines written to {}".format(n, filename))
 
 def write_datafiles(data, r, base_dir=MATSCHKE_DIR):

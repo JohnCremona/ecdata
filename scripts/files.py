@@ -1253,7 +1253,6 @@ def fix_faltings_ratios(data, verbose=True):
     return data
 
 def make_all_upload_files(data, tables=all_tables, NN=None, include_id=False):
-    #data = fix_labels(data)
     for table in tables:
         make_table_upload_file(data, table, NN=NN, include_id=include_id)
 
