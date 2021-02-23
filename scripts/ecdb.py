@@ -21,6 +21,7 @@ modular_degree_bound = 1000000 # do not compute modular degree if conductor grea
 magma = Magma()
 magma_count = 0
 magma_count_max = 100 # restart magma after this number of uses
+MagmaEffort = 100000   # 1000 not enough for  282203479a1 (rank 2)
 
 def get_magma(verbose=False):
     global magma, magma_count, magma_count_max
@@ -125,7 +126,7 @@ def pari_rank1_gen(E):
     return E(pari(E).ellheegner().sage())
 
 def get_magma_gens(E, mE):
-    MS = mE.MordellWeilShaInformation(RankOnly=True, nvals=3)
+    MS = mE.MordellWeilShaInformation(RankOnly=False, Effort=MagmaEffort, nvals=3)
     rank_bounds = [r.sage() for r in MS[0]]
     gens = [E(P.Eltseq().sage()) for P in MS[1]]
     return rank_bounds, gens
@@ -186,6 +187,8 @@ def get_gens(E, ar, verbose=False):
         if verbose:
             print("a.r.={}, finding generators using Magma".format(ar))
         rb, gens = get_magma_gens(E, mE)
+        if verbose:
+            print("gens = {}".format(gens))
 
     # Now we have independent gens, and saturate them
 
@@ -731,12 +734,43 @@ def check_sagedb(N1, N2, a4a6bound=100):
 #
 # sage: read_write_data(allcurves_file, CURVE_DIR)
 #
-# We now have files CURVE_DIR/ft/ft.NN for ft in ['curvedata', 'classdata', 'intpts', 'alldegphi'].
+# We now have files CURVE_DIR/F/F.NN for F in ['curvedata', 'classdata', 'intpts', 'alldegphi'].
+#
+# Step 2a: if we have processed allcurves.RANGE with more than one
+#  conductor, then for each conductor N we will have files F/F.N for F
+#  in ['curvedata', 'classdata', 'intpts', 'alldegphi'].  We now check
+#  that these are complete and merge them into just 4 files F/F.RANGE.
+#
+# (o) RANGE=...
+#     CURVE_DIR=...
+#     cd ${CURVE_DIR}
+#
+# (i) extract conductors
+# awk '{print $1;}' allcurves/allcurves.${RANGE} | sort -n | uniq > conductors.RANGE
+#
+# (ii) check files are complete (this is quick)
+
+# for F in curvedata classdata intpts alldegphi; do echo $F; for N in `cat conductors.${RANGE}`; do if ! [ -e ${CURVE_DIR}/${F}/${F}.${N} ]; then echo ${F}"."${N}" missing"; fi; done; done;
+#
+# (iii) merge files (this takes ages for ~200000 conductors)
+# Here we don't bother with alldegphi files as they will be empty for large N.
+
+# for F in curvedata classdata intpts; do echo $F; for N in `cat conductors.${RANGE}`; do cat ${CURVE_DIR}/${F}/${F}.${N} >> ${CURVE_DIR}/${F}/${F}.${RANGE}; done; done
+#
+# Better way if you can find all the files easily with a wildcard:
+# e.g. for all conductors in range 1e7-1e8:
+# echo curvedata.???????? | xargs cat > curvedata.${RANGE}
+#
+# or
+# pushd curvedata
+# echo $(for N in $(cat ../conductors.${RANGE}); do echo curvedata\.${N}; done) | xargs cat > curvedata.${RANGE}
+# popd
 #
 # Step 3: run magma scripts to compute galrep and 2adic data. From ecdata/scripts:
 # ./make_galrep.sh NN CURVE_DIR
 #
-# This creates CURVE_DIR/ft/ft.NN for ft in ['galrep', '2adic'].
+# This uses CURVE_DIR/allcurves/allcurves.NN and
+# creates   CURVE_DIR/ft/ft.NN for ft in ['galrep', '2adic'].
 #
 # Step 4: create 6 files in UPLOAD_DIR (default ${HOME}/ecq-upload):
 #
@@ -1014,10 +1048,9 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
                 n+=1
                 gens = [weighted_proj_to_affine_point(P) for P in record['gens']]
                 gens_dict[tuple(record['ainvs'])] = gens
-                print("curve {} has gens {} --> {}".format(record['ainvs'], record['gens'], gens))
                 if n%10000==0:
                     print("Read {} curves from {}".format(n,allgensfilename))
-
+    #gens_dict[(0,-1,1,-2689633639596,-1697804092543155417)] = [the_point]
     N0 = 0
     for N, labels in labels_by_conductor.items():
         if N!=N0 and N0:
@@ -1132,6 +1165,9 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
 
             if verbose>1:
                 print("analytic rank done: {}".format(ar))
+
+            gens_missing = False
+
             if ar==0:
                 record['gens'] = gens = []
                 record['regulator'] = reg = 1
@@ -1147,9 +1183,7 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
                     #if 'gens' in record:
                     ainvs = tuple(record['ainvs'])
                     if ainvs in gens_dict:
-                        #print(E.ainvs(), record['gens'])
                         gens = [E(P) for P in gens_dict[ainvs]]
-                        #gens = gens_dict[ainvs]
                         if verbose>1:
                             print("..already have gens {}, just saturating (p<{})...".format(gens, mwrank_saturation_maxprime))
                         gens, n, r = E.saturation(gens, max_prime=mwrank_saturation_maxprime)
@@ -1162,23 +1196,25 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
                         gens = get_gens(E, ar, verbose) # this returns saturated points
                     ngens = len(gens)
                     if ngens <ar:
+                        gens_missing = True
                         print("{}: analytic rank = {} but we only found {} generators".format(label,ar,ngens))
                     else:
                         if verbose>1:
                             print("...done, generators {}".format(gens))
                     record['rank_bounds'] = [ngens, ar]
-                    record['rank'] = ngens if ngens == ar else None
+                    record['rank'] = None if gens_missing else ngens
                     # so the other curves in the class know their gens:
                     record['allgens'] = map_points(isogenies, gens) # returns saturated sets of gens
                 else:
                     gens = record1['allgens'][number-1]
                     record['rank'] = record1['rank']
                     record['rank_bounds'] = record1['rank_bounds']
+                    gens_missing = (record['rank'] is None)
 
                 gens, tgens = reduce_gens(gens, tgens, False, label)
                 record['gens'] = [point_to_weighted_proj(gen) for gen in gens]
                 record['heights'] = heights = [P.height(precision=PRECISION) for P in gens]
-                reg = E.regulator_of_points(gens, PRECISION)
+                reg = None if gens_missing else E.regulator_of_points(gens, PRECISION)
                 record['ngens'] = len(gens)
                 record['regulator'] = reg
                 if verbose>1:
@@ -1190,14 +1226,22 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
             record['faltings_height'] = -A.log()/2
 
             # Analytic Sha
-            sha_an = sv*torsion**2 / (tamprod*reg*om)
-            sha = sha_an.round()
-            warn = "sha_an = {}, rounds to {}".format(sha_an,sha)
-            assert sha>0, warn
-            assert sha.is_square(), warn
-            assert ((sha-sha_an).abs() < 1e-10), warn
-            record['sha_an'] = sha_an
-            record['sha'] = int(sha)
+            if gens_missing:
+                if verbose:
+                    print("Unable to compute analytic Sha since #gens < analytic rank")
+                record['sha_an'] = None
+                record['sha']    = None
+            else:
+                sha_an = sv*torsion**2 / (tamprod*reg*om)
+                sha = sha_an.round()
+                warn = "sha_an = {}, rounds to {}".format(sha_an,sha)
+                assert sha>0, warn
+                assert sha.is_square(), warn
+                assert ((sha-sha_an).abs() < 1e-10), warn
+                record['sha_an'] = sha_an
+                record['sha']    = int(sha)
+
+            # Faltings ratio
             FR = 1 if first else (record1['area']/A).round()
             assert FR in FR_values, "F ratio = {}/{} = {}".format(record1['area'], A, FR)
             record['faltings_ratio'] = FR
@@ -1238,7 +1282,7 @@ def write_curvedata(data, r, base_dir=MATSCHKE_DIR):
     """
     cols = datafile_columns['curvedata']
     filename = os.path.join(base_dir, 'curvedata', 'curvedata.{}'.format(r))
-    print("Writing data to {}".format(filename))
+    #print("Writing data to {}".format(filename))
     n = 0
     with open(filename, 'w') as outfile:
         for label, record in data.items():
@@ -1254,7 +1298,7 @@ def write_classdata(data, r, base_dir=MATSCHKE_DIR):
     """
     cols = datafile_columns['classdata']
     filename = os.path.join(base_dir, 'classdata', 'classdata.{}'.format(r))
-    print("Writing data to {}".format(filename))
+    #print("Writing data to {}".format(filename))
     n = 0
     with open(filename, 'w') as outfile:
         for label, record in data.items():
@@ -1271,7 +1315,7 @@ def write_intpts(data, r, base_dir=MATSCHKE_DIR):
     """
     cols = ['label', 'ainvs', 'xcoord_integral_points']
     filename = os.path.join(base_dir, 'intpts', 'intpts.{}'.format(r))
-    print("Writing data to {}".format(filename))
+    #print("Writing data to {}".format(filename))
     n = 0
     with open(filename, 'w') as outfile:
         for label, record in data.items():
@@ -1287,7 +1331,7 @@ def write_degphi(data, r, base_dir=MATSCHKE_DIR):
     """
     cols = ['conductor', 'isoclass', 'number', 'ainvs', 'degree']
     filename = os.path.join(base_dir, 'alldegphi', 'alldegphi.{}'.format(r))
-    print("Writing data to {}".format(filename))
+    #print("Writing data to {}".format(filename))
     n = 0
     with open(filename, 'w') as outfile:
         for label, record in data.items():
@@ -1326,12 +1370,11 @@ def read_write_data(infilename, base_dir=MATSCHKE_DIR, verbose=1):
 #
 # label:[a1,a2,a3,a4,a6]
 #
-# To run both on the range NN, given a file  curvedata/ curvedata.NN in directory D:
+# To run both on the range NN, given a file  allcurves/allcurves.NN in directory D:
 #
 # ~/ecdata/scripts/make_galrep.sh NN D
 #
-# from a directory containing curvedata/curvedata.${r}, which will
-# create (or overwrite) the files 2adic/2adic.${r} and
+# which will create (or overwrite) the files 2adic/2adic.${r} and
 # galrep/galrep.${r}.
 
 

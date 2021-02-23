@@ -98,6 +98,8 @@ RR_type = type(RR(1))
 number_types = [int_type, ZZ_type, RR_type]
 
 def encode(col):
+    if col is None:
+        return "?"
     t = type(col)
     if t is str_type:
         return col

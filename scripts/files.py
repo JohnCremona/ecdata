@@ -630,7 +630,8 @@ def parse_curvedata_line(line, raw=False):
         record['Ciso'] = record['label'][:-1]
         record['Cnumber'] = record['number']
 
-    record['sha_primes']     = [int(p) for p in Integer(record['sha']).prime_divisors()]
+    if record['sha'] != "?":
+        record['sha_primes']     = [int(p) for p in Integer(record['sha']).prime_divisors()]
     record['torsion_primes'] = [int(p) for p in Integer(record['torsion']).prime_divisors()]
     record['lmfdb_iso']      = ".".join([str(record['conductor']),record['lmfdb_isoclass']])
 
@@ -983,7 +984,7 @@ def postgres_encode(col, coltype):
     NB A list stored in the database as a postgres array (e.g. int[] or
     numeric[]) must appear as (e.g.) {1,2,3} not [1,2,3].
     """
-    if col is None:
+    if col is None or col == "?":
             return "\\N"
     if coltype == "boolean":
         return "t" if col else "f"
