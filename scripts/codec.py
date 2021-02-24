@@ -17,7 +17,7 @@ def parse_int_list(s, delims=True):
     Given a string like '[a1,a2,a3,a4,a6]' returns the list of integers [a1,a2,a3,a4,a6]
     """
     ss = s[1:-1] if delims else s
-    return [] if ss=='' else [int(a) for a in ss.split(',')]
+    return [] if ss=='' else [ZZ(a) for a in ss.split(',')]
 
 def parse_int_list_list(s, delims=True):
     r"""
@@ -139,7 +139,7 @@ def decode(colname, data):
     elif colname in bigint_cols:
         return ZZ(data)
     elif colname in int_cols:
-        return int(data)
+        return ZZ(data)
     elif colname in int_list_cols:
         return parse_int_list(data)
     elif colname in bool_cols:
