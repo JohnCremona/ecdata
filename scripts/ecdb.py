@@ -126,7 +126,7 @@ def pari_rank1_gen(E):
     return E(pari(E).ellheegner().sage())
 
 def get_magma_gens(E, mE):
-    MS = mE.MordellWeilShaInformation(RankOnly=False, Effort=MagmaEffort, nvals=3)
+    MS = mE.MordellWeilShaInformation(RankOnly=True, Effort=MagmaEffort, nvals=3)
     rank_bounds = [r.sage() for r in MS[0]]
     gens = [E(P.Eltseq().sage()) for P in MS[1]]
     return rank_bounds, gens
@@ -181,11 +181,11 @@ def get_gens(E, ar, verbose=False):
     mE = mag(E)
     if ar==1:
         if verbose:
-            print("a.r.=1, finding a generator")
+            print("{}: a.r.=1, finding a generator".format(E.ainvs()))
         gens = get_rank1_gens(E,mE, verbose)
     else: # ar >=2
         if verbose:
-            print("a.r.={}, finding generators using Magma".format(ar))
+            print("{}: a.r.={}, finding generators using Magma".format(E.ainvs(),ar))
         rb, gens = get_magma_gens(E, mE)
         if verbose:
             print("gens = {}".format(gens))
@@ -218,9 +218,9 @@ def map_points(maps, Plist):
         return [[] for _ in range(ncurves)]
     if ncurves==1:
         return [Plist]
-    print("in map_points with degrees {}".format([[phi.degree() if phi else 0 for phi in r] for r in maps]))
+    #print("in map_points with degrees {}".format([[phi.degree() if phi else 0 for phi in r] for r in maps]))
     maxp = max([max([max(phi.degree().support(), default=0) if phi else 0 for phi in r], default=0) for r in maps], default=0)
-    print("  maxp = {}".format(maxp))
+    #print("  maxp = {}".format(maxp))
 
     Qlists = [Plist] + [[]]*(ncurves-1)
     nfill = 1
@@ -966,7 +966,9 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
     alldata = {}
     nc = 0
     labels_by_conductor = {}
-    with open(os.path.join(base_dir, infilename)) as infile:
+    tempdir = os.path.join(base_dir, "temp")
+
+    with open(os.path.join(base_dir, "allcurves", infilename)) as infile:
         for L in infile:
             sN, isoclass, class_size, number, lmfdb_number, ainvs = L.split()
             N = ZZ(sN)
@@ -1012,8 +1014,12 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
             else:
                 labels_by_conductor[N] = [label]
 
+    allN = list(labels_by_conductor.keys())
+    allN.sort()
+    firstN = min(allN)
+    lastN  = max(allN)
     if verbose:
-        print("{} curves read from {}, with {} distinct conductors".format(nc, infilename, len(labels_by_conductor)))
+        print("{} curves read from {}, with {} distinct conductors from {} to {}".format(nc, infilename, len(labels_by_conductor), firstN, lastN))
 
     gens_dict = {}
     if allgensfilename:
@@ -1059,7 +1065,7 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
                 print("Finished conductor {}".format(N0))
                 print("Writing data files for conductor {}".format(N0))
             write_datafiles(dict([(lab, alldata[lab]) for lab in labels_by_conductor[N0]]),
-                            N0, base_dir)
+                            N0, tempdir)
         N0 = N
         if verbose:
             print("Processing conductor {}".format(N))
@@ -1193,7 +1199,7 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
                             else:
                                 print("..saturated already")
                     else:
-                        gens = get_gens(E, ar, verbose) # this returns saturated points
+                        gens = get_gens(E, ar, verbose>1) # this returns saturated points
                     ngens = len(gens)
                     if ngens <ar:
                         gens_missing = True
@@ -1271,7 +1277,15 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
         print("Finished conductor {}".format(N0))
         print("Writing data files for conductor {}".format(N0))
     write_datafiles(dict([(lab, alldata[lab]) for lab in labels_by_conductor[N0]]),
-                        N0, base_dir)
+                        N0, tempdir)
+    outfilename = infilename.replace("allcurves.", "")
+    if Nmin or Nmax:
+        outfilename = "{}.{}-{}".format(outfilename, firstN, lastN)
+    if verbose:
+        print("Finished all, writing data files for {}".format(outfilename))
+
+    write_datafiles(alldata, outfilename, base_dir)
+
     return alldata
 
 
