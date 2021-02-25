@@ -961,8 +961,37 @@ def parse_allgens_line_simple(line):
     record['gens'] = [proj_to_point(gen, E) for gen in data[6:6 + rank]]
     return label,  record
 
+def parse_extra_gens_line(line):
+    r"""
+    Parse one line from a gens file (e.g. output by my pari wrapper of ellrank)
+
+    Lines contain 5 fields (columns)
+
+    conductor ainvs ar [rlb,rub] gens
+
+    where:
+
+    ar = analytic rank
+    rlb, rub are lower/upper bounds on the rank
+    gens is a list of pairs of rationals, of length rlb
+
+    Returns a pair of ainvs (as a tuple) and a list of points
+    """
+    data = split(line)
+    N = ZZ(data[0])
+    ainvs = parse_int_list(data[1])
+    ar  = int(data[2])
+    rbds = parse_int_list(data[3])
+    gens = data[4]
+    if gens == '[]':
+        gens = []
+    else:
+        E = EllipticCurve(ainvs)
+        gens = [E([QQ(c) for c in g.split(",")]) for g in gens[2:-2].split('],[')]
+    return N, tuple(ainvs), gens
+
 def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, verbose=1,
-                  allgensfilename=None, oldcurvedatafile=None):
+                  allgensfilename=None, oldcurvedatafile=None, extragensfilename=None):
     alldata = {}
     nc = 0
     labels_by_conductor = {}
@@ -1055,8 +1084,25 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
                 gens = [weighted_proj_to_affine_point(P) for P in record['gens']]
                 gens_dict[tuple(record['ainvs'])] = gens
                 if n%10000==0:
-                    print("Read {} curves from {}".format(n,allgensfilename))
-    #gens_dict[(0,-1,1,-2689633639596,-1697804092543155417)] = [the_point]
+                    print("Read {} curves from {}".format(n,oldcurvedatafile))
+
+    if extragensfilename:
+        print("Reading from {}".format(extragensfilename))
+        n = 0
+        with open(os.path.join(base_dir, "allgens", extragensfilename)) as genfile:
+            for L in genfile:
+                N = ZZ(L.split()[0])
+                if Nmin and N<Nmin:
+                    continue
+                if Nmax and N>Nmax:
+                    continue
+                N, ainvs, gens = parse_extra_gens_line(L)
+                n+=1
+                if gens:
+                    gens_dict[ainvs] = gens
+                if n%10000==0:
+                    print("Read {} curves from {}".format(n,extragensfilename))
+
     N0 = 0
     for N, labels in labels_by_conductor.items():
         if N!=N0 and N0:
@@ -1193,8 +1239,12 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
                         if verbose>1:
                             print("..already have gens {}, just saturating (p<{})...".format(gens, mwrank_saturation_maxprime))
                         gens, n, r = E.saturation(gens, max_prime=mwrank_saturation_maxprime)
+                        ngens = len(gens)
+                        if ngens < ar:
+                            if verbose:
+                                print("Warning: a.r.={} but we only have {} gens".format(ar, ngens))
                         if verbose>1:
-                            if n>1:
+                            if n and n>1:
                                 print("..saturation index was {}, new gens: ".format(n, gens))
                             else:
                                 print("..saturated already")
