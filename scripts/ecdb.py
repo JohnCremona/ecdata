@@ -10,7 +10,7 @@ from codec import parse_int_list, point_to_weighted_proj, proj_to_point, weighte
 
 from sage.databases.cremona import parse_cremona_label, class_to_int, cremona_letter_code
 
-mwrank_saturation_precision = 300
+mwrank_saturation_precision = 1000 # 500 not enough for 594594bf2
 mwrank_saturation_maxprime = 1000
 GP = '/usr/local/bin/gp'
 
@@ -134,7 +134,7 @@ def get_magma_gens(E, mE):
 def get_gens_mwrank(E):
     return E.gens(algorithm='mwrank_lib', descent_second_limit=15, sat_bound=2)
 
-def get_rank1_gens(E, mE, verbose=False):
+def get_rank1_gens(E, mE, verbose=0):
     if verbose:
         print(" - trying a point search...")
     gens = E.point_search(15)
@@ -174,20 +174,20 @@ def get_gens_simon(E):
     E.simon_two_descent(lim3=5000)
     return E.gens()
 
-def get_gens(E, ar, verbose=False):
+def get_gens(E, ar, verbose=0):
     if ar==0:
         return []
     mag = get_magma()
     mE = mag(E)
     if ar==1:
-        if verbose:
+        if verbose>1:
             print("{}: a.r.=1, finding a generator".format(E.ainvs()))
         gens = get_rank1_gens(E,mE, verbose)
     else: # ar >=2
-        if verbose:
+        if verbose>1:
             print("{}: a.r.={}, finding generators using Magma".format(E.ainvs(),ar))
         rb, gens = get_magma_gens(E, mE)
-        if verbose:
+        if verbose>1:
             print("gens = {}".format(gens))
 
     # Now we have independent gens, and saturate them
@@ -212,15 +212,17 @@ def get_gens(E, ar, verbose=False):
 # resaturate their images at primes up to the masimum prime dividing
 # an isogeny degree.
 
-def map_points(maps, Plist):
+def map_points(maps, Plist, verbose=0):
     ncurves = len(maps)
     if len(Plist)==0:
         return [[] for _ in range(ncurves)]
     if ncurves==1:
         return [Plist]
-    #print("in map_points with degrees {}".format([[phi.degree() if phi else 0 for phi in r] for r in maps]))
+    if verbose>1:
+        print("in map_points with degrees {}".format([[phi.degree() if phi else 0 for phi in r] for r in maps]))
     maxp = max([max([max(phi.degree().support(), default=0) if phi else 0 for phi in r], default=0) for r in maps], default=0)
-    #print("  maxp = {}".format(maxp))
+    if verbose>1:
+        print("  maxp = {}".format(maxp))
 
     Qlists = [Plist] + [[]]*(ncurves-1)
     nfill = 1
@@ -236,9 +238,11 @@ def map_points(maps, Plist):
     mwrank_set_precision(mwrank_saturation_precision)
     for i in range(1,ncurves):
         E = Qlists[i][0].curve()
+        if verbose>1:
+          print("Saturating curve {} (maxp={})...".format(i, maxp))
         Qlists[i], n, r = E.saturation(Qlists[i], max_prime=maxp)
-        if n>1:
-          print("On curve {}, gained index {}".format(i,n))
+        if verbose>1:
+          print("--saturation index was {}".format(n))
     mwrank_set_precision(prec0)
     return Qlists
 
@@ -1199,7 +1203,7 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
                             else:
                                 print("..saturated already")
                     else:
-                        gens = get_gens(E, ar, verbose>1) # this returns saturated points
+                        gens = get_gens(E, ar, verbose) # this returns saturated points
                     ngens = len(gens)
                     if ngens <ar:
                         gens_missing = True
@@ -1210,7 +1214,7 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
                     record['rank_bounds'] = [ngens, ar]
                     record['rank'] = None if gens_missing else ngens
                     # so the other curves in the class know their gens:
-                    record['allgens'] = map_points(isogenies, gens) # returns saturated sets of gens
+                    record['allgens'] = map_points(isogenies, gens, verbose) # returns saturated sets of gens
                 else:
                     gens = record1['allgens'][number-1]
                     record['rank'] = record1['rank']
