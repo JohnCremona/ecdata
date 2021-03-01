@@ -986,8 +986,8 @@ def parse_extra_gens_line(line):
     data = split(line)
     N = ZZ(data[0])
     ainvs = parse_int_list(data[1])
-    ar  = int(data[2])
-    rbds = parse_int_list(data[3])
+    #ar  = int(data[2])
+    #rbds = parse_int_list(data[3])
     gens = data[4]
     if gens == '[]':
         gens = []

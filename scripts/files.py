@@ -11,7 +11,7 @@ import os
 from sage.all import ZZ, QQ, RR, EllipticCurve, Integer, prod, factorial, primes
 from sage.databases.cremona import class_to_int, parse_cremona_label
 from trace_hash import TraceHashClass
-from codec import split, parse_int_list, parse_int_list_list, proj_to_point, point_to_weighted_proj, decode, encode, split_galois_image_code
+from codec import split, parse_int_list, parse_int_list_list, proj_to_point, point_to_weighted_proj, weighted_proj_to_proj, decode, encode, split_galois_image_code
 from red_gens import reduce_gens
 
 HOME = os.getenv("HOME")
@@ -896,7 +896,7 @@ def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges,
             if raw:
                 newmat = str(newmat).replace(' ','')
             record['isogeny_matrix'] = newmat
-                
+
     if 'growth' in file_types:
         print("reading growth data")
         growth_data = read_all_growth_data(ranges=ranges)
@@ -1257,3 +1257,26 @@ def make_all_upload_files(data, tables=all_tables, NN=None, include_id=False):
     for table in tables:
         make_table_upload_file(data, table, NN=NN, include_id=include_id)
 
+def make_allgens_line(E):
+    tgens = parse_int_list_list(E['torsion_generators'])
+    gens  = parse_int_list_list(E['gens'])
+    parts = [" ".join([encode(E[col]) for col in ['conductor', 'isoclass', 'number', 'ainvs', 'ngens', 'torsion_structure']]),
+             " ".join([encode(weighted_proj_to_proj(P)) for P in gens]),
+             " ".join([encode(weighted_proj_to_proj(P)) for P in tgens])]
+    return " ".join(parts)
+
+def write_allgens_file(data, BASE_DIR, r):
+    r""" Output an allgens file.  Used, for example, to run our C++
+    saturation-checking program on the data.
+    """
+    allgensfilename = os.path.join(BASE_DIR, 'allgens', 'allgens.{}'.format(r))
+    n = 0
+    with open(allgensfilename, 'w') as outfile:
+        for label, record in data.items():
+            n += 1
+            outfile.write(make_allgens_line(record) + "\n")
+    print("{} line written to {}".format(n, allgensfilename))
+
+def make_allgens_file(BASE_DIR, r):
+    data = read_data(BASE_DIR, ['curvedata'], [r])
+    write_allgens_file(data, BASE_DIR, r)
