@@ -239,10 +239,12 @@ def map_points(maps, Plist, verbose=0):
     for i in range(1,ncurves):
         E = Qlists[i][0].curve()
         if verbose>1:
-          print("Saturating curve {} (maxp={})...".format(i, maxp))
+          print("Saturating curve {} (maxp={})...".format(i+1, maxp))
+          print("old gens: {}".format(Qlists[i]))
         Qlists[i], n, r = E.saturation(Qlists[i], max_prime=maxp)
         if verbose>1:
           print("--saturation index was {}".format(n))
+          print("new gens: {}".format(Qlists[i]))
     mwrank_set_precision(prec0)
     return Qlists
 
