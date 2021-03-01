@@ -2,6 +2,11 @@
 
 ## Last major update: 2019-07-22
 
+### 2021
+
+- 1 March 2021: updated paricurves files with the new gens from
+  updated allgens files.
+
 ### 2020
 
 - 27 Novermber 2020: updated allgens files with Minkowski-reduced
