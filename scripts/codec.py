@@ -42,6 +42,17 @@ def proj_to_weighted_proj(s):
     a = x//c
     return [a,b,c]
 
+def weighted_proj_to_proj(s):
+    r"""Converts weighted projective coordinate string '[a,b,c]'
+    representing the point (a/c^2,b/c^3) to projective coordinate
+    string '[x:y:z]' where [x,y,z]=[ac,b,c^3].
+    """
+    if type(s) == type('string'):
+        a, b, c = [ZZ(t) for t in s[1:-1].split(",")]
+    else:
+        a, b, c = s
+    return "[{}:{}:{}]".format(a*c,b,c**3)
+
 def point_to_weighted_proj(P):
     r"""Converts rational point P=(x,y) to weighted projective coordinates [a,b,c]
     where x=a/c^2, y=b/c^3

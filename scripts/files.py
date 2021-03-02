@@ -942,7 +942,7 @@ def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges,
             if raw:
                 newmat = str(newmat).replace(' ','')
             record['isogeny_matrix'] = newmat
-                
+
     if 'growth' in file_types:
         print("reading growth data")
         growth_data = read_all_growth_data(ranges=ranges)
@@ -1461,3 +1461,26 @@ def process_curve_file(infilename, outfilename, use):
     infile.close()
     outfile.close()
 
+def make_allgens_line(E):
+    tgens = parse_int_list_list(E['torsion_generators'])
+    gens  = parse_int_list_list(E['gens'])
+    parts = [" ".join([encode(E[col]) for col in ['conductor', 'isoclass', 'number', 'ainvs', 'ngens', 'torsion_structure']]),
+             " ".join([encode(weighted_proj_to_proj(P)) for P in gens]),
+             " ".join([encode(weighted_proj_to_proj(P)) for P in tgens])]
+    return " ".join(parts)
+
+def write_allgens_file(data, BASE_DIR, r):
+    r""" Output an allgens file.  Used, for example, to run our C++
+    saturation-checking program on the data.
+    """
+    allgensfilename = os.path.join(BASE_DIR, 'allgens', 'allgens.{}'.format(r))
+    n = 0
+    with open(allgensfilename, 'w') as outfile:
+        for label, record in data.items():
+            n += 1
+            outfile.write(make_allgens_line(record) + "\n")
+    print("{} line written to {}".format(n, allgensfilename))
+
+def make_allgens_file(BASE_DIR, r):
+    data = read_data(BASE_DIR, ['curvedata'], [r])
+    write_allgens_file(data, BASE_DIR, r)
