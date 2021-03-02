@@ -13,7 +13,7 @@ from sage.databases.cremona import class_to_int, parse_cremona_label
 from trace_hash import TraceHashClass
 from codec import split, parse_int_list, parse_int_list_list, proj_to_point, proj_to_aff, point_to_weighted_proj, decode, encode, split_galois_image_code, parse_twoadic_string, shortstr, liststr
 from red_gens import reduce_gens
-from ec_utsil import get_modular_degree
+from ec_utils import get_modular_degree
 
 HOME = os.getenv("HOME")
 
