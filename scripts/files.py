@@ -11,8 +11,9 @@ import os
 from sage.all import ZZ, QQ, RR, EllipticCurve, Integer, prod, factorial, primes
 from sage.databases.cremona import class_to_int, parse_cremona_label
 from trace_hash import TraceHashClass
-from codec import split, parse_int_list, parse_int_list_list, proj_to_point, point_to_weighted_proj, decode, encode, split_galois_image_code, parse_twoadic_string
+from codec import split, parse_int_list, parse_int_list_list, proj_to_point, proj_to_aff, point_to_weighted_proj, decode, encode, split_galois_image_code, parse_twoadic_string, shortstr, liststr
 from red_gens import reduce_gens
+from ec_utsil import get_modular_degree
 
 HOME = os.getenv("HOME")
 
@@ -27,6 +28,9 @@ IWASAWA_DATA_DIR = ECDATA_DIR
 
 # Data files derived from https://github.com/bmatschke/s-unit-equations/tree/master/elliptic-curve-tables
 MATSCHKE_DIR = os.path.join(HOME, "MatschkeCurves")
+
+# Data files for Stein-Watkins database curves
+SWDB_DIR = os.path.join(HOME, "swdb")
 
 DEFAULT_PRECISION=53
 PRECISION=53 # precision of heights, regulator, real period and
@@ -568,6 +572,58 @@ def read_all_growth_data(base_dir=ECDATA_DIR, degrees=growth_degrees, ranges=gro
                         all_data[label] = record
     return all_data
 
+def parse_allgens_line_simple(line):
+    r"""
+    Parse one line from an allgens file
+
+    Lines contain 6+t+r fields (columns)
+
+    conductor iso number ainvs r torsion_structure <tgens> <gens>
+
+    where:
+
+    torsion_structure is a list of t = 0,1,2 ints
+    <tgens> is t fields containing torsion generators
+    <gens> is r fields containing generators mod torsion
+
+    """
+    label, record = parse_line_label_cols(line, 3, True)
+    E = EllipticCurve(record['ainvs'])
+    data = split(line)
+    rank = int(data[4])
+    record['gens'] = [proj_to_point(gen, E) for gen in data[6:6 + rank]]
+    return label,  record
+
+def parse_extra_gens_line(line):
+    r"""
+    Parse one line from a gens file (e.g. output by my pari wrapper of ellrank)
+
+    Lines contain 5 fields (columns)
+
+    conductor ainvs ar [rlb,rub] gens
+
+    where:
+
+    ar = analytic rank
+    rlb, rub are lower/upper bounds on the rank
+    gens is a list of pairs of rationals, of length rlb
+
+    Returns a pair of ainvs (as a tuple) and a list of points
+    """
+    data = split(line)
+    N = ZZ(data[0])
+    ainvs = parse_int_list(data[1])
+    #ar  = int(data[2])
+    #rbds = parse_int_list(data[3])
+    gens = data[4]
+    if gens == '[]':
+        gens = []
+    else:
+        E = EllipticCurve(ainvs)
+        gens = [E([QQ(c) for c in g.split(",")]) for g in gens[2:-2].split('],[')]
+    return N, tuple(ainvs), gens
+
+
 datafile_columns = {
     'curvedata': ['label', 'isoclass', 'number', 'lmfdb_label', 'lmfdb_isoclass',
                   'lmfdb_number', 'iso_nlabel', 'faltings_index', 'faltings_ratio',
@@ -585,6 +641,18 @@ datafile_columns = {
     'classdata': ['iso', 'lmfdb_iso', 'trace_hash',
                   'class_size', 'class_deg', 'isogeny_matrix', 'aplist', 'anlist'],
     }
+
+extra_curvedata_columns = ['trace_hash',
+                           'xcoord_integral_points',
+                           'num_int_pts',
+                           'degree',
+                           'twoadic_index',
+                           'twoadic_label',
+                           'twoadic_log_level',
+                           'twoadic_gens',
+                           'modp_images',
+                           'nonmax_primes',
+                           'nonmax_rad']
 
 def parse_curvedata_line(line, raw=False):
     """
@@ -1234,4 +1302,162 @@ def fix_faltings_ratios(data, verbose=True):
 def make_all_upload_files(data, tables=all_tables, NN=None, include_id=False):
     for table in tables:
         make_table_upload_file(data, table, NN=NN, include_id=include_id)
+
+def write_curvedata(data, r, base_dir=MATSCHKE_DIR):
+    r"""
+    Write file base_dir/curvedata/curvedata.<r>
+    """
+    cols = datafile_columns['curvedata']
+    filename = os.path.join(base_dir, 'curvedata', 'curvedata.{}'.format(r))
+    #print("Writing data to {}".format(filename))
+    n = 0
+    with open(filename, 'w') as outfile:
+        for label, record in data.items():
+            line = make_line(record, cols)
+            outfile.write(line +"\n")
+            n += 1
+    print("{} lines written to {}".format(n, filename))
+
+# temporary function for writing extended curvedata files
+
+def write_curvedata_ext(data, r, base_dir=MATSCHKE_DIR):
+    r"""
+    Write file base_dir/curvedata/curvedata.<r>.ext
+    """
+    cols = datafile_columns['curvedata_ext']
+    from files import extra_curvedata_columns
+    cols.append(extra_curvedata_columns)
+    filename = os.path.join(base_dir, 'curvedata', 'curvedata.{}'.format(r), 'ext')
+    #print("Writing data to {}".format(filename))
+    n = 0
+    with open(filename, 'w') as outfile:
+        for label, record in data.items():
+            line = make_line(record, cols)
+            outfile.write(line +"\n")
+            n += 1
+    print("{} lines written to {}".format(n, filename))
+
+def write_classdata(data, r, base_dir=MATSCHKE_DIR):
+    r"""
+    Write file base_dir/classdata/classdata.<r>
+    """
+    cols = datafile_columns['classdata']
+    filename = os.path.join(base_dir, 'classdata', 'classdata.{}'.format(r))
+    #print("Writing data to {}".format(filename))
+    n = 0
+    with open(filename, 'w') as outfile:
+        for label, record in data.items():
+            if int(record['number']) == 1:
+                line = make_line(record, cols)
+                outfile.write(line +"\n")
+                n += 1
+    print("{} lines written to {}".format(n, filename))
+
+def write_intpts(data, r, base_dir=MATSCHKE_DIR):
+    r"""
+    Write file base_dir/intpts/intpts.<r>
+
+    """
+    cols = ['label', 'ainvs', 'xcoord_integral_points']
+    filename = os.path.join(base_dir, 'intpts', 'intpts.{}'.format(r))
+    #print("Writing data to {}".format(filename))
+    n = 0
+    with open(filename, 'w') as outfile:
+        for label, record in data.items():
+            line = make_line(record, cols)
+            outfile.write(line +"\n")
+            n += 1
+    print("{} lines written to {}".format(n, filename))
+
+def write_degphi(data, r, base_dir=MATSCHKE_DIR):
+    r"""
+    Write file base_dir/alldegphi/alldegphi.<r>
+
+    """
+    cols = ['conductor', 'isoclass', 'number', 'ainvs', 'degree']
+    filename = os.path.join(base_dir, 'alldegphi', 'alldegphi.{}'.format(r))
+    #print("Writing data to {}".format(filename))
+    n = 0
+    with open(filename, 'w') as outfile:
+        for label, record in data.items():
+            if record['degree']:
+                line = make_line(record, cols)
+                outfile.write(line +"\n")
+                n += 1
+    print("{} lines written to {}".format(n, filename))
+
+def write_datafiles(data, r, base_dir=MATSCHKE_DIR):
+    r"""Write file base_dir/<ft>/<ft>.<r> for ft in ['curvedata',
+    'classdata', 'intpts', 'alldegphi']
+    """
+    for writer in [write_curvedata, write_classdata, write_intpts, write_degphi]:
+        writer(data, r, base_dir)
+
+
+# Read allgens file (with torsion) and output paricurves file
+#
+def make_paricurves(infilename, mode='w', verbose=False, prefix="t"):
+    infile = open(infilename)
+    pre, suf = infilename.split(".")
+    paricurvesfile = open(prefix+"paricurves."+suf, mode=mode)
+    for L in infile.readlines():
+        N, cl, num, ainvs, r, gens = L.split(' ',5)
+        if int(r)==0:
+            gens = "[]"
+        else:
+            gens = gens.split()[1:1+int(r)] # ignore torsion struct and gens
+            gens = "[{}]".format(",".join([proj_to_aff(P) for P in gens]))
+
+        label = '"{}"'.format(''.join([N,cl,num]))
+        line = '[{}]'.format(', '.join([label,ainvs,gens]))
+        paricurvesfile.write(line+'\n')
+    infile.close()
+    paricurvesfile.close()
+
+################################################################################
+
+# old functions before major ecdb rewrite
+
+# Create alldegphi files from allcurves files:
+
+def make_alldegphi(infilename, mode='w', verbose=False, prefix="t"):
+    infile = open(infilename)
+    pre, suf = infilename.split(".")
+    alldegphifile = open(prefix+"alldegphi."+suf, mode=mode)
+    for L in infile.readlines():
+        N, cl, num, ainvs, rest = L.split(' ',4)
+        label = "".join([N,cl,num])
+        E = EllipticCurve(eval(ainvs))
+        degphi = get_modular_degree(E, label)
+        line = ' '.join([str(N),cl,str(num),shortstr(E),liststr(degphi)])
+        alldegphifile.write(line+'\n')
+        if verbose: print("alldegphifile: {}".format(line))
+    infile.close()
+    alldegphifile.close()
+
+def put_allcurves_line(outfile, N, cl, num, ainvs, r, t):
+    line = ' '.join([str(N),cl,str(num),str(ainvs).replace(' ',''),str(r),str(t)])
+    outfile.write(line+'\n')
+
+def make_allcurves_lines(outfile, code, ainvs, r, t):
+    E = EllipticCurve(ainvs)
+    N, cl, n = parse_cremona_label(code)
+    for i, F in enumerate(E.isogeny_class().curves):
+        put_allcurves_line(outfile,N,cl,str(i+1),list(F.ainvs()),r,F.torsion_order())
+    outfile.flush()
+
+def process_curve_file(infilename, outfilename, use):
+    infile = open(infilename)
+    outfile = open(outfilename, mode='a')
+    for L in infile.readlines():
+        N, iso, num, ainvs, r, tor, d = L.split()
+        code = N+iso+num
+        N = int(N)
+        num = int(num)
+        r = int(r)
+        tor = int(tor)
+        ainvs = eval(ainvs)
+        use(outfile, code, ainvs, r, tor)
+    infile.close()
+    outfile.close()
 

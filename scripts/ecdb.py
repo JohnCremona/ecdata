@@ -2,352 +2,35 @@ import os
 import sys
 HOME = os.getenv("HOME")
 sys.path.append(os.path.join(HOME, 'ecdata', 'scripts'))
-from sage.all import EllipticCurve, Integer, ZZ, QQ, Set, Magma, prime_range, factorial, mwrank_get_precision, mwrank_set_precision, srange, pari, EllipticCurve_from_c4c6, prod, copy
+
+from sage.all import (EllipticCurve, Integer, ZZ, Set, factorial,
+                      mwrank_get_precision, mwrank_set_precision, srange, prod, copy)
+
 from red_gens import reduce_tgens, reduce_gens
 from trace_hash import TraceHashClass
-from files import make_line, datafile_columns, MATSCHKE_DIR, parse_line_label_cols, split, parse_curvedata_line
-from codec import parse_int_list, point_to_weighted_proj, proj_to_point, weighted_proj_to_affine_point, split_galois_image_code
-from twoadic import init_2adic, get_2adic_data
-from galrep import init_galrep, get_galrep_data
+
+from files import (parse_line_label_cols, parse_curvedata_line,
+                   parse_allgens_line_simple, parse_extra_gens_line, write_datafiles)
+
+from codec import (parse_int_list, point_to_weighted_proj,
+                   weighted_proj_to_affine_point, split_galois_image_code,
+                   curve_from_inv_string, shortstr, liststr, matstr, shortstrlist,
+                   point_to_proj, mat_to_list_list)
+
+from twoadic import get_2adic_data
+from galrep import get_galrep_data
+
+from ec_utils import (mwrank_saturation_precision,
+                      mwrank_saturation_maxprime, get_gens,
+                      map_points, my_aplist,
+                      get_integral_points, get_magma,
+                      get_modular_degree)
 
 from sage.databases.cremona import parse_cremona_label, class_to_int, cremona_letter_code
-
-mwrank_saturation_precision = 1000 # 500 not enough for 594594bf2
-mwrank_saturation_maxprime = 1000
-GP = '/usr/local/bin/gp'
 
 FR_values = srange(1,20) + [21, 25, 37, 43, 67, 163] # possible values of Faltings ratio
 
 modular_degree_bound = 1000000 # do not compute modular degree if conductor greater than this
-
-magma = Magma()
-init_2adic(magma)
-init_galrep(magma)
-
-magma_count = 0
-magma_count_max = 100 # restart magma after this number of uses
-MagmaEffort = 100000   # 1000 not enough for  282203479a1 (rank 2)
-
-def get_magma(verbose=False):
-    global magma, magma_count, magma_count_max
-    if magma_count == magma_count_max:
-        if verbose:
-            print("Restarting Magma")
-        magma.quit()
-        magma = Magma()
-        init_2adic(magma)
-        init_galrep(magma)
-        magma_count = 1
-    else:
-        if verbose:
-            print("Reusing Magma (count={})".format(magma_count))
-        magma_count += 1
-    return magma
-
-def print_data(outfile, code, ainvs, r, t):
-    print("Code = {}".format(code))
-    print("Curve = {}".format(EllipticCurve(ainvs)))
-    print("rank = {}".format(r))
-    print("torsion = {}".format(t))
-
-def put_allcurves_line(outfile, N, cl, num, ainvs, r, t):
-    line = ' '.join([str(N),cl,str(num),str(ainvs).replace(' ',''),str(r),str(t)])
-    outfile.write(line+'\n')
-
-def make_allcurves_lines(outfile, code, ainvs, r, t):
-    E = EllipticCurve(ainvs)
-    N, cl, n = parse_cremona_label(code)
-    for i, F in enumerate(E.isogeny_class().curves):
-        put_allcurves_line(outfile,N,cl,str(i+1),list(F.ainvs()),r,F.torsion_order())
-    outfile.flush()
-
-def process_curve_file(infilename, outfilename, use):
-    infile = open(infilename)
-    outfile = open(outfilename, mode='a')
-    for L in infile.readlines():
-        N, iso, num, ainvs, r, tor, d = L.split()
-        code = N+iso+num
-        N = int(N)
-        num = int(num)
-        r = int(r)
-        tor = int(tor)
-        ainvs = eval(ainvs)
-        use(outfile, code, ainvs, r, tor)
-    infile.close()
-    outfile.close()
-
-def liststr(l):
-    return str(l).replace(' ','')
-
-def shortstr(E):
-    return liststr(list(E.ainvs()))
-
-def shortstrlist(Elist):
-    return str([list(F.ainvs()) for F in Elist]).replace(' ','')
-
-def pointstr(P):
-    P = list(P)
-    z = P[1].denominator()
-    P = [z*c for c in P]
-    return '['+':'.join([str(c) for c in P])+']'
-#    return str(P).replace('(','[').replace(')',']').replace(' ','')
-
-# convert '[x:y:z]' to '[x/z,y/z]'
-def pointPtoA(P):
-    x,y,z = [Integer(c) for c in P[1:-1].split(":")]
-    return [x/z,y/z]
-
-
-def matstr(m):
-    return str(list(m)).replace('(','[').replace(')',']').replace(' ','')
-
-def mat_to_list_list(M):
-    m,n = M.dimensions()
-    return [[M[i][j] for j in range(n)] for i in range(m)]
-
-# Assuming that E is known to have rank 1, returns a point on E
-# computed by Magma's HeegnerPoint command
-def magma_rank1_gen(E, mE):
-    mP = mE.HeegnerPoint(nvals=2)[1]
-    P = E([mP[i].sage() for i in [1,2,3]])
-    return P
-
-# Assuming that E is known to have rank 1, returns a point on E
-# computed by GP's ellheegner() command
-def pari_rank1_gen_old(E, stacksize=1024000000):
-    from os import system, getpid, unlink
-    f = 'tempfile-'+str(getpid())
-    comm = "LD_LIBRARY_PATH=/usr/local/lib; echo `echo 'ellheegner(ellinit("+str(list(E.ainvs()))+"))' | %s -q -f -s %s` > %s;" % (GP,stacksize,f)
-    system(comm)
-    P = open(f).read()
-    #print(P)
-    P = open(f).read().partition("[")[2].partition("]")[0]
-    P = P.replace("\xb1","") # needed for 497805u1
-    #print(P)
-    unlink(f)
-    P = E([QQ(c) for c in P.split(',')])
-    #print(P)
-    return P
-
-def pari_rank1_gen(E):
-    return E(pari(E).ellheegner().sage())
-
-def get_magma_gens(E, mE):
-    MS = mE.MordellWeilShaInformation(RankOnly=True, Effort=MagmaEffort, nvals=3)
-    rank_bounds = [r.sage() for r in MS[0]]
-    gens = [E(P.Eltseq().sage()) for P in MS[1]]
-    return rank_bounds, gens
-
-def get_gens_mwrank(E):
-    return E.gens(algorithm='mwrank_lib', descent_second_limit=15, sat_bound=2)
-
-def get_rank1_gens(E, mE, verbose=0):
-    if verbose:
-        print(" - trying a point search...")
-    gens = E.point_search(15)
-    if gens:
-        if verbose:
-            print("--success: P = {}".format(gens[0]))
-        return gens
-    if verbose:
-        print("--failed.  Trying pari's ellheegner...")
-    gens = [pari_rank1_gen(E)]
-    if gens:
-        if verbose:
-            print("--success: P = {}".format(gens[0]))
-        return gens
-    if verbose:
-        print("--failed.  Trying Magma's HeegnerPoint...")
-    try:
-        gens = [magma_rank1_gen(E, mE)]
-        if gens:
-            if verbose:
-                print("--success: P = {}".format(gens[0]))
-            return gens
-    except:
-        pass
-    if verbose:
-        print("-- failed. Trying Magma...")
-    rb, gens = get_magma_gens(E, mE)
-    if gens:
-        if verbose:
-            print("--success: P = {}".format(gens[0]))
-        return gens
-    if verbose:
-        print("--failed.  Trying mwrank...")
-    return get_gens_mwrank(E)
-
-def get_gens_simon(E):
-    E.simon_two_descent(lim3=5000)
-    return E.gens()
-
-def get_gens(E, ar, verbose=0):
-    if ar==0:
-        return []
-    mag = get_magma()
-    mE = mag(E)
-    if ar==1:
-        if verbose>1:
-            print("{}: a.r.=1, finding a generator".format(E.ainvs()))
-        gens = get_rank1_gens(E,mE, verbose)
-    else: # ar >=2
-        if verbose>1:
-            print("{}: a.r.={}, finding generators using Magma".format(E.ainvs(),ar))
-        rb, gens = get_magma_gens(E, mE)
-        if verbose>1:
-            print("gens = {}".format(gens))
-
-    # Now we have independent gens, and saturate them
-
-    prec0=mwrank_get_precision()
-    mwrank_set_precision(mwrank_saturation_precision)
-    if verbose>1:
-        print("Starting saturation (p<{})...".format(mwrank_saturation_maxprime))
-    gens, index, reg = E.saturation(gens, max_prime=mwrank_saturation_maxprime)
-    mwrank_set_precision(prec0)
-    if verbose>1:
-        print("... finished saturation (index {}, new reg={})".format(index, reg))
-
-    return gens
-
-# Given a matrix of isogenies and a list of points on the initial
-# curve returns a# list of their images on each other curve.  The
-# complication is that the isogenies will only exist when they have
-# prime degree.
-
-# Here we assume that the points in Plist are saturated, and only
-# resaturate their images at primes up to the masimum prime dividing
-# an isogeny degree.
-
-def map_points(maps, Plist, verbose=0):
-    ncurves = len(maps)
-    if len(Plist)==0:
-        return [[] for _ in range(ncurves)]
-    if ncurves==1:
-        return [Plist]
-    if verbose>1:
-        print("in map_points with degrees {}".format([[phi.degree() if phi else 0 for phi in r] for r in maps]))
-    maxp = max([max([max(phi.degree().support(), default=0) if phi else 0 for phi in r], default=0) for r in maps], default=0)
-    if verbose>1:
-        print("  maxp = {}".format(maxp))
-
-    Qlists = [Plist] + [[]]*(ncurves-1)
-    nfill = 1
-    for i in range(ncurves):
-        if nfill==ncurves:
-          break
-        for j in range(1,ncurves):
-            if not (maps[i][j] == 0) and Qlists[j]==[]:
-                Qlists[j] = [maps[i][j](P) for P in Qlists[i]]
-                nfill += 1
-    # now we saturate the points just computed at all primes up to maxp
-    prec0=mwrank_get_precision()
-    mwrank_set_precision(mwrank_saturation_precision)
-    for i in range(1,ncurves):
-        E = Qlists[i][0].curve()
-        if verbose>1:
-          print("Saturating curve {} (maxp={})...".format(i, maxp))
-        Qlists[i], n, r = E.saturation(Qlists[i], max_prime=maxp)
-        if verbose>1:
-          print("--saturation index was {}".format(n))
-    mwrank_set_precision(prec0)
-    return Qlists
-
-# Find integral points in a fail-safe way uing both Sage and Magma,
-# comparing, returning the union in all cases and outputting a warning
-# message if they disagree.
-def get_integral_points_with_sage(E, gens):
-    return [P[0] for P in E.integral_points(mw_base=gens)]
-
-def get_integral_points_with_magma(E, gens):
-    mag = get_magma()
-    mE = mag(E)
-    xs = [E(P.Eltseq().sage())[0] for P in mE.IntegralPoints(FBasis=[mE(list(P)) for P in gens])]
-    return xs
-
-def get_integral_points(E, gens, verbose=True):
-    x_list_magma = get_integral_points_with_magma(E, gens)
-    x_list_sage = get_integral_points_with_sage(E, gens)
-    if x_list_magma != x_list_sage:
-        if verbose:
-            print("Curve {}: \n".format(E.ainvs))
-            print("Integral points via Magma: {}".format(x_list_magma))
-            print("Integral points via Sage: {}".format(x_list_sage))
-    x_list = list(Set(x_list_sage)+Set(x_list_magma))
-    x_list.sort()
-    return x_list
-
-def get_modular_degree(E, label):
-    degphi_magma = 0
-    degphi_sympow = 0
-    #return E.modular_degree(algorithm='sympow')
-    try:
-        degphi_magma = E.modular_degree(algorithm='magma')
-    except RuntimeError:
-        print("{}: degphi via magma failed".format(label))
-        try:
-            degphi_sympow = E.modular_degree(algorithm='sympow')
-        except RuntimeError:
-            print("{}: degphi via sympow failed".format(label))
-    if degphi_magma:
-        if degphi_sympow:
-            if degphi_magma==degphi_sympow:
-                return degphi_magma
-            else:
-                print("{}: degphi = {} from magma but {} from sympow!".format(label, degphi_magma, degphi_sympow))
-                return degphi_magma
-        else:
-            return degphi_magma
-    else:
-        if degphi_sympow:
-            return degphi_sympow
-        else:
-            print("{}: no success in computing degphi via magma or sympow".format(label))
-            return 0
-
-# Sage's E.aplist(100) returns a list of the Fourier coefficients for
-# p<100.  For the aplist files, we want to replace the coefficient for
-# p|N with the W-eigenvalue (the root number) and append the
-# W-eigenvalues for p|N, p>100.  Not relevant for making LMFDBupload
-# files.
-
-def wstr(n,w):  # str(n) with enough spaces prepended to give width w
-    a = str(n)
-    if len(a)<w:
-        a = ' '*(w-len(a)) + a
-    return a
-
-def my_ap(E,D,p):
-    if p.divides(D):
-        return E.root_number(p)
-    return E.ap(p)
-
-def my_ap_str(E,D,p):
-    if p.divides(D):
-        a = E.root_number(p)
-        if a==1: 
-            if p>23:
-                return '  +'
-            return ' +'
-        if p>23:
-            return '  -'
-        return ' -'
-    if p>23: 
-        return wstr(E.ap(p),3)
-    return wstr(E.ap(p),2)
-
-def my_aplist(E):
-    D = E.discriminant()
-    ap = [my_ap_str(E,D,p) for p in prime_range(100)]
-    qlist = D.support()
-    for q in qlist:
-        if q>100:
-            if E.root_number(q)==1:
-                ap.append('+('+str(q)+')')
-            else:
-                ap.append('-('+str(q)+')')
-    return ' '.join(ap)
-
 
 # Given a filename like curves.000-999, read the data in the file,
 # compute the isogeny class for each curve, and output (1)
@@ -472,8 +155,8 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
             # allgens (including torsion gens, listed last)
             line = ' '.join([str(N),cl,str(i+1),shortstr(Elist[i]),str(r)]
                             + [liststr(torstruct[i])]
-                            + [pointstr(P) for P in genlist[i]]
-                            + [pointstr(P) for P in torgens[i]]
+                            + [point_to_proj(P) for P in genlist[i]]
+                            + [point_to_proj(P) for P in torgens[i]]
                             )
             allgensfile.write(line+'\n')
             if verbose:
@@ -497,42 +180,6 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
     intptsfile.close()
     apfile.close()
 
-
-# Read allgens file (with torsion) and output paricurves file
-#
-def make_paricurves(infilename, mode='w', verbose=False, prefix="t"):
-    infile = open(infilename)
-    pre, suf = infilename.split(".")
-    paricurvesfile = open(prefix+"paricurves."+suf, mode=mode)
-    for L in infile.readlines():
-        N, cl, num, ainvs, r, gens = L.split(' ',5)
-        if int(r)==0:
-            gens = []
-        else:
-            gens = gens.split()[1:1+int(r)] # ignore torsion struct and gens
-            gens = [pointPtoA(P) for P in gens]
-
-        line = '[' + ', '.join(['"'+N+cl+num+'"',ainvs,str(gens).replace(' ','')]) + ']'
-        paricurvesfile.write(line+'\n')
-    infile.close()
-    paricurvesfile.close()
-
-# Create alldegphi files from allcurves files:
-
-def make_alldegphi(infilename, mode='w', verbose=False, prefix="t"):
-    infile = open(infilename)
-    pre, suf = infilename.split(".")
-    alldegphifile = open(prefix+"alldegphi."+suf, mode=mode)
-    for L in infile.readlines():
-        N, cl, num, ainvs, rest = L.split(' ',4)
-        label = "".join([N,cl,num])
-        E = EllipticCurve(eval(ainvs))
-        degphi = get_modular_degree(E, label)
-        line = ' '.join([str(N),cl,str(num),shortstr(E),liststr(degphi)])
-        alldegphifile.write(line+'\n')
-        if verbose: print("alldegphifile: {}".format(line))
-    infile.close()
-    alldegphifile.close()
 
 # Create manin constant files from allcurves files:
 #
@@ -798,16 +445,6 @@ def check_sagedb(N1, N2, a4a6bound=100):
 # db.ec_curvedata.update_from_file()
 
 
-def curve_from_inv_string(s):
-    invs = parse_int_list(s)
-    if len(invs)==5:
-        E = EllipticCurve(invs).minimal_model()
-    elif len(invs)==2:
-        E = EllipticCurve_from_c4c6(*invs).minimal_model()
-    else:
-        raise ValueError("{}: invariant list must have length 2 or 5".format(s))
-    return E
-
 def process_raw_curves(infilename, outfilename, base_dir='.', split_by_N=False, verbose=1):
     """File infilename should contain one curve per line, with
     a-ainvariants or c-invariants as a list (with no internal spaces),
@@ -949,57 +586,6 @@ def process_raw_curves(infilename, outfilename, base_dir='.', split_by_N=False, 
             for N in conductors:
                 nNcu, nNcl = output_one_conductor(N, allcurves[N], outfile)
                 print("N={}: {} curves in {} classes output to {}".format(N,nNcu,nNcl,outfilename))
-
-def parse_allgens_line_simple(line):
-    r"""
-    Parse one line from an allgens file
-
-    Lines contain 6+t+r fields (columns)
-
-    conductor iso number ainvs r torsion_structure <tgens> <gens>
-
-    where:
-
-    torsion_structure is a list of t = 0,1,2 ints
-    <tgens> is t fields containing torsion generators
-    <gens> is r fields containing generators mod torsion
-
-    """
-    label, record = parse_line_label_cols(line, 3, True)
-    E = EllipticCurve(record['ainvs'])
-    data = split(line)
-    rank = int(data[4])
-    record['gens'] = [proj_to_point(gen, E) for gen in data[6:6 + rank]]
-    return label,  record
-
-def parse_extra_gens_line(line):
-    r"""
-    Parse one line from a gens file (e.g. output by my pari wrapper of ellrank)
-
-    Lines contain 5 fields (columns)
-
-    conductor ainvs ar [rlb,rub] gens
-
-    where:
-
-    ar = analytic rank
-    rlb, rub are lower/upper bounds on the rank
-    gens is a list of pairs of rationals, of length rlb
-
-    Returns a pair of ainvs (as a tuple) and a list of points
-    """
-    data = split(line)
-    N = ZZ(data[0])
-    ainvs = parse_int_list(data[1])
-    #ar  = int(data[2])
-    #rbds = parse_int_list(data[3])
-    gens = data[4]
-    if gens == '[]':
-        gens = []
-    else:
-        E = EllipticCurve(ainvs)
-        gens = [E([QQ(c) for c in g.split(",")]) for g in gens[2:-2].split('],[')]
-    return N, tuple(ainvs), gens
 
 def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, verbose=1,
                   allgensfilename=None, oldcurvedatafile=None, extragensfilename=None):
@@ -1361,85 +947,6 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
     return alldata
 
 
-def write_curvedata(data, r, base_dir=MATSCHKE_DIR):
-    r"""
-    Write file base_dir/curvedata/curvedata.<r>
-
-    """
-    cols = datafile_columns['curvedata']
-    filename = os.path.join(base_dir, 'curvedata', 'curvedata.{}'.format(r))
-    #print("Writing data to {}".format(filename))
-    n = 0
-    with open(filename, 'w') as outfile:
-        for label, record in data.items():
-            line = make_line(record, cols)
-            outfile.write(line +"\n")
-            n += 1
-    print("{} lines written to {}".format(n, filename))
-
-def write_classdata(data, r, base_dir=MATSCHKE_DIR):
-    r"""
-    Write file base_dir/classdata/classdata.<r>
-
-    """
-    cols = datafile_columns['classdata']
-    filename = os.path.join(base_dir, 'classdata', 'classdata.{}'.format(r))
-    #print("Writing data to {}".format(filename))
-    n = 0
-    with open(filename, 'w') as outfile:
-        for label, record in data.items():
-            if int(record['number']) == 1:
-                line = make_line(record, cols)
-                outfile.write(line +"\n")
-                n += 1
-    print("{} lines written to {}".format(n, filename))
-
-def write_intpts(data, r, base_dir=MATSCHKE_DIR):
-    r"""
-    Write file base_dir/intpts/intpts.<r>
-
-    """
-    cols = ['label', 'ainvs', 'xcoord_integral_points']
-    filename = os.path.join(base_dir, 'intpts', 'intpts.{}'.format(r))
-    #print("Writing data to {}".format(filename))
-    n = 0
-    with open(filename, 'w') as outfile:
-        for label, record in data.items():
-            line = make_line(record, cols)
-            outfile.write(line +"\n")
-            n += 1
-    print("{} lines written to {}".format(n, filename))
-
-def write_degphi(data, r, base_dir=MATSCHKE_DIR):
-    r"""
-    Write file base_dir/alldegphi/alldegphi.<r>
-
-    """
-    cols = ['conductor', 'isoclass', 'number', 'ainvs', 'degree']
-    filename = os.path.join(base_dir, 'alldegphi', 'alldegphi.{}'.format(r))
-    #print("Writing data to {}".format(filename))
-    n = 0
-    with open(filename, 'w') as outfile:
-        for label, record in data.items():
-            if record['degree']:
-                line = make_line(record, cols)
-                outfile.write(line +"\n")
-                n += 1
-    print("{} lines written to {}".format(n, filename))
-
-def write_datafiles(data, r, base_dir=MATSCHKE_DIR):
-    r"""Write file base_dir/<ft>/<ft>.<r> for ft in ['curvedata',
-    'classdata', 'intpts', 'alldegphi']
-    """
-    for writer in [write_curvedata, write_classdata, write_intpts, write_degphi]:
-        writer(data, r, base_dir)
-
-def read_write_data(infilename, base_dir=MATSCHKE_DIR, verbose=1):
-    print("Reading from {}".format(infilename))
-    N = ".".join(infilename.split(".")[1:])
-    data = make_new_data(infilename, base_dir=base_dir, verbose=verbose)
-    write_datafiles(data, N, base_dir)
-
 # How to make a 2adic file: run 2adic.m on a file containing one line
 # per curve, where each line has the form
 #
@@ -1463,4 +970,11 @@ def read_write_data(infilename, base_dir=MATSCHKE_DIR, verbose=1):
 # which will create (or overwrite) the files 2adic/2adic.${r} and
 # galrep/galrep.${r}.
 
+def read_write_data(infilename, base_dir, verbose=1):
+    print("Reading from {}".format(infilename))
+    N = ".".join(infilename.split(".")[1:])
+    data = make_new_data(infilename, base_dir=base_dir, verbose=verbose)
+    write_datafiles(data, N, base_dir)
+
+################################################################################
 

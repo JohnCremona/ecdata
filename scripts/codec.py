@@ -4,7 +4,7 @@
 #
 ######################################################################
 
-from sage.all import ZZ, QQ, RR, sage_eval
+from sage.all import ZZ, QQ, RR, sage_eval, EllipticCurve, EllipticCurve_from_c4c6
 import re
 
 whitespace = re.compile(r'\s+')
@@ -28,10 +28,10 @@ def parse_int_list_list(s, delims=True):
 
 def proj_to_aff(s):
     r"""
-    Converts projective coordinate string '[x:y:z]' to affine coordinate string '(x/z,y/z)'
+    Converts projective coordinate string '[x:y:z]' to affine coordinate string '[x/z,y/z]'
     """
     x, y, z = [ZZ(c) for c in s[1:-1].split(":")]
-    return "({},{})".format(x/z,y/z)
+    return "[{},{}]".format(x/z,y/z)
 
 def proj_to_weighted_proj(s):
     r"""Converts projective coordinate string '[x:y:z]' to list [a,b,c]
@@ -118,6 +118,20 @@ def parse_twoadic_string(s, raw=False):
                 record['twoadic_gens'] = [[int(c) for c in g[1:-1].split(',')] for g in gens]
     return record
 
+def curve_from_inv_string(s):
+    """From a string representing a list of 2 or 5 integers, return the
+    elliptic curve defined by these as a- or c-invariants.
+    """
+    invs = parse_int_list(s)
+    if len(invs)==5:
+        E = EllipticCurve(invs).minimal_model()
+    elif len(invs)==2:
+        E = EllipticCurve_from_c4c6(*invs).minimal_model()
+    else:
+        raise ValueError("{}: invariant list must have length 2 or 5".format(s))
+    return E
+
+
 
 ######################################################################
 #
@@ -192,3 +206,29 @@ def decode(colname, data):
     print("No decoder set for column {} (data = {})".format(colname, data))
     return data
 
+################################################################################
+
+# some old functions
+
+def liststr(l):
+    return str(l).replace(' ','')
+
+def shortstr(E):
+    return liststr(list(E.ainvs()))
+
+def shortstrlist(Elist):
+    return str([list(F.ainvs()) for F in Elist]).replace(' ','')
+
+
+# convert '[x:y:z]' to '[x/z,y/z]'
+def pointPtoA(P):
+    x,y,z = [ZZ(c) for c in P[1:-1].split(":")]
+    return [x/z,y/z]
+
+
+def matstr(m):
+    return str(list(m)).replace('(','[').replace(')',']').replace(' ','')
+
+def mat_to_list_list(M):
+    m,n = M.dimensions()
+    return [[M[i][j] for j in range(n)] for i in range(m)]
