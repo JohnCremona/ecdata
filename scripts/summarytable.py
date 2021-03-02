@@ -32,32 +32,30 @@ def make_table(nmax=30, verbose=False):
     total_all = 0
 
     for n in range(nmax):
-        infilename = "allcurves/allcurves."+str(n)+"0000-"+str(n)+"9999"
+        infilename = ''.join(["allcurves/allcurves.", str(n), "0000-", str(n), "9999"])
         range_total_all[n] = len(open(infilename).readlines())
         total_all += range_total_all[n]
 
     for n in range(nmax):
-        infilename = "curves/curves."+str(n)+"0000-"+str(n)+"9999"
+        infilename = ''.join(["curves/curves.", str(n), "0000-", str(n), "9999"])
         if verbose:
             print("processing {}".format(infilename))
         infile = open(infilename)
         for L in infile.readlines():
-            N, cl, num, ainvs, r, t, d = L.split()
+            _, _, _, _, r, _, _ = L.split()
             r = int(r)
-            total_tab[r] = total_tab.get(r,0)+1
-            range_tab[n][r] = range_tab[n].get(r,0)+1
-            total +=1
-            rank_total[r] +=1
-            range_total[n] +=1
+            total_tab[r] = total_tab.get(r, 0) + 1
+            range_tab[n][r] = range_tab[n].get(r, 0) + 1
+            total += 1
+            rank_total[r] += 1
+            range_total[n] += 1
         infile.close()
 
         if verbose:
-            print("Totals for range {}0000-{}9999: {} (total {})".format(n,n,range_tab[n],range_total))
+            print("Totals for range {}0000-{}9999: {} (total {})".format(n, n, range_tab[n], range_total))
 
     if verbose:
-        print
-        print("Totals for all: {} (total {})".format(total_tab,total))
-        print
+        print("\nTotals for all: {} (total {})\n".format(total_tab, total))
 
     outfilename = HTML_FILENAME
     outfile = open(outfilename, mode='w')
@@ -90,10 +88,10 @@ def make_table(nmax=30, verbose=False):
 
     outfile.write("<tfoot>\n")
     outfile.write("<tr>\n")
-    outfile.write("<th align=right>1-%s9999</th>\n"%(nmax-1))
-    outfile.write("<td align=right>%s</td>\n"%total)
+    outfile.write("<th align=right>1-%s9999</th>\n" % (nmax - 1))
+    outfile.write("<td align=right>%s</td>\n" % total)
     for r in range(MAX_RANK+1):
-        outfile.write("<td align=right>%s</td>\n"%total_tab[r])
+        outfile.write("<td align=right>%s</td>\n" % total_tab[r])
     outfile.write("</tr>\n")
     outfile.write("</tfoot>\n")
 
@@ -102,13 +100,13 @@ def make_table(nmax=30, verbose=False):
     outfile.write("<tbody>\n")
     for n in range(nmax):
         outfile.write("<tr>\n")
-        if n==0:
+        if n == 0:
             outfile.write("<th align=right>1-9999</th>\n")
         else:
-            outfile.write("<th align=right>%s0000-%s9999</th>\n"%(n,n))
-        outfile.write("<td align=right>%s</td>\n"%range_total[n])
-        for r in range(MAX_RANK+1):
-            outfile.write("<td align=right>%s</td>\n"%range_tab[n].get(r,0))
+            outfile.write("<th align=right>%s0000-%s9999</th>\n" % (n, n))
+        outfile.write("<td align=right>%s</td>\n" % range_total[n])
+        for r in range(MAX_RANK + 1):
+            outfile.write("<td align=right>%s</td>\n" % range_tab[n].get(r, 0))
         outfile.write("</tr>\n")
 
     outfile.write("</tbody>\n")
@@ -123,7 +121,7 @@ def make_table(nmax=30, verbose=False):
 # Table 2 header
 
     outfile.write("<H3 align=center>\n")
-    outfile.write("Total number of curves of conductor N < %s0000\n"%nmax)
+    outfile.write("Total number of curves of conductor N < %s0000\n" % nmax)
     outfile.write("</H3>\n")
     outfile.write("<table border=2 align=center cellpadding=3 rules=groups>\n")
     outfile.write("<colgroup span=1>\n")
@@ -141,9 +139,9 @@ def make_table(nmax=30, verbose=False):
 
     outfile.write("<tfoot>\n")
     outfile.write("<tr>\n")
-    outfile.write("<th align=right>1-%s9999</th>\n"%(nmax-1))
-    outfile.write("<td align=right>%s</td>\n"%total)
-    outfile.write("<td align=right>%s</td>\n"%total_all)
+    outfile.write("<th align=right>1-%s9999</th>\n" % (nmax - 1))
+    outfile.write("<td align=right>%s</td>\n" % total)
+    outfile.write("<td align=right>%s</td>\n" % total_all)
     outfile.write("</tr>\n")
     outfile.write("</tfoot>\n")
 
@@ -152,12 +150,12 @@ def make_table(nmax=30, verbose=False):
     outfile.write("<tbody>\n")
     for n in range(nmax):
         outfile.write("<tr>\n")
-        if n==0:
+        if n == 0:
             outfile.write("<th align=right>1-9999</th>\n")
         else:
-            outfile.write("<th align=right>%s0000-%s9999</th>\n"%(n,n))
-        outfile.write("<td align=right>%s</td>\n"%range_total[n])
-        outfile.write("<td align=right>%s</td>\n"%range_total_all[n])
+            outfile.write("<th align=right>%s0000-%s9999</th>\n" % (n, n))
+        outfile.write("<td align=right>%s</td>\n" % range_total[n])
+        outfile.write("<td align=right>%s</td>\n" % range_total_all[n])
         outfile.write("</tr>\n")
 
     outfile.write("</tbody>\n")

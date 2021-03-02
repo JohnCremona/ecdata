@@ -1,47 +1,46 @@
 # script used to create shas.html from allbsd.* files:
 
+from sage.all import isqrt
+
 # we do not call the output file "shas.html" so we can compare the new
 # version with the old
 HTML_FILENAME = "newshas.html"
 
 MAX_RANK = 4
-SHA_LIST = range(2,35)+[37,41,43,47,50,75]
+SHA_LIST = range(2, 35) + [37, 41, 43, 47, 50, 75]
 
-from sage.all import isqrt
 
 def make_rankshatable(nmax=30, verbose=False):
     total_tab = {}
-    rank_tab = [{} for r in range(MAX_RANK+1)]
+    rank_tab = [{} for r in range(MAX_RANK + 1)]
     range_tab = [{} for n in range(nmax)]
     total = 0
-    rank_total = [0 for r in range(MAX_RANK+1)]
+    rank_total = [0 for r in range(MAX_RANK + 1)]
     range_total = [0 for n in range(nmax)]
 
     for n in range(nmax):
-        infilename = "allbigsha/allbigsha."+str(n)+"0000-"+str(n)+"9999"
+        infilename = ''.join(["allbigsha/allbigsha.", str(n), "0000-", str(n), "9999"])
         if verbose:
-            print("processing "+infilename)
+            print("processing " + infilename)
         infile = open(infilename)
         for L in infile.readlines():
-            N, cl, num, ainvs, r, t, S = L.split()
+            _, _, _, _, r, _, S = L.split()
             r = int(r)
             S = int(S)
             s = int(isqrt(S))
-            total_tab[s] = total_tab.get(s,0)+1
-            rank_tab[r][s] = rank_tab[r].get(s,0)+1
-            range_tab[n][s] = range_tab[n].get(s,0)+1
-            total +=1
-            rank_total[r] +=1
-            range_total[n] +=1
+            total_tab[s] = total_tab.get(s, 0) + 1
+            rank_tab[r][s] = rank_tab[r].get(s, 0) + 1
+            range_tab[n][s] = range_tab[n].get(s, 0) + 1
+            total += 1
+            rank_total[r] += 1
+            range_total[n] += 1
         infile.close()
 
         if verbose:
-            print("Totals for range {}0000-{}9999: {} (total {})".format(n,n,range_tab[n],range_total))
+            print("Totals for range {}0000-{}9999: {} (total {})".format(n, n, range_tab[n], range_total))
 
     if verbose:
-        print
-        print("Totals for all ranks: {} (total {})".format(total_tab,total))
-        print
+        print("\nTotals for all ranks: {} (total {})\n".format(total_tab, total))
 
     outfilename = HTML_FILENAME
     outfile = open(outfilename, mode='w')
@@ -78,35 +77,35 @@ def make_rankshatable(nmax=30, verbose=False):
     outfile.write('<tr style="border: solid">\n')
     outfile.write("<th>N<th>all>1")
     for s in SHA_LIST:
-        outfile.write("<th>%s<sup>2</sup>"%s)
+        outfile.write("<th>%s<sup>2</sup>" % s)
     outfile.write("\n</tr>\n")
     outfile.write("</thead>\n")
 # Table foot
     outfile.write("<tfoot >\n")
     outfile.write("<tr>\n")
-    outfile.write("<th align=right>1-%s9999</th>\n"%str(nmax-1))
-    outfile.write("<td align=right>%s</td>\n"%total)
+    outfile.write("<th align=right>1-%s9999</th>\n" % str(nmax-1))
+    outfile.write("<td align=right>%s</td>\n" % total)
     for s in SHA_LIST:
-        outfile.write("<td align=right>%s</td>\n"%total_tab.get(s,0))
+        outfile.write("<td align=right>%s</td>\n" % total_tab.get(s, 0))
     outfile.write("\n</tr>\n")
 
     outfile.write('<tr style="border: solid">\n')
     outfile.write("<th>N<th>all>1")
     for s in SHA_LIST:
-        outfile.write("<th>%s<sup>2</sup>"%s)
+        outfile.write("<th>%s<sup>2</sup>" % s)
     outfile.write("\n</tr>\n")
     outfile.write("</tfoot>\n")
 # Table body
     outfile.write("<tbody>\n")
     for n in range(nmax):
         outfile.write("<tr>\n")
-        if n==0:
+        if n == 0:
             outfile.write("<th align=right>1-9999</th>\n")
         else:
-            outfile.write("<th align=right>%s0000-%s9999</th>\n"%(str(n),str(n)))
-        outfile.write("<td align=right>%s</td>\n"%range_total[n])
+            outfile.write("<th align=right>%s0000-%s9999</th>\n" % (str(n), str(n)))
+        outfile.write("<td align=right>%s</td>\n" % range_total[n])
         for s in SHA_LIST:
-            outfile.write("<td align=right>%s</td>\n"%range_tab[n].get(s,'&nbsp;'))
+            outfile.write("<td align=right>%s</td>\n" % range_tab[n].get(s, '&nbsp;'))
         outfile.write("</tr>\n")
 
     outfile.write("</tbody>\n")
@@ -132,33 +131,33 @@ def make_rankshatable(nmax=30, verbose=False):
     outfile.write('<tr style="border: solid">\n')
     outfile.write("<th>&nbsp;<th>all>1")
     for s in SHA_LIST:
-        outfile.write("<th>%s<sup>2</sup>"%s)
+        outfile.write("<th>%s<sup>2</sup>" % s)
     outfile.write("\n</tr>\n")
     outfile.write("</thead>\n")
 # Table foot
     outfile.write("<tfoot >\n")
     outfile.write("<tr>\n")
     outfile.write("<th align=right>all ranks</th>\n")
-    outfile.write("<td align=right>%s</td>\n"%total)
+    outfile.write("<td align=right>%s</td>\n" % total)
     for s in SHA_LIST:
-        outfile.write("<td align=right>%s</td>\n"%total_tab.get(s,0))
+        outfile.write("<td align=right>%s</td>\n" % total_tab.get(s, 0))
     outfile.write("\n</tr>\n")
 
     outfile.write('<tr style="border: solid">\n')
     outfile.write("<th>&nbsp;<th>all>1")
     for s in SHA_LIST:
-        outfile.write("<th>%s<sup>2</sup>"%s)
+        outfile.write("<th>%s<sup>2</sup>" % s)
     outfile.write("\n</tr>\n")
     outfile.write("</tfoot>\n")
 # Table body
     outfile.write("<tbody>\n")
     for r in range(MAX_RANK+1):
-        if rank_total[r]>0:
+        if rank_total[r] > 0:
             outfile.write("<tr>\n")
-            outfile.write("<th align=right>r=%s</th>\n"%str(r))
-            outfile.write("<td align=right>%s</td>\n"%rank_total[r])
+            outfile.write("<th align=right>r=%s</th>\n" % str(r))
+            outfile.write("<td align=right>%s</td>\n" % rank_total[r])
             for s in SHA_LIST:
-                outfile.write("<td align=right>%s</td>\n"%rank_tab[r].get(s,'&nbsp;'))
+                outfile.write("<td align=right>%s</td>\n" % rank_tab[r].get(s, '&nbsp;'))
             outfile.write("</tr>\n")
     outfile.write("</tbody>\n")
     outfile.write("</table>\n")
@@ -176,9 +175,9 @@ def make_rankshatable(nmax=30, verbose=False):
 
 
     if verbose:
-        for r in range(MAX_RANK+1):
-            if rank_total[r]>0:
-                print("Totals for rank {}: {} (total {})".format(r,rank_tab[r],rank_total[r]))
+        for r in range(MAX_RANK + 1):
+            if rank_total[r] > 0:
+                print("Totals for rank {}: {} (total {})".format(r, rank_tab[r], rank_total[r]))
 
 
 

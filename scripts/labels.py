@@ -11,26 +11,27 @@
 # themselves are in the correct order.
 #
 from sage.all import EllipticCurve
+from codec import parse_int_list
 
 def make_alllabels(infilename, mode='w', pref='t', verbose=False):
     infile = open(infilename)
-    pre, suf = infilename.split(".")
+    _, suf = infilename.split(".")
     alllabelsfile = open(pref+"alllabels."+suf, mode=mode)
-    count=0
+    count = 0
     for L in open(infilename).readlines():
-        count +=1
-        if count%1000==0:
+        count += 1
+        if count % 1000 == 0:
             print(L)
-        N, cl, num, ainvs, r, tor, d = L.split()
-        E = EllipticCurve(eval(ainvs))
+        N, cl, _, ainvs, _, _, _ = L.split()
+        E = EllipticCurve(parse_int_list(ainvs))
         curves = E.isogeny_class(order="sage").curves
-        reordered_curves = sorted(curves, key = lambda E: E.a_invariants())
-        lab1 = range(1,len(curves)+1)
-        lab2 = [1+reordered_curves.index(EE) for EE in curves]
+        reordered_curves = sorted(curves, key=lambda E: E.a_invariants())
+        lab1 = range(1, len(curves)+1)
+        lab2 = [1 + reordered_curves.index(EE) for EE in curves]
         for j in range(len(curves)):
-            line = ' '.join([N,cl,str(lab1[j]),N,cl,str(lab2[j])])
-            alllabelsfile.write(line+'\n')
+            line = ' '.join([N, cl, str(lab1[j]), N, cl, str(lab2[j])])
+            alllabelsfile.write(line + '\n')
             if verbose:
-                print("alllabelsfile:  "+line)
+                print("alllabelsfile:  " + line)
     infile.close()
     alllabelsfile.close()

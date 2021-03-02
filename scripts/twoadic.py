@@ -1,7 +1,7 @@
 # Sage interface to 2adic Magma script
 
-from codec import parse_twoadic_string
 import os
+from codec import parse_twoadic_string
 
 TWOADIC_SCRIPT_DIR = "/home/jec/ecdata/scripts"
 
