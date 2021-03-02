@@ -2,18 +2,6 @@
 // Cremona's elliptic curve tables (a text file - not a gzipped text file)
 // as a command line argument filename
 
-if (not assigned filename) then
-  printf "This magma script should be called with filename as an argument.\n";
-  printf "Something like:\n";
-  printf "magma -b filename:=allcurves.00000-09999 2adic.m";
-end if;
-
-// (Nicolas) Form the output file name from the input one
-// Assuming the input file is called allcurves.XXX
-// The output file will be called 2adic.XXX
-outputfilename := "2adic" cat Substring(filename,Position(filename,"."),#filename);
-SetColumns(0);
-
 // Each line of the output has 8 columns. 
 // N class # [a1,a2,a3,a4,a6] index level matrix list (possibly empty) label
 
@@ -9827,24 +9815,10 @@ coverlist := [ 0, 1, 1, 1, 1, 1,
 292, 298, 294, 298, 294, 324, 291, 350, 292, 327, 296, 439, 439, 490,
 490, 496, 496, 496, 496, 490, 490 ];
 
-// The actual script starts here
-
-FP := Open(filename,"r");
-Rewind(FP);
-done := false;
-while (done eq false) do
-A := Gets(FP);
-if IsEof(A) then
-done := true;
-else
-startind := Position(A,"[");
-endind := Position(A,"]");
-prefix := Substring(A,1,endind) cat " ";
-ainvars := eval Substring(A,startind,endind-startind+1);
-E := EllipticCurve(ainvars);
+function make_2adic_string(E);
 
 if HasComplexMultiplication(E) then
-  outstr := prefix cat "inf inf [] CM";
+  outstr := "inf inf [] CM";
 else
 
 done1 := false;
@@ -10033,14 +10007,60 @@ end if;
 // The smallest 2^r so that every matrix congruent to I (mod 2^r)
 // is level.
 // The name of the modular curve is subname
-outstr := prefix cat IntegerToString(index) cat " " cat IntegerToString(level) cat " " cat gens cat " " cat subname;
+outstr := IntegerToString(index) cat " " cat IntegerToString(level) cat " " cat gens cat " " cat subname;
 // End the non-CM case
 end if;
+return outstr;
+end function;
 
-PrintFile(outputfilename,outstr);
-// End the case when we haven't gotten to the end of the file
-end if;
+procedure make_2adic_file(curvefile);
+
+// (Nicolas) Form the output file name from the input one
+// Assuming the input file is called allcurves.XXX
+// The output file will be called 2adic.XXX
+
+outputfilename := "2adic" cat Substring(curvefile,Position(curvefile,"."),#curvefile);
+SetColumns(0);
+
+FP := Open(curvefile,"r");
+Rewind(FP);
+done := false;
+while (done eq false) do
+ A := Gets(FP);
+ if IsEof(A) then
+  done := true;
+ else
+  startind := Position(A,"[");
+  endind := Position(A,"]");
+  prefix := Substring(A,1,endind) cat " ";
+  ainvars := eval Substring(A,startind,endind-startind+1);
+  Eline := prefix cat make_2adic_string(EllipticCurve(ainvars));
+  PrintFile(outputfilename, Eline);
+//print Eline;
+  // End the case when we haven't gotten to the end of the file
+ end if;
 // End the while loop
 end while;
 
-    quit;
+end procedure;
+
+if (assigned filename) then
+  printf "Processing curves in %o...", filename;
+  make_2adic_file(filename);
+  printf ".finished\n";
+  quit;
+else
+  if (assigned ainvs) then
+  E := EllipticCurve(eval ainvs);
+  res := make_2adic_string(E);
+  print res ;
+  quit;
+else
+  printf "This magma script may be called with filename as an argument.\n";
+  printf "Something like:\n";
+  printf "magma -b filename:=allcurves.00000-09999 2adic.m";
+  printf "which will then process all curves, writing the output file 2adic.00000-09999";
+  printf "";
+  printf "Otherwise run make_2adic_file(filename) to process a file, or use the function make_2adic_string(E) on a single elliptic curve.";
+end if;
+end if;

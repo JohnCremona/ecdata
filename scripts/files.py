@@ -11,7 +11,7 @@ import os
 from sage.all import ZZ, QQ, RR, EllipticCurve, Integer, prod, factorial, primes
 from sage.databases.cremona import class_to_int, parse_cremona_label
 from trace_hash import TraceHashClass
-from codec import split, parse_int_list, parse_int_list_list, proj_to_point, point_to_weighted_proj, decode, encode, split_galois_image_code
+from codec import split, parse_int_list, parse_int_list_list, proj_to_point, point_to_weighted_proj, decode, encode, split_galois_image_code, parse_twoadic_string
 from red_gens import reduce_gens
 
 HOME = os.getenv("HOME")
@@ -398,30 +398,8 @@ def parse_twoadic_line(line, raw=False):
     27 a 1 [0,0,1,0,-7] inf inf [] CM
     """
     label, record = parse_line_label_cols(line, 3, False, raw=raw)
-    data = split(line)
-    assert len(data)==8
-    model = data[7]
-    if model == 'CM':
-        record['twoadic_index'] = '0' if raw else int(0)
-        record['twoadic_log_level'] = None
-        record['twoadic_gens'] = None
-        record['twoadic_label'] = None
-        return label, record
-
-    record['twoadic_label'] = model
-    record['twoadic_index'] = data[4] if raw else int(data[4])
-    log_level = ZZ(data[5]).valuation(2)
-    record['twoadic_log_level'] = str(log_level) if raw else int(log_level)
-
-    rgens = data[6]
-    if raw:
-        record['twoadic_gens'] = rgens
-    else:
-        if rgens=='[]':
-            record['twoadic_gens'] = []
-        else:
-            gens = rgens[1:-1].replace('],[','];[').split(';')
-            record['twoadic_gens'] = [[int(c) for c in g[1:-1].split(',')] for g in gens]
+    s = line.split(maxsplit=4)[4]
+    record.update(parse_twoadic_string(s))
     return label, record
 
 ######################################################################
@@ -742,7 +720,7 @@ def read_old_data(base_dir=ECDATA_DIR, ranges=all_ranges):
                 record['faltings_index'] = 0
                 record['faltings_ratio'] = 1
             else:
-                class_labels = [label[:-1]+str(n+1) for n in range(class_size)]
+                class_labels = [label[:-1]+str(k+1) for k in range(class_size)]
                 class_labels.sort(key = sort_key)
                 base_label = class_labels[0]
                 base_record = all_data[base_label]

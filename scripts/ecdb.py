@@ -6,7 +6,9 @@ from sage.all import EllipticCurve, Integer, ZZ, QQ, Set, Magma, prime_range, fa
 from red_gens import reduce_tgens, reduce_gens
 from trace_hash import TraceHashClass
 from files import make_line, datafile_columns, MATSCHKE_DIR, parse_line_label_cols, split, parse_curvedata_line
-from codec import parse_int_list, point_to_weighted_proj, proj_to_point, weighted_proj_to_affine_point
+from codec import parse_int_list, point_to_weighted_proj, proj_to_point, weighted_proj_to_affine_point, split_galois_image_code
+from twoadic import init_2adic, get_2adic_data
+from galrep import init_galrep, get_galrep_data
 
 from sage.databases.cremona import parse_cremona_label, class_to_int, cremona_letter_code
 
@@ -19,6 +21,9 @@ FR_values = srange(1,20) + [21, 25, 37, 43, 67, 163] # possible values of Faltin
 modular_degree_bound = 1000000 # do not compute modular degree if conductor greater than this
 
 magma = Magma()
+init_2adic(magma)
+init_galrep(magma)
+
 magma_count = 0
 magma_count_max = 100 # restart magma after this number of uses
 MagmaEffort = 100000   # 1000 not enough for  282203479a1 (rank 2)
@@ -30,6 +35,8 @@ def get_magma(verbose=False):
             print("Restarting Magma")
         magma.quit()
         magma = Magma()
+        init_2adic(magma)
+        init_galrep(magma)
         magma_count = 1
     else:
         if verbose:
@@ -984,8 +991,8 @@ def parse_extra_gens_line(line):
     data = split(line)
     N = ZZ(data[0])
     ainvs = parse_int_list(data[1])
-    ar  = int(data[2])
-    rbds = parse_int_list(data[3])
+    #ar  = int(data[2])
+    #rbds = parse_int_list(data[3])
     gens = data[4]
     if gens == '[]':
         gens = []
@@ -1128,7 +1135,7 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
             first = (number==1) # tags first curve in each isogeny class
             ncurves = record['class_size']
             if first:
-                alllabels = [iso+str(n+1) for n in range(ncurves)]
+                alllabels = [iso+str(k+1) for k in range(ncurves)]
                 allcurves = [EllipticCurve(alldata[lab]['ainvs']) for lab in alllabels]
                 E = allcurves[0]
             else:
@@ -1138,8 +1145,8 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
             if verbose>1:
                 print("E = {}".format(E.ainvs()))
 
-            record['jinv'] = j = E.j_invariant()
-            record['potential_good_reduction'] = (j.denominator()==1)
+            record['jinv'] = Ej = E.j_invariant()
+            record['potential_good_reduction'] = (Ej.denominator()==1)
             record['signD'] = int(E.discriminant().sign())
             record['cm'] = int(E.cm_discriminant()) if E.has_cm() else 0
 
@@ -1157,7 +1164,7 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
             local_data = [{'p': int(ld.prime().gen()),
                            'ord_cond':int(ld.conductor_valuation()),
                            'ord_disc':int(ld.discriminant_valuation()),
-                           'ord_den_j':int(max(0,-(E.j_invariant().valuation(ld.prime().gen())))),
+                           'ord_den_j':int(max(0,-(Ej.valuation(ld.prime().gen())))),
                            'red':int(ld.bad_reduction_type()),
                            'rootno':int(E.root_number(ld.prime().gen())),
                            'kod':ld.kodaira_symbol()._pari_code(),
@@ -1176,6 +1183,17 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
             record['tamagawa_product'] = tamprod = prod(cps)
             if verbose>1:
                 print("local data done")
+
+            twoadic_data = get_2adic_data(E, get_magma())
+            record.update(twoadic_data)
+            if verbose>1:
+                print("2-adic data done")
+
+            record['modp_images'] = image_codes = get_galrep_data(E, get_magma())
+            record['nonmax_primes'] = pr = [ int(split_galois_image_code(s)[0]) for s in image_codes]
+            record['nonmax_rad'] = prod(pr)
+            if verbose>1:
+                print("galrep data done")
 
             T = E.torsion_subgroup()
             tgens = [P.element() for P in T.gens()]

@@ -60,7 +60,7 @@ def point_to_proj(P):
     c = y.denominator()
     a = ZZ(c*x)
     b = ZZ(c*y)
-    return "[" + ":".join([str(x) for x in [a,b,c]]) + "]"
+    return "[" + ":".join([str(co) for co in [a,b,c]]) + "]"
 
 def proj_to_point(s, E):
     r"""
@@ -82,6 +82,42 @@ def weighted_proj_to_affine_point(P):
     """
     a, b, c = [ZZ(x) for x in P]
     return (a/c**2, b/c**3)
+
+def parse_twoadic_string(s, raw=False):
+    r""" Parses one 2-adic string
+    Input a string with 4 fields, as output by the Magma make_2adic_tring() function, e.g.
+
+    "12 4 [[3,0,0,1],[3,2,2,3],[3,0,0,3]] X24"
+    "inf inf [] CM"
+
+    Returns a dict with keys 'twoadic_index', 'twoadic_log_level', 'twoadic_gens', 'twoadic_label'
+    """
+    record = {}
+    data = split(s)
+    assert len(data)==4
+    model = data[3]
+    if model == 'CM':
+        record['twoadic_index'] = '0' if raw else int(0)
+        record['twoadic_log_level'] = None
+        record['twoadic_gens'] = None
+        record['twoadic_label'] = None
+    else:
+        record['twoadic_label'] = model
+        record['twoadic_index'] = data[0] if raw else int(data[0])
+        log_level = ZZ(data[1]).valuation(2)
+        record['twoadic_log_level'] = str(log_level) if raw else int(log_level)
+
+        rgens = data[2]
+        if raw:
+            record['twoadic_gens'] = rgens
+        else:
+            if rgens=='[]':
+                record['twoadic_gens'] = []
+            else:
+                gens = rgens[1:-1].replace('],[','];[').split(';')
+                record['twoadic_gens'] = [[int(c) for c in g[1:-1].split(',')] for g in gens]
+    return record
+
 
 ######################################################################
 #
