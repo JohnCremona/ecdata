@@ -11,8 +11,9 @@ import os
 from sage.all import ZZ, QQ, RR, EllipticCurve, Integer, prod, factorial, primes
 from sage.databases.cremona import class_to_int, parse_cremona_label
 from trace_hash import TraceHashClass
-from codec import split, parse_int_list, parse_int_list_list, proj_to_point, point_to_weighted_proj, decode, encode, split_galois_image_code
+from codec import split, parse_int_list, parse_int_list_list, proj_to_point, proj_to_aff, point_to_weighted_proj, decode, encode, split_galois_image_code, parse_twoadic_string, shortstr, liststr, weighted_proj_to_proj
 from red_gens import reduce_gens
+from moddeg import get_modular_degree
 
 HOME = os.getenv("HOME")
 
@@ -28,8 +29,11 @@ IWASAWA_DATA_DIR = ECDATA_DIR
 # Data files derived from https://github.com/bmatschke/s-unit-equations/tree/master/elliptic-curve-tables
 MATSCHKE_DIR = os.path.join(HOME, "MatschkeCurves")
 
-DEFAULT_PRECISION=53
-PRECISION=53 # precision of heights, regulator, real period and
+# Data files for Stein-Watkins database curves
+SWDB_DIR = os.path.join(HOME, "swdb")
+
+DEFAULT_PRECISION = 53
+PRECISION = 53 # precision of heights, regulator, real period and
              # special value, and hence analytic sha, when these are
              # computed and not just read from the files.
 
@@ -71,14 +75,14 @@ def parse_line_label_cols(L, label_cols=3, ainvs=True, raw=False):
         sN = str(N)
         record['conductor'] = sN if raw else N
         record['isoclass'] = isoclass
-        record['iso'] = ''.join([sN,isoclass])
+        record['iso'] = ''.join([sN, isoclass])
         record['number'] = str(num) if raw else num
     else:
         record['conductor'] = data[0] if raw else int(data[0])
-        record['isoclass']  = data[1]
-        record['iso']       = ''.join(data[:2])
-        record['number']    = data[2] if raw else int(data[2])
-        record['label']     = ''.join(data[:3])
+        record['isoclass'] = data[1]
+        record['iso'] = ''.join(data[:2])
+        record['number'] = data[2] if raw else int(data[2])
+        record['label'] = ''.join(data[:3])
 
     if ainvs:
         record['ainvs'] = data[label_cols] if raw else parse_int_list(data[label_cols])
@@ -116,7 +120,7 @@ def parse_allgens_line(line):
     ainvs = record['ainvs']
     E = EllipticCurve(ainvs)
     N = E.conductor()
-    assert N==record['conductor']
+    assert N == record['conductor']
     record['bad_primes'] = bad_p = N.prime_factors() # will be sorted
     record['num_bad_primes'] = len(bad_p)
     record['jinv'] = E.j_invariant()
@@ -124,30 +128,30 @@ def parse_allgens_line(line):
     record['cm'] = int(E.cm_discriminant()) if E.has_cm() else 0
 
     if first:
-        record['aplist'] = E.aplist(100,python_ints=True)
-        record['anlist'] = E.anlist(20,python_ints=True)
+        record['aplist'] = E.aplist(100, python_ints=True)
+        record['anlist'] = E.anlist(20, python_ints=True)
         # passing the iso means that we'll only do the computation once per isogeny class
         record['trace_hash'] = TraceHashClass(record['iso'], E)
 
     local_data = [{'p': int(ld.prime().gen()),
                    'ord_cond':int(ld.conductor_valuation()),
                    'ord_disc':int(ld.discriminant_valuation()),
-                   'ord_den_j':int(max(0,-(E.j_invariant().valuation(ld.prime().gen())))),
+                   'ord_den_j':int(max(0, -(E.j_invariant().valuation(ld.prime().gen())))),
                    'red':int(ld.bad_reduction_type()),
                    'rootno':int(E.root_number(ld.prime().gen())),
                    'kod':ld.kodaira_symbol()._pari_code(),
                    'cp':int(ld.tamagawa_number())}
                   for ld in E.local_data()]
 
-    record['tamagawa_numbers']    = cps = [ld['cp'] for ld in local_data]
-    record['kodaira_symbols']           = [ld['kod'] for ld in local_data]
-    record['reduction_types']           = [ld['red'] for ld in local_data]
-    record['root_numbers']              = [ld['rootno'] for ld in local_data]
+    record['tamagawa_numbers'] = cps = [ld['cp'] for ld in local_data]
+    record['kodaira_symbols'] = [ld['kod'] for ld in local_data]
+    record['reduction_types'] = [ld['red'] for ld in local_data]
+    record['root_numbers'] = [ld['rootno'] for ld in local_data]
     record['conductor_valuations'] = cv = [ld['ord_cond'] for ld in local_data]
-    record['discriminant_valuations']   = [ld['ord_disc'] for ld in local_data]
-    record['j_denominator_valuations']  = [ld['ord_den_j'] for ld in local_data]
+    record['discriminant_valuations'] = [ld['ord_disc'] for ld in local_data]
+    record['j_denominator_valuations'] = [ld['ord_den_j'] for ld in local_data]
 
-    record['semistable'] = all([v==1 for v in cv])
+    record['semistable'] = all([v == 1 for v in cv])
     record['tamagawa_product'] = tamprod = prod(cps)
 
     # NB in the allgens file all points are stored in projective
@@ -160,7 +164,7 @@ def parse_allgens_line(line):
     # point is already affine.  So let's do the conversion here.
 
     record['rank'] = rank = int(data[4])
-    record['rank_bounds'] = [rank,rank]
+    record['rank_bounds'] = [rank, rank]
     record['ngens'] = rank
     tor_struct = parse_int_list(data[5])
     record['torsion_structure'] = tor_struct
@@ -173,7 +177,7 @@ def parse_allgens_line(line):
     tgens = [proj_to_point(gen, E) for gen in data[6 + rank:]]
     gens, tgens = reduce_gens(gens, tgens, False, label)
 
-    record['gens']               = [point_to_weighted_proj(gen) for gen in gens]
+    record['gens'] = [point_to_weighted_proj(gen) for gen in gens]
     record['torsion_generators'] = [point_to_weighted_proj(gen) for gen in tgens]
     record['heights'] = [P.height(precision=PRECISION) for P in gens]
     reg = E.regulator_of_points(gens, precision=PRECISION) if gens else 1
@@ -187,29 +191,29 @@ def parse_allgens_line(line):
     if first: # else add later to avoid recomputing a.r.
 
         # Analytic rank and special L-value
-        ar,sv = E.pari_curve().ellanalyticrank(precision=PRECISION)
+        ar, sv = E.pari_curve().ellanalyticrank(precision=PRECISION)
         record['analytic_rank'] = ar = ar.sage()
         record['special_value'] = sv = sv.sage()/factorial(ar)
 
         # Analytic Sha
         sha_an = sv*torsion**2 / (tamprod*reg*om)
         sha = sha_an.round()
-        assert sha>0
+        assert sha > 0
         assert sha.is_square()
-        assert ((sha-sha_an).abs() < 1e-10)
+        assert (sha-sha_an).abs() < 1e-10
         record['sha_an'] = sha_an
         record['sha'] = int(sha)
         record['sha_primes'] = [int(p) for p in sha.prime_divisors()]
 
     Etw, Dtw = E.minimal_quadratic_twist()
-    if Etw.conductor()==N:
+    if Etw.conductor() == N:
         record['min_quad_twist_ainvs'] = ainvs
-        record['min_quad_twist_disc']  = 1
+        record['min_quad_twist_disc'] = 1
     else:
         record['min_quad_twist_ainvs'] = [int(a) for a in Etw.ainvs()]
-        record['min_quad_twist_disc']  = int(Dtw)
+        record['min_quad_twist_disc'] = int(Dtw)
 
-    return label,  record
+    return label, record
 
 ######################################################################
 #
@@ -275,7 +279,7 @@ def parse_allisog_line(line):
     record['isogeny_matrix'] = mat = [[int(a) for a in r.split(",")] for r in isomat]
     record['class_size'] = len(mat)
     record['class_deg'] = max(max(r) for r in mat)
-    record['all_iso_degs'] = dict([[n+1,sorted(list(set(row)))] for n,row in enumerate(mat)])
+    record['all_iso_degs'] = dict([[n+1, sorted(list(set(row)))] for n, row in enumerate(mat)])
     record['isogeny_degrees'] = record['all_iso_degs'][1]
 
     # NB Every curve in the class has the same 'isogeny_matrix',
@@ -311,7 +315,7 @@ def parse_alldegphi_line(line, raw=False):
 # intpts parser
 #
 
-def make_y_coords(ainvs,x):
+def make_y_coords(ainvs, x):
     a1, a2, a3, a4, a6 = ainvs
     f = ((x + a2) * x + a4) * x + a6
     b = (a1*x + a3)
@@ -320,7 +324,7 @@ def make_y_coords(ainvs,x):
     return [y, -b-y] if d else [y]
 
 def count_integral_points(ainvs, xs):
-    return sum([len(make_y_coords(ainvs,x)) for x in xs])
+    return sum([len(make_y_coords(ainvs, x)) for x in xs])
 
 def parse_intpts_line(line, raw=False):
     r""" Parses one line from an intpts file.
@@ -398,30 +402,8 @@ def parse_twoadic_line(line, raw=False):
     27 a 1 [0,0,1,0,-7] inf inf [] CM
     """
     label, record = parse_line_label_cols(line, 3, False, raw=raw)
-    data = split(line)
-    assert len(data)==8
-    model = data[7]
-    if model == 'CM':
-        record['twoadic_index'] = '0' if raw else int(0)
-        record['twoadic_log_level'] = None
-        record['twoadic_gens'] = None
-        record['twoadic_label'] = None
-        return label, record
-
-    record['twoadic_label'] = model
-    record['twoadic_index'] = data[4] if raw else int(data[4])
-    log_level = ZZ(data[5]).valuation(2)
-    record['twoadic_log_level'] = str(log_level) if raw else int(log_level)
-
-    rgens = data[6]
-    if raw:
-        record['twoadic_gens'] = rgens
-    else:
-        if rgens=='[]':
-            record['twoadic_gens'] = []
-        else:
-            gens = rgens[1:-1].replace('],[','];[').split(';')
-            record['twoadic_gens'] = [[int(c) for c in g[1:-1].split(',')] for g in gens]
+    s = line.split(maxsplit=4)[4]
+    record.update(parse_twoadic_string(s))
     return label, record
 
 ######################################################################
@@ -429,7 +411,7 @@ def parse_twoadic_line(line, raw=False):
 # galrep parser
 #
 
-def parse_galrep_line(line, raw = False):
+def parse_galrep_line(line, raw=False):
     r"""Parses one line from a galrep file.
 
     Codes follow Sutherland's coding scheme for subgroups of GL(2,p).
@@ -447,7 +429,7 @@ def parse_galrep_line(line, raw = False):
     """
     label, record = parse_line_label_cols(line, 1, False, raw=raw)
     record['modp_images'] = image_codes = split(line)[1:]
-    record['nonmax_primes'] = pr = [ int(split_galois_image_code(s)[0]) for s in image_codes]
+    record['nonmax_primes'] = pr = [int(split_galois_image_code(s)[0]) for s in image_codes]
     record['nonmax_rad'] = prod(pr)
     return label, record
 
@@ -470,7 +452,8 @@ def parse_iwasawa_line(line, debug=0, raw=False):
                                   lambda+,lambda-,mu if supersingular (or 's?' if unknown)
 
     """
-    if debug: print("Parsing input line {}".format(line[:-1]))
+    if debug:
+        print("Parsing input line {}".format(line[:-1]))
     label, record = parse_line_label_cols(line, 3, False, raw=raw)
     badp = Integer(record['conductor']).support()
     nbadp = len(badp)
@@ -479,34 +462,38 @@ def parse_iwasawa_line(line, debug=0, raw=False):
     rp0 = data[4]
     p0 = int(rp0)
     record['iwp0'] = rp0 if raw else p0
-    if debug: print("p0={}".format(p0))
+    if debug:
+        print("p0={}".format(p0))
 
     iwdata = {}
 
     # read data for bad primes
 
-    for p,pdat in zip(badp,data[5:5+nbadp]):
+    for p, pdat in zip(badp, data[5:5+nbadp]):
         p = str(p)
-        if debug>1: print("p={}, pdat={}".format(p,pdat))
-        if pdat in ['o?','a']:
-            iwdata[p]=pdat
+        if debug > 1:
+            print("p={}, pdat={}".format(p, pdat))
+        if pdat in ['o?', 'a']:
+            iwdata[p] = pdat
         else:
-            iwdata[p]=[int(x) for x in pdat.split(",")]
+            iwdata[p] = [int(x) for x in pdat.split(",")]
 
     # read data for all primes
 
     # NB Current data has p<50: if this increases to over 1000, change the next line.
 
-    for p,pdat in zip(primes(1000),data[5+nbadp:]):
+    for p, pdat in zip(primes(1000), data[5+nbadp:]):
         p = str(p)
-        if debug>1: print("p={}, pdat={}".format(p,pdat))
-        if pdat in ['s?','o?','a']:
+        if debug > 1:
+            print("p={}, pdat={}".format(p, pdat))
+        if pdat in ['s?', 'o?', 'a']:
             iwdata[p] = pdat
         else:
             iwdata[p] = parse_int_list(pdat, delims=False)
 
     record['iwdata'] = iwdata
-    if debug: print("label {}, data {}".format(label,record))
+    if debug:
+        print("label {}, data {}".format(label, record))
     return label, record
 
 ######################################################################
@@ -542,13 +529,13 @@ def parse_growth_line(line, raw=False):
 
     """
     label, record = parse_line_label_cols(line, 1, False, raw=raw)
-    data = [[parse_int_list(F,delims=False),parse_int_list(T,delims=False)]
-            for T,F in [s[1:-1].split("][") for s in split(line)[1:]]]
+    data = [[parse_int_list(F, delims=False), parse_int_list(T, delims=False)]
+            for T, F in [s[1:-1].split("][") for s in split(line)[1:]]]
     degree = len(data[0][0])-1
     record['torsion_growth'] = {degree: data}
     return label, record
 
-iwasawa_ranges = ["{}0000-{}9999".format(n,n) for n in range(15)]
+iwasawa_ranges = ["{}0000-{}9999".format(n, n) for n in range(15)]
 
 ######################################################################
 #
@@ -557,9 +544,9 @@ iwasawa_ranges = ["{}0000-{}9999".format(n,n) for n in range(15)]
 # (special treatment needed because of the nonstandard filenames, in directories by degree)
 #
 
-growth_degrees = [2,3,4,5,6,7,8,9,10,12,14,15,16,18,20,21]
+growth_degrees = (2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 15, 16, 18, 20, 21)
 #NB the 0'th range is usually '00000-09999' but for growth files it's just '0-9999'
-growth_ranges = ["0-9999"] + ["{}0000-{}9999".format(k,k) for k in range(1,40)]
+growth_ranges = ["0-9999"] + ["{}0000-{}9999".format(k, k) for k in range(1, 40)]
 
 def read_all_growth_data(base_dir=ECDATA_DIR, degrees=growth_degrees, ranges=growth_ranges, raw=False):
     r"""Read all the data in files base_dir/growth/<d>/growth.<r> where d
@@ -571,24 +558,76 @@ def read_all_growth_data(base_dir=ECDATA_DIR, degrees=growth_degrees, ranges=gro
     """
     all_data = {}
     for r in ranges:
-        if r=='00000-09999':
+        if r == '00000-09999':
             r = '0-9999'
-        if not r in growth_ranges:
+        if r not in growth_ranges:
             continue
         for d in degrees:
-            if not d in growth_degrees:
+            if d not in growth_degrees:
                 continue
-            data_filename = os.path.join(base_dir, 'growth/{}/growth{}.{}'.format(d,d,r))
+            data_filename = os.path.join(base_dir, 'growth/{}/growth{}.{}'.format(d, d, r))
             n = 0
             with open(data_filename) as data:
                 for L in data:
                     label, record = parse_growth_line(L, raw=raw)
-                    n+=1
+                    n += 1
                     if label in all_data:
                         all_data[label]['torsion_growth'].update(record['torsion_growth'])
                     else:
                         all_data[label] = record
     return all_data
+
+def parse_allgens_line_simple(line):
+    r"""
+    Parse one line from an allgens file
+
+    Lines contain 6+t+r fields (columns)
+
+    conductor iso number ainvs r torsion_structure <tgens> <gens>
+
+    where:
+
+    torsion_structure is a list of t = 0,1,2 ints
+    <tgens> is t fields containing torsion generators
+    <gens> is r fields containing generators mod torsion
+
+    """
+    label, record = parse_line_label_cols(line, 3, True)
+    E = EllipticCurve(record['ainvs'])
+    data = split(line)
+    rank = int(data[4])
+    record['gens'] = [proj_to_point(gen, E) for gen in data[6:6 + rank]]
+    return label, record
+
+def parse_extra_gens_line(line):
+    r"""
+    Parse one line from a gens file (e.g. output by my pari wrapper of ellrank)
+
+    Lines contain 5 fields (columns)
+
+    conductor ainvs ar [rlb,rub] gens
+
+    where:
+
+    ar = analytic rank
+    rlb, rub are lower/upper bounds on the rank
+    gens is a list of pairs of rationals, of length rlb
+
+    Returns a pair of ainvs (as a tuple) and a list of points
+    """
+    data = split(line)
+    N = ZZ(data[0])
+    ainvs = parse_int_list(data[1])
+    #ar  = int(data[2])
+    #rbds = parse_int_list(data[3])
+    gens = data[4]
+    if gens == '[]':
+        gens = []
+    else:
+        E = EllipticCurve(ainvs)
+        gens = [E([QQ(c) for c in g.split(",")]) for g in gens[2:-2].split('],[')]
+    return N, tuple(ainvs), gens
+
 
 datafile_columns = {
     'curvedata': ['label', 'isoclass', 'number', 'lmfdb_label', 'lmfdb_isoclass',
@@ -608,32 +647,44 @@ datafile_columns = {
                   'class_size', 'class_deg', 'isogeny_matrix', 'aplist', 'anlist'],
     }
 
+extra_curvedata_columns = ['trace_hash',
+                           'xcoord_integral_points',
+                           'num_int_pts',
+                           'degree',
+                           'twoadic_index',
+                           'twoadic_label',
+                           'twoadic_log_level',
+                           'twoadic_gens',
+                           'modp_images',
+                           'nonmax_primes',
+                           'nonmax_rad']
+
 def parse_curvedata_line(line, raw=False):
     """
     """
     data = split(line)
     if raw:
-        record = dict([(col, data[n]) for n, col in enumerate(datafile_columns['curvedata']) ])
+        record = dict([(col, data[n]) for n, col in enumerate(datafile_columns['curvedata'])])
         record['semistable'] = bool(int(record['semistable']))
-        record['potential_good_reduction'] = (parse_int_list(record['jinv'])[1]==1)
+        record['potential_good_reduction'] = (parse_int_list(record['jinv'])[1] == 1)
         record['num_bad_primes'] = str(1+record['bad_primes'].count(","))
-        record['class_size']     = str(1+record['isogeny_degrees'].count(","))
+        record['class_size'] = str(1+record['isogeny_degrees'].count(","))
     else:
-        record = dict([(col, decode(col, data[n])) for n, col in enumerate(datafile_columns['curvedata']) ])
-        record['potential_good_reduction'] = (record['jinv'].denominator()==1)
+        record = dict([(col, decode(col, data[n])) for n, col in enumerate(datafile_columns['curvedata'])])
+        record['potential_good_reduction'] = (record['jinv'].denominator() == 1)
         record['num_bad_primes'] = len(record['bad_primes'])
-        record['class_size']     = len(record['isogeny_degrees'])
+        record['class_size'] = len(record['isogeny_degrees'])
 
     # Cremona labels only defined for conductors up to 500000:
-    if ZZ(record['conductor'])<500000:
+    if ZZ(record['conductor']) < 500000:
         record['Clabel'] = record['label']
         record['Ciso'] = record['label'][:-1]
         record['Cnumber'] = record['number']
 
     if record['sha'] != "?":
-        record['sha_primes']     = [int(p) for p in Integer(record['sha']).prime_divisors()]
+        record['sha_primes'] = [int(p) for p in Integer(record['sha']).prime_divisors()]
     record['torsion_primes'] = [int(p) for p in Integer(record['torsion']).prime_divisors()]
-    record['lmfdb_iso']      = ".".join([str(record['conductor']),record['lmfdb_isoclass']])
+    record['lmfdb_iso'] = ".".join([str(record['conductor']), record['lmfdb_isoclass']])
 
     return record['label'], record
 
@@ -642,9 +693,9 @@ def parse_classdata_line(line, raw=False):
     """
     data = split(line)
     if raw:
-        record = dict([(col, data[n]) for n, col in enumerate(datafile_columns['classdata']) ])
+        record = dict([(col, data[n]) for n, col in enumerate(datafile_columns['classdata'])])
     else:
-        record = dict([(col, decode(col, data[n])) for n, col in enumerate(datafile_columns['classdata']) ])
+        record = dict([(col, decode(col, data[n])) for n, col in enumerate(datafile_columns['classdata'])])
     return record['iso']+'1', record
 
 ######################################################################
@@ -662,16 +713,16 @@ parsers = {'allgens': parse_allgens_line,
            'classdata': parse_classdata_line,
            'growth': parse_growth_line,
            'iwasawa': parse_iwasawa_line,
-}
+          }
 
 all_file_types = list(parsers.keys())
 old_file_types = ['alllabels', 'allgens', 'allisog']
-new_file_types = [ft for ft in all_file_types if not ft in old_file_types]
+new_file_types = [ft for ft in all_file_types if ft not in old_file_types]
 optional_file_types = ['opt_man', 'growth', 'iwasawa']
-main_file_types = [t for t in new_file_types if not t in optional_file_types]
+main_file_types = [t for t in new_file_types if t not in optional_file_types]
 
-all_ranges = ["{}0000-{}9999".format(n,n) for n in range(50)]
-iwasawa_ranges = ["{}0000-{}9999".format(n,n) for n in range(15)]
+all_ranges = ["{}0000-{}9999".format(n, n) for n in range(50)]
+iwasawa_ranges = ["{}0000-{}9999".format(n, n) for n in range(15)]
 
 ######################################################################
 #
@@ -693,14 +744,14 @@ def read_old_data(base_dir=ECDATA_DIR, ranges=all_ranges):
 
     for r in ranges:
         for ft in ['allgens', 'alllabels', 'allisog']:
-            data_filename = os.path.join(base_dir, '{}/{}.{}'.format(ft,ft,r))
+            data_filename = os.path.join(base_dir, '{}/{}.{}'.format(ft, ft, r))
             parser = parsers[ft]
             n = 0
             with open(data_filename) as data:
                 for L in data:
                     label, record = parser(L)
-                    first = (record['number']==1)
-                    # if n>100 and first:
+                    first = (record['number'] == 1)
+                    # if n > 100 and first:
                     #     break
                     if label:
                         if first:
@@ -709,24 +760,24 @@ def read_old_data(base_dir=ECDATA_DIR, ranges=all_ranges):
                             all_data[label].update(record)
                         else:
                             all_data[label] = record
-                    if n%1000==0 and first:
-                        print("Read {} classes from {}".format(n,data_filename))
-            print("Read {} lines from {}".format(n,data_filename))
+                    if n%1000 == 0 and first:
+                        print("Read {} classes from {}".format(n, data_filename))
+            print("Read {} lines from {}".format(n, data_filename))
 
     # Fill in isogeny data for all curves in each class:
     for label, record in all_data.items():
         n = record['number']
-        if n>1:
+        if n > 1:
             record1 = all_data[label[:-1]+'1']
             record['isogeny_degrees'] = record1['all_iso_degs'][n]
             for col in ['isogeny_matrix', 'class_size', 'class_deg']:
-                record[col]  = record1[col]
+                record[col] = record1[col]
 
     # Fill in MW & BSD data for all curves in each class:
     FRout = open("FRlists.txt", 'w')
     for label, record in all_data.items():
         n = record['number']
-        if n==1:
+        if n == 1:
             # We sort the curves in each class by Faltings height.
             # Note that while there is always a unique curve with
             # minimal height (whose period lattice is a sublattice of
@@ -736,39 +787,39 @@ def read_old_data(base_dir=ECDATA_DIR, ranges=all_ranges):
             # [1,2,4,4,8,8,16,16], [1,3,3], [1,3,3,9],
             # [1,2,3,4,4,6,12,12].  As a tie-breaker we use the LMFDB
             # ordering.
-            sort_key = lambda lab: [all_data[lab]['faltings_height'],all_data[lab]['lmfdb_number']]
+            sort_key = lambda lab: [all_data[lab]['faltings_height'], all_data[lab]['lmfdb_number']]
             class_size = record['class_size']
-            if class_size==1:
+            if class_size == 1:
                 record['faltings_index'] = 0
                 record['faltings_ratio'] = 1
             else:
-                class_labels = [label[:-1]+str(n+1) for n in range(class_size)]
-                class_labels.sort(key = sort_key)
+                class_labels = [label[:-1]+str(k+1) for k in range(class_size)]
+                class_labels.sort(key=sort_key)
                 base_label = class_labels[0]
                 base_record = all_data[base_label]
                 area = base_record['area']
                 base_record['faltings_index'] = 0
                 base_record['faltings_ratio'] = 1
                 for i, lab in enumerate(class_labels):
-                    if i==0:
+                    if i == 0:
                         continue
                     rec = all_data[lab]
                     area_ratio = area/rec['area'] # real, should be an integer
                     rec['faltings_index'] = i
                     rec['faltings_ratio'] = area_ratio.round()
-                FRout.write("{}: {}\n".format(label,[all_data[lab]['faltings_ratio'] for lab in class_labels]))
+                FRout.write("{}: {}\n".format(label, [all_data[lab]['faltings_ratio'] for lab in class_labels]))
         else:
             record1 = all_data[label[:-1]+'1']
             for col in ['analytic_rank', 'special_value', 'aplist', 'anlist', 'trace_hash']:
-                record[col]  = record1[col]
+                record[col] = record1[col]
 
 
             # Analytic Sha
             sha_an = record['special_value']*record['torsion']**2 / (record['tamagawa_product']*record['regulator']*record['real_period'])
             sha = sha_an.round()
-            assert sha>0
+            assert sha > 0
             assert sha.is_square()
-            assert ((sha-sha_an).abs() < 1e-10)
+            assert (sha-sha_an).abs() < 1e-10
             record['sha_an'] = sha_an
             record['sha'] = int(sha)
             record['sha_primes'] = [int(p) for p in sha.prime_divisors()]
@@ -806,7 +857,7 @@ def make_curvedata(base_dir=ECDATA_DIR, ranges=all_ranges, prec=DEFAULT_PRECISIO
 
     """
     global PRECISION
-    PRECISION=prec
+    PRECISION = prec
     for r in ranges:
         print("Reading data for range {}".format(r))
         all_data = read_old_data(base_dir=base_dir, ranges=[r])
@@ -815,12 +866,12 @@ def make_curvedata(base_dir=ECDATA_DIR, ranges=all_ranges, prec=DEFAULT_PRECISIO
 
         for ft in ['curvedata', 'classdata']:
             cols = datafile_columns[ft]
-            filename = os.path.join(base_dir, '{}/{}.{}'.format(ft,ft,r))
+            filename = os.path.join(base_dir, '{}/{}.{}'.format(ft, ft, r))
             print("Writing data to {}".format(filename))
             n = 0
             with open(filename, 'w') as outfile:
-                for label, record in all_data.items():
-                    if ft=='curvedata' or record['number']==1:
+                for _, record in all_data.items():
+                    if ft == 'curvedata' or record['number'] == 1:
                         line = make_line(record, cols)
                         outfile.write(line +"\n")
                         n += 1
@@ -845,16 +896,16 @@ def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges,
         for ft in file_types:
             if ft == 'growth': # special case below
                 continue
-            if ft == 'iwasawa' and not r in iwasawa_ranges + ['0-999']:
+            if ft == 'iwasawa' and r not in iwasawa_ranges + ['0-999']:
                 continue
-            data_filename = os.path.join(base_dir, '{}/{}.{}'.format(ft,ft,r))
+            data_filename = os.path.join(base_dir, '{}/{}.{}'.format(ft, ft, r))
             print("Starting to read from {}".format(data_filename))
             parser = parsers[ft]
             n = 0
             with open(data_filename) as data:
                 for L in data:
                     label, record = parser(L, raw=raw)
-                    first = (ft=='classdata') or (int(record['number'])==1)
+                    first = (ft == 'classdata') or (int(record['number']) == 1)
                     if label:
                         if first:
                             n += 1
@@ -862,9 +913,9 @@ def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges,
                             all_data[label].update(record)
                         else:
                             all_data[label] = record
-                    if n%10000==0 and first:
-                        print("Read {} classes so far from {}".format(n,data_filename))
-            print("Finished reading {} classes from {}".format(n,data_filename))
+                    if n%10000 == 0 and first:
+                        print("Read {} classes so far from {}".format(n, data_filename))
+            print("Finished reading {} classes from {}".format(n, data_filename))
 
     if 'curvedata' in file_types and 'classdata' in file_types:
         print("filling in class_deg from class to curve")
@@ -877,7 +928,7 @@ def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges,
         for label, record in all_data.items():
             n = int(record['class_size'])
             number = int(record['number'])
-            if n<=2 or number>1:
+            if n <= 2 or number > 1:
                 continue
             isomat = record['isogeny_matrix']
             if raw:
@@ -885,7 +936,7 @@ def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges,
             def num2Lnum(i):
                 return int(all_data[label[:-1]+str(i)]['lmfdb_number'])
 
-            # perm = lambda i: next(c for c in self.curves if c['number']==i+1)['lmfdb_number']-1
+            # perm = lambda i: next(c for c in self.curves if c['number'] == i+1)['lmfdb_number']-1
             # newmat = [[isomat[perm(i)][perm(j)] for i in range(n)] for j in range(n)]
             newmat = [[0 for _ in range(n)] for _ in range(n)]
             for i in range(n):
@@ -894,9 +945,9 @@ def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges,
                     rj = num2Lnum(j+1)-1
                     newmat[ri][rj] = isomat[i][j]
             if raw:
-                newmat = str(newmat).replace(' ','')
+                newmat = str(newmat).replace(' ', '')
             record['isogeny_matrix'] = newmat
-                
+
     if 'growth' in file_types:
         print("reading growth data")
         growth_data = read_all_growth_data(ranges=ranges)
@@ -924,58 +975,60 @@ def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges,
 # have these columns (any more).
 
 
-schemas = { 'ec_curvedata': {'Clabel': 'text', 'lmfdb_label': 'text', 'Ciso': 'text', 'lmfdb_iso': 'text',
-                               'iso_nlabel': 'smallint', 'Cnumber': 'smallint', 'lmfdb_number': 'smallint',
-                               'ainvs': 'numeric[]', 'jinv': 'numeric[]', 'conductor': 'integer',
-                               'cm': 'smallint', 'isogeny_degrees': 'smallint[]',
-                               'nonmax_primes': 'smallint[]', 'nonmax_rad': 'integer',
-                               'bad_primes': 'integer[]', 'num_bad_primes': 'smallint',
-                               'semistable': 'boolean', 'potential_good_reduction': 'boolean',
-                               'optimality': 'smallint', 'manin_constant': 'smallint',
-                               'num_int_pts': 'integer', 'torsion': 'smallint',
-                               'torsion_structure': 'smallint[]', 'torsion_primes': 'smallint[]',
-                               'rank': 'smallint', 'analytic_rank': 'smallint',
-                               'sha': 'integer',  'sha_primes': 'smallint[]', 'regulator': 'numeric',
-                               'signD': 'smallint', 'degree': 'bigint', 'class_deg': 'smallint', 'class_size': 'smallint',
-                               'min_quad_twist_ainvs': 'numeric[]', 'min_quad_twist_disc': 'smallint',
-                               'faltings_index': 'smallint', 'faltings_ratio': 'smallint'},
+schemas = {'ec_curvedata': {'Clabel': 'text', 'lmfdb_label': 'text', 'Ciso': 'text', 'lmfdb_iso': 'text',
+                            'iso_nlabel': 'smallint', 'Cnumber': 'smallint', 'lmfdb_number': 'smallint',
+                            'ainvs': 'numeric[]', 'jinv': 'numeric[]', 'conductor': 'integer',
+                            'cm': 'smallint', 'isogeny_degrees': 'smallint[]',
+                            'nonmax_primes': 'smallint[]', 'nonmax_rad': 'integer',
+                            'bad_primes': 'integer[]', 'num_bad_primes': 'smallint',
+                            'semistable': 'boolean', 'potential_good_reduction': 'boolean',
+                            'optimality': 'smallint', 'manin_constant': 'smallint',
+                            'num_int_pts': 'integer', 'torsion': 'smallint',
+                            'torsion_structure': 'smallint[]', 'torsion_primes': 'smallint[]',
+                            'rank': 'smallint', 'analytic_rank': 'smallint',
+                            'sha': 'integer', 'sha_primes': 'smallint[]', 'regulator': 'numeric',
+                            'signD': 'smallint', 'degree': 'bigint', 'class_deg': 'smallint', 'class_size': 'smallint',
+                            'min_quad_twist_ainvs': 'numeric[]', 'min_quad_twist_disc': 'smallint',
+                            'faltings_index': 'smallint', 'faltings_ratio': 'smallint'},
 
-            # local data: one row per (curve, bad prime)
-            'ec_localdata': {'lmfdb_label': 'text', 'conductor': 'integer',
-                             'prime': 'integer', 'tamagawa_number': 'smallint', 'kodaira_symbol': 'smallint',
-                             'reduction_type': 'smallint', 'root_number': 'smallint',
-                             'conductor_valuation': 'smallint', 'discriminant_valuation': 'smallint',
-                             'j_denominator_valuation': 'smallint'},
+           # local data: one row per (curve, bad prime)
+           'ec_localdata': {'lmfdb_label': 'text', 'conductor': 'integer',
+                            'prime': 'integer', 'tamagawa_number': 'smallint', 'kodaira_symbol': 'smallint',
+                            'reduction_type': 'smallint', 'root_number': 'smallint',
+                            'conductor_valuation': 'smallint', 'discriminant_valuation': 'smallint',
+                            'j_denominator_valuation': 'smallint'},
 
-            'ec_mwbsd': {'lmfdb_label': 'text', 'conductor': 'integer',
-                         'torsion_generators': 'numeric[]', 'xcoord_integral_points': 'numeric[]',
-                         'special_value': 'numeric', 'real_period': 'numeric', 'area': 'numeric',
-                         'tamagawa_product': 'integer', 'sha_an': 'numeric', 'rank_bounds': 'smallint[]',
-                         'ngens': 'smallint', 'gens': 'numeric[]', 'heights': 'numeric[]'},
+           'ec_mwbsd': {'lmfdb_label': 'text', 'conductor': 'integer',
+                        'torsion_generators': 'numeric[]', 'xcoord_integral_points': 'numeric[]',
+                        'special_value': 'numeric', 'real_period': 'numeric', 'area': 'numeric',
+                        'tamagawa_product': 'integer', 'sha_an': 'numeric', 'rank_bounds': 'smallint[]',
+                        'ngens': 'smallint', 'gens': 'numeric[]', 'heights': 'numeric[]'},
 
-            # class data: one row per isogeny class
-            'ec_classdata': {'lmfdb_iso': 'text', 'conductor': 'integer',
-                             'trace_hash': 'bigint', 'class_size': 'smallint', 'class_deg': 'smallint',
-                             'isogeny_matrix': 'smallint[]',
-                             'aplist': 'smallint[]', 'anlist': 'smallint[]'},
+           # class data: one row per isogeny class
+           'ec_classdata': {'lmfdb_iso': 'text', 'conductor': 'integer',
+                            'trace_hash': 'bigint', 'class_size': 'smallint', 'class_deg': 'smallint',
+                            'isogeny_matrix': 'smallint[]',
+                            'aplist': 'smallint[]', 'anlist': 'smallint[]'},
 
-            'ec_2adic': {'lmfdb_label': 'text', 'conductor': 'integer',
-                         'twoadic_label': 'text', 'twoadic_index': 'smallint',
-                         'twoadic_log_level': 'smallint', 'twoadic_gens': 'smallint[]'},
+           'ec_2adic': {'lmfdb_label': 'text', 'conductor': 'integer',
+                        'twoadic_label': 'text', 'twoadic_index': 'smallint',
+                        'twoadic_log_level': 'smallint', 'twoadic_gens': 'smallint[]'},
 
-            # galrep data: one row per (curve, non-maximal prime)
-            'ec_galrep': {'lmfdb_label': 'text', 'conductor': 'integer',
-                          'prime': 'smallint', 'image': 'text'},
+           # galrep data: one row per (curve, non-maximal prime)
+           'ec_galrep': {'lmfdb_label': 'text', 'conductor': 'integer',
+                         'prime': 'smallint', 'image': 'text'},
 
-            # torsion growth data: one row per (curve, extension field)
-            'ec_torsion_growth': {'lmfdb_label': 'text', 'conductor': 'integer',
-                                  'degree': 'smallint', 'field': 'numeric[]', 'torsion': 'smallint[]'},
+           # torsion growth data: one row per (curve, extension field)
+           'ec_torsion_growth': {'lmfdb_label': 'text', 'conductor': 'integer',
+                                 'degree': 'smallint', 'field': 'numeric[]', 'torsion': 'smallint[]'},
 
-            'ec_iwasawa': {'lmfdb_label': 'text', 'conductor': 'integer',
-                           'iwdata': 'jsonb',  'iwp0': 'smallint'}
-}
+           'ec_iwasawa': {'lmfdb_label': 'text', 'conductor': 'integer',
+                          'iwdata': 'jsonb', 'iwp0': 'smallint'}
+          }
 
 ######################################################################
+
+Qtype = type(QQ(1))
 
 def postgres_encode(col, coltype):
     """
@@ -985,17 +1038,17 @@ def postgres_encode(col, coltype):
     numeric[]) must appear as (e.g.) {1,2,3} not [1,2,3].
     """
     if col is None or col == "?":
-            return "\\N"
+        return "\\N"
     if coltype == "boolean":
         return "t" if col else "f"
-    if type(col) == type(QQ(1)): # to handle the j-invariant
+    if isinstance(col, Qtype): # to handle the j-invariant
         col = [col.numer(), col.denom()]
-    col = str(col).replace(" ","")
+    scol = str(col).replace(" ", "")
     if coltype == 'jsonb':
-        col = col.replace("'",'"')
+        scol = scol.replace("'", '"')
     if '[]' in coltype:
-        col = col.replace("[","{").replace("]","}")
-    return col
+        scol = scol.replace("[", "{").replace("]", "}")
+    return scol
 
 def table_cols(table, include_id=False):
     """
@@ -1036,16 +1089,16 @@ def data_to_string(table, cols, record):
 
     return "|".join([postgres_encode(record.get(col, None), schema[col]) for col in cols])
 
-tables1 = ['ec_curvedata', 'ec_mwbsd', 'ec_2adic', 'ec_iwasawa'] # tables with one row per curve
-tables2 = ['ec_classdata']                                       # table with one row per isogeny class
-tables3 = ['ec_localdata',      # one row per bad prime
+tables1 = ('ec_curvedata', 'ec_mwbsd', 'ec_2adic', 'ec_iwasawa') # tables with one row per curve
+tables2 = ('ec_classdata',)                                       # table with one row per isogeny class
+tables3 = ('ec_localdata',      # one row per bad prime
            'ec_galrep',         # one row per non-maximal prime
            'ec_torsion_growth', # one row per extension degree
-]
+          )
 
 all_tables = tables1 + tables2 + tables3
-optional_tables = ['ec_iwasawa', 'ec_torsion_growth']
-main_tables = [t for t in all_tables if not t in optional_tables]
+optional_tables = ('ec_iwasawa', 'ec_torsion_growth')
+main_tables = tuple(t for t in all_tables if t not in optional_tables)
 
 def make_table_upload_file(data, table, NN=None, include_id=True):
     """This version works when there is one row per curve or one per
@@ -1083,15 +1136,15 @@ def make_table_upload_file(data, table, NN=None, include_id=True):
         outfile.write("|".join([schema[col] for col in cols]) + "\n\n")
 
         n = 1
-        for label, record in data.items():
-            if table=='ec_iwasawa' and not 'iwdata' in record:
+        for record in data.values():
+            if table == 'ec_iwasawa' and 'iwdata' not in record:
                 continue
             if include_id:
                 record['id'] = n
-            if allcurves or int(record['number'])==1:
+            if allcurves or int(record['number']) == 1:
                 outfile.write(data_to_string(table, cols, record) +"\n")
                 n += 1
-            if n%10000==0:
+            if n%10000 == 0:
                 print("{} lines written so far...".format(n))
         n -= 1
         print("{} lines written to {}".format(n, filename))
@@ -1117,7 +1170,7 @@ def make_localdata_upload_file(data, NN=None):
         outfile.write("|".join([schema[col] for col in cols]) + "\n\n")
 
         n = 1
-        for label, record in data.items():
+        for record in data.values():
             for i in range(int(record['num_bad_primes'])):
                 # NB if the data is in raw form then we have 8 strongs
                 # representing lists of ints, otherwise we actually
@@ -1139,11 +1192,11 @@ def make_localdata_upload_file(data, NN=None):
                                 'conductor_valuation': record['conductor_valuations'][i],
                                 'discriminant_valuation': record['discriminant_valuations'][i],
                                 'j_denominator_valuation': record['j_denominator_valuations'][i],
-                }
+                               }
                 line = data_to_string(table, cols, prime_record)
                 outfile.write(line +"\n")
                 n += 1
-                if n%10000==0:
+                if n%10000 == 0:
                     print("{} lines written to {} so far...".format(n, filename))
         n -= 1
         print("{} lines written to {}".format(n, filename))
@@ -1158,7 +1211,7 @@ def make_galrep_upload_file(data, NN=None):
     if not NN:
         NN = 'all'
     table = 'ec_galrep'
-    filename = os.path.join(UPLOAD_DIR, ".".join([table,NN]))
+    filename = os.path.join(UPLOAD_DIR, ".".join([table, NN]))
     with open(filename, 'w') as outfile:
         print("Writing data for table {} to file {}".format(table, filename))
 
@@ -1171,16 +1224,16 @@ def make_galrep_upload_file(data, NN=None):
         outfile.write("|".join([schema[col] for col in cols]) + "\n\n")
 
         n = 1
-        for label, record in data.items():
+        for record in data.values():
             for p, im in zip(record['nonmax_primes'], record['modp_images']):
                 prime_record = {'label': record['label'], 'lmfdb_label': record['lmfdb_label'],
                                 'conductor': record['conductor'],
                                 'prime': p,
                                 'image': im,
-                }
+                               }
                 outfile.write(data_to_string(table, cols, prime_record) +"\n")
                 n += 1
-                if n%10000==0:
+                if n%10000 == 0:
                     print("{} lines written to {} so far...".format(n, filename))
         n -= 1
         print("{} lines written to {}".format(n, filename))
@@ -1194,7 +1247,7 @@ def make_torsion_growth_upload_file(data, NN=None):
     if not NN:
         NN = 'all'
     table = 'ec_torsion_growth'
-    filename = os.path.join(UPLOAD_DIR, ".".join([table,NN]))
+    filename = os.path.join(UPLOAD_DIR, ".".join([table, NN]))
     with open(filename, 'w') as outfile:
         print("Writing data for table {} to file {}".format(table, filename))
 
@@ -1207,8 +1260,8 @@ def make_torsion_growth_upload_file(data, NN=None):
         outfile.write("|".join([schema[col] for col in cols]) + "\n\n")
 
         n = 1
-        for label, record in data.items():
-            if not 'torsion_growth' in record:
+        for record in data.values():
+            if 'torsion_growth' not in record:
                 continue
             for degree, dat in record['torsion_growth'].items():
                 for field, torsion in dat:
@@ -1216,16 +1269,16 @@ def make_torsion_growth_upload_file(data, NN=None):
                                     'degree': degree,
                                     'field': field,
                                     'torsion': torsion,
-                    }
+                                   }
                     outfile.write(data_to_string(table, cols, field_record) +"\n")
                     n += 1
-                    if n%10000==0:
+                    if n%10000 == 0:
                         print("{} lines written to {} so far...".format(n, filename))
         n -= 1
         print("{} lines written to {}".format(n, filename))
 
 def fix_labels(data, verbose=True):
-    for label, record in data.items():
+    for record in data.values():
         lmfdb_label = "".join([record['lmfdb_iso'], record['lmfdb_number']])
         if lmfdb_label != record['lmfdb_label']:
             if verbose:
@@ -1235,21 +1288,21 @@ def fix_labels(data, verbose=True):
 
 def fix_faltings_ratios(data, verbose=True):
     for label, record in data.items():
-        if label[-1]=='1':
+        if label[-1] == '1':
             Fratio = '1'
             if record['faltings_ratio'] != Fratio:
                 if verbose:
-                    print("{}: changing F-ratio from {} to {}".format(label,record['faltings_ratio'],Fratio))
+                    print("{}: changing F-ratio from {} to {}".format(label, record['faltings_ratio'], Fratio))
                 record['faltings_ratio'] = Fratio
         else:
             label1 = label[:-1]+"1"
             record1 = data[label1]
             Fratio = (RR(record1['area'])/RR(record['area'])).round()
-            assert Fratio<=163
+            assert Fratio <= 163
             Fratio = str(Fratio)
-            if Fratio!=record['faltings_ratio']:
+            if Fratio != record['faltings_ratio']:
                 if verbose:
-                    print("{}: changing F-ratio from {} to {}".format(label,record['faltings_ratio'],Fratio))
+                    print("{}: changing F-ratio from {} to {}".format(label, record['faltings_ratio'], Fratio))
                 record['faltings_ratio'] = str(Fratio)
     return data
 
@@ -1257,3 +1310,184 @@ def make_all_upload_files(data, tables=all_tables, NN=None, include_id=False):
     for table in tables:
         make_table_upload_file(data, table, NN=NN, include_id=include_id)
 
+def write_curvedata(data, r, base_dir=MATSCHKE_DIR):
+    r"""
+    Write file base_dir/curvedata/curvedata.<r>
+    """
+    cols = datafile_columns['curvedata']
+    filename = os.path.join(base_dir, 'curvedata', 'curvedata.{}'.format(r))
+    #print("Writing data to {}".format(filename))
+    n = 0
+    with open(filename, 'w') as outfile:
+        for record in data.values():
+            line = make_line(record, cols)
+            outfile.write(line +"\n")
+            n += 1
+    print("{} lines written to {}".format(n, filename))
+
+# temporary function for writing extended curvedata files
+
+def write_curvedata_ext(data, r, base_dir=MATSCHKE_DIR):
+    r"""
+    Write file base_dir/curvedata/curvedata.<r>.ext
+    """
+    cols = datafile_columns['curvedata_ext']
+    cols.append(extra_curvedata_columns)
+    filename = os.path.join(base_dir, 'curvedata', 'curvedata.{}'.format(r), 'ext')
+    #print("Writing data to {}".format(filename))
+    n = 0
+    with open(filename, 'w') as outfile:
+        for record in data.values():
+            line = make_line(record, cols)
+            outfile.write(line +"\n")
+            n += 1
+    print("{} lines written to {}".format(n, filename))
+
+def write_classdata(data, r, base_dir=MATSCHKE_DIR):
+    r"""
+    Write file base_dir/classdata/classdata.<r>
+    """
+    cols = datafile_columns['classdata']
+    filename = os.path.join(base_dir, 'classdata', 'classdata.{}'.format(r))
+    #print("Writing data to {}".format(filename))
+    n = 0
+    with open(filename, 'w') as outfile:
+        for record in data.values():
+            if int(record['number']) == 1:
+                line = make_line(record, cols)
+                outfile.write(line +"\n")
+                n += 1
+    print("{} lines written to {}".format(n, filename))
+
+def write_intpts(data, r, base_dir=MATSCHKE_DIR):
+    r"""
+    Write file base_dir/intpts/intpts.<r>
+
+    """
+    cols = ['label', 'ainvs', 'xcoord_integral_points']
+    filename = os.path.join(base_dir, 'intpts', 'intpts.{}'.format(r))
+    #print("Writing data to {}".format(filename))
+    n = 0
+    with open(filename, 'w') as outfile:
+        for record in data.values():
+            line = make_line(record, cols)
+            outfile.write(line +"\n")
+            n += 1
+    print("{} lines written to {}".format(n, filename))
+
+def write_degphi(data, r, base_dir=MATSCHKE_DIR):
+    r"""
+    Write file base_dir/alldegphi/alldegphi.<r>
+
+    """
+    cols = ['conductor', 'isoclass', 'number', 'ainvs', 'degree']
+    filename = os.path.join(base_dir, 'alldegphi', 'alldegphi.{}'.format(r))
+    #print("Writing data to {}".format(filename))
+    n = 0
+    with open(filename, 'w') as outfile:
+        for record in data.values():
+            if record['degree']:
+                line = make_line(record, cols)
+                outfile.write(line +"\n")
+                n += 1
+    print("{} lines written to {}".format(n, filename))
+
+def write_datafiles(data, r, base_dir=MATSCHKE_DIR):
+    r"""Write file base_dir/<ft>/<ft>.<r> for ft in ['curvedata',
+    'classdata', 'intpts', 'alldegphi']
+    """
+    for writer in [write_curvedata, write_classdata, write_intpts, write_degphi]:
+        writer(data, r, base_dir)
+
+
+# Read allgens file (with torsion) and output paricurves file
+#
+def make_paricurves(infilename, mode='w', prefix="t"):
+    infile = open(infilename)
+    _, suf = infilename.split(".")
+    paricurvesfile = open(prefix+"paricurves."+suf, mode=mode)
+    for L in infile.readlines():
+        N, cl, num, ainvs, r, gens = L.split(' ', 5)
+        if int(r) == 0:
+            gens = "[]"
+        else:
+            gens = gens.split()[1:1+int(r)] # ignore torsion struct and gens
+            gens = "[{}]".format(",".join([proj_to_aff(P) for P in gens]))
+
+        label = '"{}"'.format(''.join([N, cl, num]))
+        line = '[{}]'.format(', '.join([label, ainvs, gens]))
+        paricurvesfile.write(line+'\n')
+    infile.close()
+    paricurvesfile.close()
+
+################################################################################
+
+# old functions before major ecdb rewrite
+
+# Create alldegphi files from allcurves files:
+
+def make_alldegphi(infilename, mode='w', verbose=False, prefix="t"):
+    infile = open(infilename)
+    _, suf = infilename.split(".")
+    alldegphifile = open(prefix+"alldegphi."+suf, mode=mode)
+    for L in infile.readlines():
+        N, cl, num, ainvs, _ = L.split(' ', 4)
+        label = "".join([N, cl, num])
+        E = EllipticCurve(parse_int_list(ainvs))
+        degphi = get_modular_degree(E, label)
+        line = ' '.join([str(N), cl, str(num), shortstr(E), liststr(degphi)])
+        alldegphifile.write(line+'\n')
+        if verbose:
+            print("alldegphifile: {}".format(line))
+    infile.close()
+    alldegphifile.close()
+
+def put_allcurves_line(outfile, N, cl, num, ainvs, r, t):
+    line = ' '.join([str(N), cl, str(num), str(ainvs).replace(' ', ''), str(r), str(t)])
+    outfile.write(line+'\n')
+
+def make_allcurves_lines(outfile, code, ainvs, r):
+    E = EllipticCurve(ainvs)
+    N, cl, _ = parse_cremona_label(code)
+    for i, F in enumerate(E.isogeny_class().curves):
+        put_allcurves_line(outfile, N, cl, str(i+1), list(F.ainvs()), r, F.torsion_order())
+    outfile.flush()
+
+def process_curve_file(infilename, outfilename, use):
+    infile = open(infilename)
+    outfile = open(outfilename, mode='a')
+    for L in infile.readlines():
+        N, iso, num, ainvs, r, tor, _ = L.split()
+        code = N+iso+num
+        N = int(N)
+        num = int(num)
+        r = int(r)
+        tor = int(tor)
+        ainvs = parse_int_list(ainvs)
+        use(outfile, code, ainvs, r, tor)
+    infile.close()
+    outfile.close()
+
+def make_allgens_line(E):
+    tgens = parse_int_list_list(E['torsion_generators'])
+    gens = parse_int_list_list(E['gens'])
+    parts = [" ".join([encode(E[col]) for col in ['conductor', 'isoclass', 'number', 'ainvs', 'ngens', 'torsion_structure']]),
+             " ".join([encode(weighted_proj_to_proj(P)) for P in gens]),
+             " ".join([encode(weighted_proj_to_proj(P)) for P in tgens])]
+    return " ".join(parts)
+
+def write_allgens_file(data, BASE_DIR, r):
+    r""" Output an allgens file.  Used, for example, to run our C++
+    saturation-checking program on the data.
+    """
+    allgensfilename = os.path.join(BASE_DIR, 'allgens', 'allgens.{}'.format(r))
+    n = 0
+    with open(allgensfilename, 'w') as outfile:
+        for record in data.values():
+            n += 1
+            outfile.write(make_allgens_line(record) + "\n")
+    print("{} line written to {}".format(n, allgensfilename))
+
+def make_allgens_file(BASE_DIR, r):
+    data = read_data(BASE_DIR, ['curvedata'], [r])
+    write_allgens_file(data, BASE_DIR, r)

@@ -4,9 +4,8 @@
 
 ### 2021
 
-- 1 March 2021: updated paricurves files after previous allgens
-  update.  (These files are used to create the PARI/GP elldata
-  optional package.)
+- 1 March 2021: updated paricurves files with the new gens from
+  updated allgens files.
 
 ### 2020
 

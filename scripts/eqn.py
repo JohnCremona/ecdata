@@ -9,13 +9,13 @@
 # of conductor <10000!
 
 def latex_equation(ainvs):
-    a1,a2,a3,a4,a6 = [int(a) for a in ainvs]
-    return ''.join(['\(y^2',
+    a1, a2, a3, a4, a6 = [int(a) for a in ainvs]
+    return ''.join([r'\(y^2',
                     '+xy' if a1 else '',
                     '+y' if a3 else '',
                     '=x^3',
-                    '+x^2' if a2==1 else '-x^2' if a2==-1 else '',
-                    '{:+}x'.format(a4) if abs(a4)>1 else '+x' if a4==1 else '-x' if a4==-1 else '',
+                    '+x^2' if a2 == 1 else '-x^2' if a2 == -1 else '',
+                    '{:+}x'.format(a4) if abs(a4) > 1 else '+x' if a4 == 1 else '-x' if a4 == -1 else '',
                     '{:+}'.format(a6) if a6 else '',
-                    '\)'])
+                    r'\)'])
 
