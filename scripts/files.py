@@ -403,7 +403,8 @@ def parse_twoadic_line(line, raw=False):
     """
     label, record = parse_line_label_cols(line, 3, False, raw=raw)
     s = line.split(maxsplit=4)[4]
-    record.update(parse_twoadic_string(s))
+    record.update(parse_twoadic_string(s, raw=raw))
+    #print(record)
     return label, record
 
 ######################################################################
@@ -428,9 +429,12 @@ def parse_galrep_line(line, raw=False):
 
     """
     label, record = parse_line_label_cols(line, 1, False, raw=raw)
-    record['modp_images'] = image_codes = split(line)[1:]
-    record['nonmax_primes'] = pr = [int(split_galois_image_code(s)[0]) for s in image_codes]
-    record['nonmax_rad'] = prod(pr)
+    image_codes = split(line)[1:] # list of strings
+    pr = [int(split_galois_image_code(s)[0]) for s in image_codes] # list of ints
+    rad = prod(pr)
+    record['modp_images'] = image_codes
+    record['nonmax_primes'] = pr
+    record['nonmax_rad'] = rad
     return label, record
 
 ######################################################################
@@ -647,30 +651,38 @@ datafile_columns = {
                   'class_size', 'class_deg', 'isogeny_matrix', 'aplist', 'anlist'],
     }
 
-extra_curvedata_columns = ['trace_hash',
-                           'xcoord_integral_points',
-                           'num_int_pts',
-                           'degree',
-                           'twoadic_index',
-                           'twoadic_label',
-                           'twoadic_log_level',
-                           'twoadic_gens',
-                           'modp_images',
-                           'nonmax_primes',
-                           'nonmax_rad']
+twoadic_cols = ['twoadic_index', 'twoadic_label', 'twoadic_log_level', 'twoadic_gens']
+galrep_cols = ['modp_images', 'nonmax_primes', 'nonmax_rad']
+intpts_cols = ['xcoord_integral_points', 'num_int_pts']
+extra_curvedata_columns = ['trace_hash', 'degree'] + intpts_cols + twoadic_cols + galrep_cols
 
-def parse_curvedata_line(line, raw=False):
+datafile_columns['curvedata_ext'] = datafile_columns['curvedata'] + extra_curvedata_columns
+
+def parse_curvedata_line(line, raw=False, ext=False):
     """
     """
     data = split(line)
+    if ext:
+        cols = datafile_columns['curvedata_ext']
+    else:
+        cols = datafile_columns['curvedata']
+    if len(data) != len(cols):
+        raise RuntimeError("curvedata line has {} colsumns but {} were expected".format(len(data), len(cols)))
     if raw:
-        record = dict([(col, data[n]) for n, col in enumerate(datafile_columns['curvedata'])])
+        record = dict([(col, data[n]) for n, col in enumerate(cols)])
         record['semistable'] = bool(int(record['semistable']))
         record['potential_good_reduction'] = (parse_int_list(record['jinv'])[1] == 1)
         record['num_bad_primes'] = str(1+record['bad_primes'].count(","))
         record['class_size'] = str(1+record['isogeny_degrees'].count(","))
+        if ext:
+            for c in galrep_cols:
+                record[c] = decode(c, record[c])
+            if record['twoadic_index'] == '0':
+                for c in twoadic_cols:
+                    if c != 'twoadic_index':
+                        record[c] = decode(c, record[c])
     else:
-        record = dict([(col, decode(col, data[n])) for n, col in enumerate(datafile_columns['curvedata'])])
+        record = dict([(col, decode(col, data[n])) for n, col in enumerate(cols)])
         record['potential_good_reduction'] = (record['jinv'].denominator() == 1)
         record['num_bad_primes'] = len(record['bad_primes'])
         record['class_size'] = len(record['isogeny_degrees'])
@@ -717,9 +729,13 @@ parsers = {'allgens': parse_allgens_line,
 
 all_file_types = list(parsers.keys())
 old_file_types = ['alllabels', 'allgens', 'allisog']
+more_old_file_types = ['alldegphi', 'intpts', '2adic', 'galrep']
 new_file_types = [ft for ft in all_file_types if ft not in old_file_types]
+newer_file_types = [ft for ft in new_file_types if ft not in more_old_file_types]
 optional_file_types = ['opt_man', 'growth', 'iwasawa']
 main_file_types = [t for t in new_file_types if t not in optional_file_types]
+new_main_file_types = [t for t in newer_file_types if t not in optional_file_types]
+assert new_main_file_types == ['curvedata', 'classdata']
 
 all_ranges = ["{}0000-{}9999".format(n, n) for n in range(50)]
 iwasawa_ranges = ["{}0000-{}9999".format(n, n) for n in range(15)]
@@ -918,10 +934,93 @@ def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges,
             print("Finished reading {} classes from {}".format(n, data_filename))
 
     if 'curvedata' in file_types and 'classdata' in file_types:
-        print("filling in class_deg from class to curve")
+        print("filling in class_deg and trace_hash from class to curve")
         for label, record in all_data.items():
             if int(record['number']) > 1:
-                record['class_deg'] = all_data[label[:-1]+'1']['class_deg']
+                label1 = label[:-1]+'1'
+                for col in ['class_deg', 'trace_hash']:
+                    record[col] = all_data[label1][col]
+
+    if 'classdata' in file_types and resort:
+        print("permuting isogeny matrices")
+        for label, record in all_data.items():
+            n = int(record['class_size'])
+            number = int(record['number'])
+            if n <= 2 or number > 1:
+                continue
+            isomat = record['isogeny_matrix']
+            if raw:
+                isomat = parse_int_list_list(isomat)
+            def num2Lnum(i):
+                return int(all_data[label[:-1]+str(i)]['lmfdb_number'])
+
+            # perm = lambda i: next(c for c in self.curves if c['number'] == i+1)['lmfdb_number']-1
+            # newmat = [[isomat[perm(i)][perm(j)] for i in range(n)] for j in range(n)]
+            newmat = [[0 for _ in range(n)] for _ in range(n)]
+            for i in range(n):
+                ri = num2Lnum(i+1)-1
+                for j in range(n):
+                    rj = num2Lnum(j+1)-1
+                    newmat[ri][rj] = isomat[i][j]
+            if raw:
+                newmat = str(newmat).replace(' ', '')
+            record['isogeny_matrix'] = newmat
+
+    if 'growth' in file_types:
+        print("reading growth data")
+        growth_data = read_all_growth_data(ranges=ranges)
+        for label, record in all_data.items():
+            if label in growth_data:
+                record.update(growth_data[label])
+
+    return all_data
+
+def read_data_ext(base_dir=ECDATA_DIR, file_types=new_main_file_types, ranges=all_ranges, raw=True, resort=True):
+    r"""Read all the data in files base_dir/curvedata/curvedata.<r>.ext and
+    base_dir/classdata/classdata.<r> and r is a range.
+
+    Return a single dict with keys labels and values complete
+    curve records.
+
+    Resort permutes the rows/columns of the isogeny matrix to be indexed
+    by LMFDB numbers.
+
+    """
+    all_data = {}
+
+    for r in ranges:
+        for ft in file_types:
+            if ft == 'curvedata':
+                data_filename = os.path.join(base_dir, '{}/{}.{}.ext'.format(ft, ft, r))
+            else:
+                data_filename = os.path.join(base_dir, '{}/{}.{}'.format(ft, ft, r))
+                parser = parsers[ft]
+            print("Starting to read from {}".format(data_filename))
+            n = 0
+            with open(data_filename) as data:
+                for L in data:
+                    if ft == 'curvedata':
+                        label, record = parse_curvedata_line(L, raw=raw, ext=True)
+                    else:
+                        label, record = parser(L, raw=raw)
+                    first = (ft == 'classdata') or (int(record['number']) == 1)
+                    if label:
+                        if first:
+                            n += 1
+                        if label in all_data:
+                            all_data[label].update(record)
+                        else:
+                            all_data[label] = record
+                    if n%10000 == 0 and first:
+                        print("Read {} classes so far from {}".format(n, data_filename))
+            print("Finished reading {} classes from {}".format(n, data_filename))
+
+    print("filling in iso, class_deg, and trace_hash from class to curve")
+    for label, record in all_data.items():
+        if int(record['number']) > 1:
+            label1 = label[:-1]+'1'
+            for col in ['iso', 'class_deg', 'trace_hash']:
+                record[col] = all_data[label1][col]
 
     if 'classdata' in file_types and resort:
         print("permuting isogeny matrices")
@@ -1225,6 +1324,7 @@ def make_galrep_upload_file(data, NN=None):
 
         n = 1
         for record in data.values():
+            #print(record['nonmax_primes'], record['modp_images'])
             for p, im in zip(record['nonmax_primes'], record['modp_images']):
                 prime_record = {'label': record['label'], 'lmfdb_label': record['lmfdb_label'],
                                 'conductor': record['conductor'],
@@ -1332,15 +1432,18 @@ def write_curvedata_ext(data, r, base_dir=MATSCHKE_DIR):
     Write file base_dir/curvedata/curvedata.<r>.ext
     """
     cols = datafile_columns['curvedata_ext']
-    cols.append(extra_curvedata_columns)
-    filename = os.path.join(base_dir, 'curvedata', 'curvedata.{}'.format(r), 'ext')
+    filename = os.path.join(base_dir, 'curvedata', 'curvedata.{}.ext'.format(r))
     #print("Writing data to {}".format(filename))
     n = 0
     with open(filename, 'w') as outfile:
         for record in data.values():
+            if 'degree' not in record or record['degree'] == 0:
+                record['degree'] = None
             line = make_line(record, cols)
             outfile.write(line +"\n")
             n += 1
+            if n%10000 == 0:
+                print("... {} lines written to {} so far".format(n, filename))
     print("{} lines written to {}".format(n, filename))
 
 def write_classdata(data, r, base_dir=MATSCHKE_DIR):

@@ -108,7 +108,7 @@ def parse_twoadic_string(s, raw=False):
     assert len(data) == 4
     model = data[3]
     if model == 'CM':
-        record['twoadic_index'] = '0' if raw else int(0)
+        record['twoadic_index'] = '0'
         record['twoadic_log_level'] = None
         record['twoadic_gens'] = None
         record['twoadic_label'] = None
@@ -164,7 +164,8 @@ encoders = {str_type: lambda x: x,
             ZZ_type: str,
             RR_type: str,
             QQ_type: lambda x: str([x.numer(), x.denom()]).replace(" ", ""),
-            list_type: lambda x: str(x).replace(" ", ""),
+            # handle lists of strings
+            list_type: lambda x: str(x).replace(" ", "").replace("'", ""),
            }
 
 def encode(x):
@@ -180,7 +181,8 @@ str_cols = ['label', 'iso', 'isoclass', 'lmfdb_label', 'lmfdb_isoclass', 'lmfdb_
 int_cols = ['number', 'lmfdb_number', 'iso_nlabel', 'faltings_index',
             'faltings_ratio', 'conductor', 'cm', 'signD',
             'min_quad_twist_disc', 'rank', 'analytic_rank', 'ngens',
-            'torsion', 'tamagawa_product', 'sha', 'class_size', 'class_deg']
+            'torsion', 'tamagawa_product', 'sha', 'class_size', 'class_deg',
+            'nonmax_rad', 'twoadic_index']
 bigint_cols = ['trace_hash']
 int_list_cols = ['ainvs', 'isogeny_degrees', 'min_quad_twist_ainvs',
                  'bad_primes', 'tamagawa_numbers', 'kodaira_symbols',
@@ -188,12 +190,13 @@ int_list_cols = ['ainvs', 'isogeny_degrees', 'min_quad_twist_ainvs',
                  'discriminant_valuations',
                  'j_denominator_valuations', 'rank_bounds',
                  'torsion_structure',
-                 'aplist', 'anlist']
+                 'aplist', 'anlist', 'nonmax_primes']
 int_list_list_cols = ['isogeny_matrix', 'gens', 'torsion_generators']
 bool_cols = ['semistable']
 QQ_cols = ['jinv']
 RR_cols = ['regulator', 'real_period', 'area', 'faltings_height', 'special_value', 'sha_an']
 RR_list_cols = ['heights']
+str_list_cols = ['modp_images']
 
 decoders = {}
 for col in str_cols:
@@ -214,6 +217,17 @@ for col in QQ_cols:
     decoders[col] = lambda x: QQ(tuple(parse_int_list(x)))
 for col in RR_list_cols:
     decoders[col] = lambda x: [] if x == '[]' else [sage_eval(d) for d in x[1:-1].split(",")]
+for col in str_list_cols:
+    decoders[col] = lambda x: [] if x == '[]' else x[1:-1].split(",")
+
+# Three 2-adic columns are special, their values are None encoded as '?' for CM curves
+
+# 'twoadic_label' is string, or None ('?') for CM
+decoders['twoadic_label'] = lambda x: None if x == '?' else x
+# 'twoadic_log_level' is int, or None ('?') for CM
+decoders['twoadic_log_level'] = lambda x: None if x == '?' else ZZ(x)
+# 'twoadic_label' is lis(list(int)), or None ('?') for CM
+decoders['twoadic_gens'] = lambda x: None if x == '?' else parse_int_list_list(x)
 
 def decode(colname, data):
     if colname in decoders:
