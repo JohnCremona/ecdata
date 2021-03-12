@@ -9,7 +9,7 @@
 
 ### 2020
 
-- 27 Novermber 2020: updated allgens files with Minkowski-reduced
+- 27 November 2020: updated allgens files with Minkowski-reduced
   generators mod torsion, of minimal naive height mod torsion. Thanks
   to R. Rathbun.
 
