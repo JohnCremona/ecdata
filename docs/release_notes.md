@@ -2,9 +2,14 @@
 
 ## Last major update: 2019-07-22
 
+### 2021
+
+- 1 March 2021: updated paricurves files with the new gens from
+  updated allgens files.
+
 ### 2020
 
-- 27 Novermber 2020: updated allgens files with Minkowski-reduced
+- 27 November 2020: updated allgens files with Minkowski-reduced
   generators mod torsion, of minimal naive height mod torsion. Thanks
   to R. Rathbun.
 

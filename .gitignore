@@ -6,4 +6,3 @@ tsat
 ecdata-*.tgz
 src
 database_cremona_ellcurve*.bz2
-scripts/trace_hash.py

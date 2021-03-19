@@ -5,8 +5,8 @@ from files import HOME
 sys.path.append(os.path.join(HOME, 'lmfdb'))
 from lmfdb import db
 
-db.create_table(name = 'ec_curvedata',
-                search_columns = {
+db.create_table(name='ec_curvedata',
+                search_columns={
                     'text': ['Clabel', 'lmfdb_label', 'Ciso', 'lmfdb_iso'],
                     'numeric': ['regulator', 'absD', 'faltings_height', 'stable_faltings_height'],
                     'numeric[]': ['ainvs', 'jinv', 'min_quad_twist_ainvs'],
@@ -23,10 +23,10 @@ db.create_table(name = 'ec_curvedata',
                 label_col='lmfdb_label',
                 sort=['conductor', 'iso_nlabel', 'lmfdb_number'],
                 id_ordered=True
-)
+               )
 
-db.create_table(name = 'ec_localdata',
-                search_columns = {
+db.create_table(name='ec_localdata',
+                search_columns={
                     'text': ['lmfdb_label'],
                     'smallint': ['tamagawa_number', 'kodaira_symbol', 'reduction_type', 'root_number', 'conductor_valuation', 'discriminant_valuation', 'j_denominator_valuation'],
                     'integer': ['prime']
@@ -34,10 +34,10 @@ db.create_table(name = 'ec_localdata',
                 label_col='lmfdb_label',
                 sort=['lmfdb_label', 'prime'],
                 id_ordered=False
-)
+               )
 
-db.create_table(name = 'ec_mwbsd',
-                search_columns = {
+db.create_table(name='ec_mwbsd',
+                search_columns={
                     'text': ['lmfdb_label'],
                     'numeric': ['special_value', 'real_period', 'area', 'sha_an'],
                     'integer': ['tamagawa_product'],
@@ -48,10 +48,10 @@ db.create_table(name = 'ec_mwbsd',
                 label_col='lmfdb_label',
                 sort=['lmfdb_label'],
                 id_ordered=False
-)
+               )
 
-db.create_table(name = 'ec_classdata',
-                search_columns = {
+db.create_table(name='ec_classdata',
+                search_columns={
                     'text': ['lmfdb_iso'],
                     'bigint': ['trace_hash'],
                     'smallint': ['class_size', 'class_deg'],
@@ -60,10 +60,10 @@ db.create_table(name = 'ec_classdata',
                 label_col='lmfdb_iso',
                 sort=['lmfdb_iso'],
                 id_ordered=False
-)
+               )
 
-db.create_table(name = 'ec_2adic',
-                search_columns = {
+db.create_table(name='ec_2adic',
+                search_columns={
                     'text': ['lmfdb_label', 'twoadic_label'],
                     'smallint': ['twoadic_index', 'twoadic_log_level'],
                     'smallint[]': ['twoadic_gens'],
@@ -71,20 +71,20 @@ db.create_table(name = 'ec_2adic',
                 label_col='lmfdb_label',
                 sort=['lmfdb_label'],
                 id_ordered=False
-)
+               )
 
-db.create_table(name = 'ec_galrep',
-                search_columns = {
+db.create_table(name='ec_galrep',
+                search_columns={
                     'text': ['lmfdb_label', 'image'],
                     'smallint': ['prime'],
                 },
                 label_col='lmfdb_label',
                 sort=['lmfdb_label', 'prime'],
                 id_ordered=False
-)
+               )
 
-db.create_table(name = 'ec_torsion_growth',
-                search_columns = {
+db.create_table(name='ec_torsion_growth',
+                search_columns={
                     'text': ['lmfdb_label'],
                     'smallint': ['degree'],
                     'numeric[]': ['field'],
@@ -93,10 +93,10 @@ db.create_table(name = 'ec_torsion_growth',
                 label_col='lmfdb_label',
                 sort=['lmfdb_label', 'degree'],
                 id_ordered=False
-)
+               )
 
-db.create_table(name = 'ec_iwasawa',
-                search_columns = {
+db.create_table(name='ec_iwasawa',
+                search_columns={
                     'text': ['lmfdb_label'],
                     'smallint': ['iwp0'],
                     'jsonb': ['iwdata'],
@@ -104,7 +104,7 @@ db.create_table(name = 'ec_iwasawa',
                 label_col='lmfdb_label',
                 sort=['lmfdb_label'],
                 id_ordered=False
-)
+               )
 
 #######  Indexes ##############
 
