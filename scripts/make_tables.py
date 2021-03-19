@@ -8,7 +8,7 @@ from lmfdb import db
 db.create_table(name = 'ec_curvedata',
                 search_columns = {
                     'text': ['Clabel', 'lmfdb_label', 'Ciso', 'lmfdb_iso'],
-                    'numeric': ['regulator'],
+                    'numeric': ['regulator', 'absD', 'faltings_height', 'stable_faltings_height'],
                     'numeric[]': ['ainvs', 'jinv', 'min_quad_twist_ainvs'],
                     'smallint': ['iso_nlabel', 'Cnumber', 'lmfdb_number', 'cm', 'num_bad_primes',
                                  'optimality', 'manin_constant', 'torsion', 'rank',
@@ -138,6 +138,9 @@ db.ec_curvedata.create_index(['potential_good_reduction', 'conductor', 'iso_nlab
 db.ec_curvedata.create_index(['class_size'], type='btree')
 db.ec_curvedata.create_index(['class_deg'], type='btree')
 db.ec_curvedata.create_index(['conductor'], type='btree')
+db.ec_curvedata.create_index(['absD'], type='btree')
+db.ec_curvedata.create_index(['faltings_height'], type='btree')
+db.ec_curvedata.create_index(['stable_faltings_height'], type='btree')
 
 db.ec_classdata.create_index(['lmfdb_iso'], type='btree')
 db.ec_classdata.create_index(['conductor'], type='btree')

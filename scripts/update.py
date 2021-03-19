@@ -63,6 +63,12 @@ def update_range(r, tables=all_tables, base_dir=UPLOAD_DIR):
 #     make_table_upload_file(data, t.search_table, rows='all', include_id=False)
 # add_data('all', tables=tables)
 #
+# To add a new set of curves given upload files for the main tables only, suffix r
+#
+# sage: r = "p.500000-999999"
+# sage: add_data(r, tables=main_tables)
+#
+#
 
 def add_data(r, tables=all_tables, base_dir=UPLOAD_DIR):
     for t in tables:
