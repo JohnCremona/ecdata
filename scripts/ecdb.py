@@ -754,7 +754,9 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
 
             record['jinv'] = Ej = E.j_invariant()
             record['potential_good_reduction'] = (Ej.denominator() == 1)
-            record['signD'] = int(E.discriminant().sign())
+            D = E.discriminant()
+            record['absD'] = ZZ(D).abs()
+            record['signD'] = int(D.sign())
             record['cm'] = int(E.cm_discriminant()) if E.has_cm() else 0
 
             if first:
@@ -908,7 +910,10 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
             L = E.period_lattice()
             record['real_period'] = om = L.omega(prec=PRECISION) # includes #R-components factor
             record['area'] = A = L.complex_area(prec=PRECISION)
-            record['faltings_height'] = -A.log()/2
+            F_ht = -A.log()/2
+            R = om.parent()
+            record['faltings_height'] = F_ht
+            record['stable_faltings_height'] = F_ht - R(gcd(D,E.c4()**3)).log()/12
 
             # Analytic Sha
             if gens_missing:
@@ -966,30 +971,6 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
     write_datafiles(alldata, outfilename, base_dir)
 
     return alldata
-
-
-# How to make a 2adic file: run 2adic.m on a file containing one line
-# per curve, where each line has the form
-#
-# N c i [a1,a2,a3,a4,a6] *
-#
-# The magma script only read the a-invariants from what it finds
-# between the first "[" and the first "]", and also copies anything
-# which precedes the first "[" verbatim into the output line (one line
-# per curve).
-#
-# Similarly, Sutherland's script for mod p Galois representations runs
-# the function ComputeQGaloisImages(infilename, outfilename) in
-# ~/galrep/nfgalrep.m, where the format of infilename is
-#
-# label:[a1,a2,a3,a4,a6]
-#
-# To run both on the range NN, given a file  allcurves/allcurves.NN in directory D:
-#
-# ~/ecdata/scripts/make_galrep.sh NN D
-#
-# which will create (or overwrite) the files 2adic/2adic.${r} and
-# galrep/galrep.${r}.
 
 def read_write_data(infilename, base_dir, verbose=1):
     print("Reading from {}".format(infilename))

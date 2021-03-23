@@ -632,12 +632,51 @@ def parse_extra_gens_line(line):
         gens = [E([QQ(c) for c in g.split(",")]) for g in gens[2:-2].split('],[')]
     return N, tuple(ainvs), gens
 
+# Original columns of a curvedata file:
 
-datafile_columns = {
-    'curvedata': ['label', 'isoclass', 'number', 'lmfdb_label', 'lmfdb_isoclass',
+curvedata_cols_old1 = ['label', 'isoclass', 'number', 'lmfdb_label', 'lmfdb_isoclass',
+                       'lmfdb_number', 'iso_nlabel', 'faltings_index', 'faltings_ratio',
+                       'conductor', 'ainvs', 'jinv', 'cm',
+                       'isogeny_degrees', 'semistable', 'signD',
+                       'min_quad_twist_ainvs', 'min_quad_twist_disc',
+                       'bad_primes', 'tamagawa_numbers', 'kodaira_symbols',
+                       'reduction_types', 'root_numbers', 'conductor_valuations',
+                       'discriminant_valuations', 'j_denominator_valuations',
+                       'rank', 'rank_bounds', 'analytic_rank', 'ngens', 'gens',
+                       'heights', 'regulator', 'torsion', 'torsion_structure',
+                       'torsion_generators', 'tamagawa_product', 'real_period',
+                       'area', 'faltings_height', 'special_value', 'sha_an', 'sha']
+
+twoadic_cols = ['twoadic_index', 'twoadic_label', 'twoadic_log_level', 'twoadic_gens']
+galrep_cols = ['modp_images', 'nonmax_primes', 'nonmax_rad']
+intpts_cols = ['xcoord_integral_points', 'num_int_pts']
+
+# Columns after adding twoadic, galrep and intpts columns (making
+# those separate files unnecessary) and 'trac_hash' and 'degree':
+
+curvedata_cols_old2 = ['label', 'isoclass', 'number', 'lmfdb_label', 'lmfdb_isoclass',
+                       'lmfdb_number', 'iso_nlabel', 'faltings_index', 'faltings_ratio',
+                       'conductor', 'ainvs', 'jinv', 'cm',
+                       'isogeny_degrees', 'semistable', 'signD',
+                       'min_quad_twist_ainvs', 'min_quad_twist_disc',
+                       'bad_primes', 'tamagawa_numbers', 'kodaira_symbols',
+                       'reduction_types', 'root_numbers', 'conductor_valuations',
+                       'discriminant_valuations', 'j_denominator_valuations',
+                       'rank', 'rank_bounds', 'analytic_rank', 'ngens', 'gens',
+                       'heights', 'regulator', 'torsion', 'torsion_structure',
+                       'torsion_generators', 'tamagawa_product', 'real_period',
+                       'area', 'faltings_height', 'special_value', 'sha_an', 'sha',
+                       'trace_hash', 'degree',
+                       'xcoord_integral_points', 'num_int_pts',
+                       'twoadic_index', 'twoadic_label', 'twoadic_log_level', 'twoadic_gens',
+                       'modp_images', 'nonmax_primes', 'nonmax_rad']
+
+# Columns after adding 'absD' and 'stable_faltings_height'
+
+curvedata_cols = ['label', 'isoclass', 'number', 'lmfdb_label', 'lmfdb_isoclass',
                   'lmfdb_number', 'iso_nlabel', 'faltings_index', 'faltings_ratio',
                   'conductor', 'ainvs', 'jinv', 'cm',
-                  'isogeny_degrees', 'semistable', 'signD',
+                  'isogeny_degrees', 'semistable', 'signD', 'absD',
                   'min_quad_twist_ainvs', 'min_quad_twist_disc',
                   'bad_primes', 'tamagawa_numbers', 'kodaira_symbols',
                   'reduction_types', 'root_numbers', 'conductor_valuations',
@@ -645,18 +684,25 @@ datafile_columns = {
                   'rank', 'rank_bounds', 'analytic_rank', 'ngens', 'gens',
                   'heights', 'regulator', 'torsion', 'torsion_structure',
                   'torsion_generators', 'tamagawa_product', 'real_period',
-                  'area', 'faltings_height', 'special_value', 'sha_an', 'sha'],
+                  'area', 'faltings_height',  'stable_faltings_height',
+                  'special_value', 'sha_an', 'sha',
+                  'trace_hash', 'degree',
+                  'xcoord_integral_points', 'num_int_pts',
+                  'twoadic_index', 'twoadic_label', 'twoadic_log_level', 'twoadic_gens',
+                  'modp_images', 'nonmax_primes', 'nonmax_rad']
 
-    'classdata': ['iso', 'lmfdb_iso', 'trace_hash',
-                  'class_size', 'class_deg', 'isogeny_matrix', 'aplist', 'anlist'],
+classdata_cols = ['iso', 'lmfdb_iso', 'trace_hash', 'class_size', 'class_deg', 'isogeny_matrix', 'aplist', 'anlist']
+
+datafile_columns = {
+    'curvedata': curvedata_cols,
+    'curvedata_ext': curvedata_cols,
+    'classdata': classdata_cols,
     }
 
-twoadic_cols = ['twoadic_index', 'twoadic_label', 'twoadic_log_level', 'twoadic_gens']
-galrep_cols = ['modp_images', 'nonmax_primes', 'nonmax_rad']
-intpts_cols = ['xcoord_integral_points', 'num_int_pts']
-extra_curvedata_columns = ['trace_hash', 'degree'] + intpts_cols + twoadic_cols + galrep_cols
-
-datafile_columns['curvedata_ext'] = datafile_columns['curvedata'] + extra_curvedata_columns
+# print("curvedata columns")
+# print(datafile_columns['curvedata'])
+# print("curvedata_ext columns")
+# print(datafile_columns['curvedata_ext'])
 
 def parse_curvedata_line(line, raw=False, ext=False):
     """
@@ -698,6 +744,7 @@ def parse_curvedata_line(line, raw=False, ext=False):
     record['torsion_primes'] = [int(p) for p in Integer(record['torsion']).prime_divisors()]
     record['lmfdb_iso'] = ".".join([str(record['conductor']), record['lmfdb_isoclass']])
 
+    #record = add_extra_data(record)
     return record['label'], record
 
 def parse_classdata_line(line, raw=False):
@@ -895,7 +942,7 @@ def make_curvedata(base_dir=ECDATA_DIR, ranges=all_ranges, prec=DEFAULT_PRECISIO
 
 
 
-def read_data(base_dir=ECDATA_DIR, file_types=new_file_types, ranges=all_ranges, raw=True, resort=True):
+def read_data(base_dir=ECDATA_DIR, file_types=new_main_file_types, ranges=all_ranges, raw=True, resort=True):
     r"""Read all the data in files base_dir/<ft>/<ft>.<r> where ft is a file type
     and r is a range.
 
@@ -1086,8 +1133,10 @@ schemas = {'ec_curvedata': {'Clabel': 'text', 'lmfdb_label': 'text', 'Ciso': 'te
                             'torsion_structure': 'smallint[]', 'torsion_primes': 'smallint[]',
                             'rank': 'smallint', 'analytic_rank': 'smallint',
                             'sha': 'integer', 'sha_primes': 'smallint[]', 'regulator': 'numeric',
-                            'signD': 'smallint', 'degree': 'bigint', 'class_deg': 'smallint', 'class_size': 'smallint',
+                            'signD': 'smallint', 'absD': 'numeric',
+                            'degree': 'bigint', 'class_deg': 'smallint', 'class_size': 'smallint',
                             'min_quad_twist_ainvs': 'numeric[]', 'min_quad_twist_disc': 'smallint',
+                            'faltings_height': 'numeric', 'stable_faltings_height': 'numeric',
                             'faltings_index': 'smallint', 'faltings_ratio': 'smallint'},
 
            # local data: one row per (curve, bad prime)
@@ -1199,9 +1248,14 @@ all_tables = tables1 + tables2 + tables3
 optional_tables = ('ec_iwasawa', 'ec_torsion_growth')
 main_tables = tuple(t for t in all_tables if t not in optional_tables)
 
-def make_table_upload_file(data, table, NN=None, include_id=True):
+def make_table_upload_file(data, table, NN=None, include_id=True, columns=None):
     """This version works when there is one row per curve or one per
     class.  The other cases are passed to special versions.
+
+    If columns is None then all columns for the table will be output,
+    otherwise only those in columns.  This is for updating only some
+    columns of a table.
+
     """
     if not NN:
         NN = 'all'
@@ -1225,6 +1279,8 @@ def make_table_upload_file(data, table, NN=None, include_id=True):
             print(" (only outputting one curve per isogeny class)")
 
         cols = table_cols(table, include_id)
+        if columns:
+            cols = [c for c in cols if c in columns]
         schema = schemas[table]
         if 'id' in cols:
             schema['id'] = 'bigint'
@@ -1433,7 +1489,11 @@ def write_curvedata_ext(data, r, base_dir=MATSCHKE_DIR):
     """
     cols = datafile_columns['curvedata_ext']
     filename = os.path.join(base_dir, 'curvedata', 'curvedata.{}.ext'.format(r))
-    #print("Writing data to {}".format(filename))
+    print("Writing data to {}".format(filename))
+    # print("--old columns were")
+    # print(datafile_columns['curvedata'])
+    # print("--new columns are")
+    # print(cols)
     n = 0
     with open(filename, 'w') as outfile:
         for record in data.values():
@@ -1594,3 +1654,33 @@ def write_allgens_file(data, BASE_DIR, r):
 def make_allgens_file(BASE_DIR, r):
     data = read_data(BASE_DIR, ['curvedata'], [r])
     write_allgens_file(data, BASE_DIR, r)
+
+
+# one-off to add 'absD' and 'stable_faltings_height'
+
+def c4c6D(ainvs):
+    (a1, a2, a3, a4, a6) = ainvs
+    (b2, b4, b6, b8) = (a1*a1 + 4*a2,
+                        a1*a3 + 2*a4,
+                        a3**2 + 4*a6,
+                        a1**2 * a6 + 4*a2*a6 - a1*a3*a4 + a2*a3**2 - a4**2)
+
+    (c4, c6) =  (b2**2 - 24*b4,
+                 -b2**3 + 36*b2*b4 - 216*b6)
+
+    D = -b2**2*b8 - 8*b4**3 - 27*b6**2 + 9*b2*b4*b6
+    return (c4, c6, D)
+
+def add_extra_data(record, PRECISION=100):
+    # We avoid constructing the elliptic curve as that is very much slower
+    (c4, c6, D) = c4c6D(parse_int_list(record['ainvs']))
+    record['absD'] = ZZ(D).abs()
+
+    if gcd(D, c4) == 1:
+        record['stable_faltings_height'] = record['faltings_height']
+    else:
+        R = RealField(PRECISION)
+        g = gcd(D, c4**3)
+        record['stable_faltings_height'] = R(record['faltings_height']) - R(g).log()/12
+    return record
+
