@@ -8,7 +8,7 @@
 # ranges up to 50000.
 
 import os
-from sage.all import ZZ, QQ, RR, EllipticCurve, Integer, prod, factorial, primes
+from sage.all import ZZ, QQ, RR, RealField, EllipticCurve, Integer, prod, factorial, primes, gcd
 from sage.databases.cremona import class_to_int, parse_cremona_label
 from trace_hash import TraceHashClass
 from codec import split, parse_int_list, parse_int_list_list, proj_to_point, proj_to_aff, point_to_weighted_proj, decode, encode, split_galois_image_code, parse_twoadic_string, shortstr, liststr, weighted_proj_to_proj
@@ -684,7 +684,7 @@ curvedata_cols = ['label', 'isoclass', 'number', 'lmfdb_label', 'lmfdb_isoclass'
                   'rank', 'rank_bounds', 'analytic_rank', 'ngens', 'gens',
                   'heights', 'regulator', 'torsion', 'torsion_structure',
                   'torsion_generators', 'tamagawa_product', 'real_period',
-                  'area', 'faltings_height',  'stable_faltings_height',
+                  'area', 'faltings_height', 'stable_faltings_height',
                   'special_value', 'sha_an', 'sha',
                   'trace_hash', 'degree',
                   'xcoord_integral_points', 'num_int_pts',
@@ -998,8 +998,9 @@ def read_data(base_dir=ECDATA_DIR, file_types=new_main_file_types, ranges=all_ra
             isomat = record['isogeny_matrix']
             if raw:
                 isomat = parse_int_list_list(isomat)
+            clabel = label[:-1]
             def num2Lnum(i):
-                return int(all_data[label[:-1]+str(i)]['lmfdb_number'])
+                return int(all_data[clabel+str(i)]['lmfdb_number'])
 
             # perm = lambda i: next(c for c in self.curves if c['number'] == i+1)['lmfdb_number']-1
             # newmat = [[isomat[perm(i)][perm(j)] for i in range(n)] for j in range(n)]
@@ -1079,8 +1080,9 @@ def read_data_ext(base_dir=ECDATA_DIR, file_types=new_main_file_types, ranges=al
             isomat = record['isogeny_matrix']
             if raw:
                 isomat = parse_int_list_list(isomat)
+            clabel = label[:-1]
             def num2Lnum(i):
-                return int(all_data[label[:-1]+str(i)]['lmfdb_number'])
+                return int(all_data[clabel+str(i)]['lmfdb_number'])
 
             # perm = lambda i: next(c for c in self.curves if c['number'] == i+1)['lmfdb_number']-1
             # newmat = [[isomat[perm(i)][perm(j)] for i in range(n)] for j in range(n)]
@@ -1665,21 +1667,21 @@ def c4c6D(ainvs):
                         a3**2 + 4*a6,
                         a1**2 * a6 + 4*a2*a6 - a1*a3*a4 + a2*a3**2 - a4**2)
 
-    (c4, c6) =  (b2**2 - 24*b4,
-                 -b2**3 + 36*b2*b4 - 216*b6)
+    (c4, c6) = (b2**2 - 24*b4,
+                -b2**3 + 36*b2*b4 - 216*b6)
 
     D = -b2**2*b8 - 8*b4**3 - 27*b6**2 + 9*b2*b4*b6
     return (c4, c6, D)
 
-def add_extra_data(record, PRECISION=100):
+def add_extra_data(record, prec=100):
     # We avoid constructing the elliptic curve as that is very much slower
-    (c4, c6, D) = c4c6D(parse_int_list(record['ainvs']))
+    (c4, _, D) = c4c6D(parse_int_list(record['ainvs']))
     record['absD'] = ZZ(D).abs()
 
     if gcd(D, c4) == 1:
         record['stable_faltings_height'] = record['faltings_height']
     else:
-        R = RealField(PRECISION)
+        R = RealField(prec)
         g = gcd(D, c4**3)
         record['stable_faltings_height'] = R(record['faltings_height']) - R(g).log()/12
     return record

@@ -2,7 +2,7 @@ import os
 import sys
 
 from sage.all import (EllipticCurve, Integer, ZZ, Set, factorial,
-                      mwrank_get_precision, mwrank_set_precision, srange, prod, copy)
+                      mwrank_get_precision, mwrank_set_precision, srange, prod, copy, gcd)
 from magma import get_magma
 
 from red_gens import reduce_tgens, reduce_gens
@@ -913,7 +913,7 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, ver
             F_ht = -A.log()/2
             R = om.parent()
             record['faltings_height'] = F_ht
-            record['stable_faltings_height'] = F_ht - R(gcd(D,E.c4()**3)).log()/12
+            record['stable_faltings_height'] = F_ht - R(gcd(D, E.c4()**3)).log()/12
 
             # Analytic Sha
             if gens_missing:
