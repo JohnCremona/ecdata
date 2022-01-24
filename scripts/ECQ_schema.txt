@@ -1,4 +1,182 @@
-Old (pre-December 2020) schema for ECQ: table ec_curves with extra table
+New (since December 2020) schema for ECQ:
+
+    Before this there was one table ec_curves with an "extra" table
+    (see below for the schema) and ec_padic.
+
+New tables (since December 2020): 8 tables, the first of which will be
+the main search table, with ec_padic unchanged.
+
+ec_curvedata
+ec_localdata
+ec_classdata
+ec_mwbsd
+ec_galrep
+ec_2adic
+ec_torsion_growth [only has data for conductors up to 400000]
+ec_iwasawa        [only has data for conductors up to 150000]
+ec_padic          [only has data for conductors up to 130000]
+
+NB (1) All curves have an 'lmfdb_label' (e.g. '11.a1'), with
+'lmfdb_iso' the isogeny class label (e.g. '11.a'), 'lmfdb_number' the
+number of the curve in its isogeny class (e.g. 1), 'iso_nlabel'
+(numerical converson of the letter part of the label).  Curves of
+conductor <500000 also have "Cremona label" columns 'Clabel'
+(e.g. '11a1') and 'Ciso' (e.g.'11a').
+
+(2) The 'conductor' column is in all tables though apparently
+redundant in all but ec_curvedata.  This is fo ease of housekeeping
+operations such as deleteing/backup of curves by conductor range.
+
+schemas:
+
+ec_curvedata: one row per curve, contains all columns used in search
+
+{'id': 'bigint',
+ 'Clabel': 'text',
+ 'lmfdb_label': 'text',
+ 'Ciso': 'text',
+ 'lmfdb_iso': 'text',
+ 'regulator': 'numeric',
+ 'ainvs': 'numeric[]',
+ 'jinv': 'numeric[]',
+ 'min_quad_twist_ainvs': 'numeric[]',
+ 'iso_nlabel': 'smallint',
+ 'Cnumber': 'smallint',
+ 'lmfdb_number': 'smallint',
+ 'cm': 'smallint',
+ 'num_bad_primes': 'smallint',
+ 'optimality': 'smallint',
+ 'manin_constant': 'smallint',
+ 'torsion': 'smallint',
+ 'rank': 'smallint',
+ 'analytic_rank': 'smallint',
+ 'signD': 'smallint',
+ 'class_deg': 'smallint',
+ 'class_size': 'smallint',
+ 'min_quad_twist_disc': 'smallint',
+ 'faltings_index': 'smallint',
+ 'faltings_ratio': 'smallint',
+ 'isogeny_degrees': 'smallint[]',
+ 'nonmax_primes': 'smallint[]',
+ 'torsion_structure': 'smallint[]',
+ 'torsion_primes': 'smallint[]',
+ 'sha_primes': 'smallint[]',
+ 'conductor': 'integer',
+ 'nonmax_rad': 'integer',
+ 'num_int_pts': 'integer',
+ 'sha': 'integer',
+ 'bad_primes': 'integer[]',
+ 'degree': 'bigint',
+ 'semistable': 'boolean',
+ 'potential_good_reduction': 'boolean'}
+
+NB (1) no 'equation' column: constructed on the fly from ainvs.
+(2) we store the ainvs of the minimal quadratic twist and look up its
+label on the fly.
+
+ec_localdata: one row per (curve, bad prime)
+
+{'id': 'bigint',
+ 'lmfdb_label': 'text',
+ 'tamagawa_number': 'smallint',
+ 'kodaira_symbol': 'smallint',
+ 'reduction_type': 'smallint',
+ 'root_number': 'smallint',
+ 'conductor_valuation': 'smallint',
+ 'discriminant_valuation': 'smallint',
+ 'j_denominator_valuation': 'smallint',
+ 'prime': 'integer',
+ 'conductor': 'integer'}
+
+NB kodaira_symbol uses the pari numerical encoding.  Sage has (thanks
+to David Roe) a suitable class to use to convert these to text via
+latex(KodairaSymbol(n)), and K._pari_code() converts a Sage Kodaira
+Symbol object K to its pari code.
+
+ec_mwbsd: one row per curve
+
+{'id': 'bigint',
+ 'lmfdb_label': 'text',
+ 'special_value': 'numeric',
+ 'real_period': 'numeric',
+ 'area': 'numeric',
+ 'sha_an': 'numeric',
+ 'tamagawa_product': 'integer',
+ 'ngens': 'smallint',
+ 'rank_bounds': 'smallint[]',
+ 'torsion_generators': 'numeric[]',
+ 'xcoord_integral_points': 'numeric[]',
+ 'gens': 'numeric[]',
+ 'heights': 'numeric[]',
+ 'conductor': 'integer'}
+
+ec_classdata: one row per isogeny class
+
+{'id': 'bigint',
+ 'lmfdb_iso': 'text',
+ 'trace_hash': 'bigint',
+ 'class_size': 'smallint',
+ 'class_deg': 'smallint',
+ 'isogeny_matrix': 'smallint[]',
+ 'aplist': 'smallint[]',
+ 'anlist': 'smallint[]',
+ 'conductor': 'integer'}
+
+ec_2adic: one row per curve (Rouse data)
+
+{'id': 'bigint',
+ 'lmfdb_label': 'text',
+ 'twoadic_label': 'text',
+ 'twoadic_index': 'smallint',
+ 'twoadic_log_level': 'smallint',
+ 'twoadic_gens': 'smallint[]',
+ 'conductor': 'integer'}
+
+ec_galrep: one row per (curve, nonmaximal prime) (Sutherland data)
+
+{'id': 'bigint',
+ 'lmfdb_label': 'text',
+ 'image': 'text',
+ 'prime': 'smallint',
+ 'conductor': 'integer'}
+
+ec_torsion_growth: one row per (curve, extension field) (Gonzalez-Jimenez--Najman data)
+
+[No data for conductors over 400000]
+
+{'id': 'bigint',
+ 'lmfdb_label': 'text',
+ 'degree': 'smallint',
+ 'field': 'numeric[]',
+ 'torsion': 'smallint[]',
+ 'conductor': 'integer'}
+
+ec_iwasawa: one row per curve (Pollack data)
+
+[No data for conductors over 4150000]
+
+{'id': 'bigint',
+ 'lmfdb_label': 'text',
+ 'iwp0': 'smallint',
+ 'iwdata': 'jsonb',
+ 'conductor': 'integer'}
+
+NB Type jsonb is only used for ec_iwasawa.iwdata, which is a dict with
+keys a variable number of primes.
+
+ec_padic: one row per (curve, prime p) for p<100.
+
+{'id': 'bigint',
+ 'lmfdb_iso': 'text',
+ 'p': 'smallint',
+ 'prec': 'smallint',
+ 'unit': 'numeric',
+ 'val': 'smallint'}
+
+See make_tables.py for commands used to create these tables, and also
+the commands for creating indexes for them.
+
+======================= Old schemas =============================
 
 Search table columns (* indicates "used for searching Nov 2020"):
 
@@ -64,152 +242,3 @@ Extra table columns:
  'iwdata'
  'iwp0'
 
-New tables (since December 2020): 8 tables, the first of which will be
-the main search table.
-
-ec_curvedata
-ec_localdata
-ec_classdata
-ec_mwbsd
-ec_galrep
-ec_2adic
-ec_torsion_growth
-ec_iwasawa
-
-schemas:
-
-ec_curvedata: one row per curve, contains all columns used in search
-
-'label': 'text',
-'lmfdb_label': 'text',
-'iso': 'text',
-'lmfdb_iso': 'text',
-'iso_nlabel': 'smallint',
-'number': 'smallint',
-'lmfdb_number': 'smallint',
-'ainvs': 'numeric[]',
-'jinv': 'numeric[]',
-'conductor': 'integer',
-'cm': 'smallint',
-'isogeny_degrees': 'smallint[]',
-'nonmax_primes': 'smallint[]',
-'nonmax_rad': 'integer',
-'bad_primes': 'integer[]',
-'num_bad_primes': 'smallint',
-'semistable': 'boolean',
-'potential_good_reduction': 'boolean',
-'optimality': 'smallint',
-'manin_constant': 'smallint',
-'num_int_pts': 'integer',
-'torsion': 'smallint',
-'torsion_structure': 'smallint[]',
-'torsion_primes': 'smallint[]',
-'rank': 'smallint',
-'analytic_rank': 'smallint',
-'sha': 'integer',
-'sha_primes': 'smallint[]',
-'regulator': 'numeric',
-'signD': 'smallint',
-'degree': 'bigint',
-'class_deg': 'smallint',
-'class_size': 'smallint',
-'min_quad_twist_ainvs': 'numeric[]',
-'min_quad_twist_disc': 'smallint',
-'faltings_index': 'smallint',
-'faltings_ratio': 'smallint'
-
-NB
-(1) no 'equation' column: constructed on the fly from ainvs
-(2) we store tha ainvs of the minimal quadratic twist and look up its
-    label on the fly.
-
-ec_localdata: one row per (curve, bad prime)
-
-'label': 'text',
-'lmfdb_label': 'text',
-'conductor': 'integer',
-'prime': 'integer',
-'tamagawa_number': 'smallint',
-'kodaira_symbol': 'smallint',
-'reduction_type': 'smallint',
-'root_number': 'smallint',
-'conductor_valuation': 'smallint',
-'discriminant_valuation': 'smallint',
-'j_denominator_valuation': 'smallint'
-
-NB kodaira_symbol uses the pari numerical encoding.  Sage has (thanks
-to David Roe) a suitable class to use to convert these to text via
-latex(KodairaSymbol(n)), and K._pari_code() converts a Sage Kodaira
-Symbol object K to its pari code.
-
-ec_mwbsd: one row per curve
-
-'label': 'text',
-'lmfdb_label': 'text',
-'conductor': 'integer',
-'torsion_generators': 'numeric[]',
-'xcoord_integral_points': 'numeric[]',
-'special_value': 'numeric',
-'real_period': 'numeric',
-'area': 'numeric',
-'tamagawa_product': 'integer',
-'sha_an': 'numeric',
-'rank_bounds': 'smallint[]',
-'ngens': 'smallint',
-'gens': 'numeric[]',
-'heights': 'numeric[]'
-
-ec_classdata: one row per isogeny class
-
-'iso': 'text',
-'lmfdb_iso': 'text',
-'conductor': 'integer',
-'trace_hash': 'bigint',
-'class_size': 'smallint',
-'class_deg': 'smallint',
-'isogeny_matrix': 'smallint[]',
-'aplist': 'smallint[]',
-'anlist': 'smallint[]'
-
-ec_2adic: one row per curve (Rouse data)
-
-'label': 'text',
-'lmfdb_label': 'text',
-'conductor': 'integer',
-'twoadic_label': 'text',
-'twoadic_index': 'smallint',
-'twoadic_log_level': 'smallint',
-'twoadic_gens': 'smallint[]'
-
-ec_galrep: one row per (curve, nonmaximal prime) (Sutherland data)
-
-'label': 'text',
-'lmfdb_label': 'text',
-'conductor': 'integer',
-'prime': 'smallint',
-'image': 'text'
-
-ec_torsion_growth: one row per (curve, extension field) (Gonzalez-Jimenez--Najman data)
-
-[No data for conductors over 400000]
-
-'label': 'text',
-'lmfdb_label': 'text',
-'conductor': 'integer',
-'degree': 'smallint',
-'field': 'numeric[]',
-'torsion': 'smallint[]'
-
-ec_iwasawa: one row per curve (Pollack data)
-
-'label': 'text',
-'lmfdb_label': 'text',
-'conductor': 'integer',
-'iwdata': 'jsonb',
-'iwp0': 'smallint'
-
-NB Type jsonb is only used for ec_iwasawa.iwdata, which is a dict with
-keys a variable number of primes.
-
-See make_tables.py for commands used to create these tables, and also
-the commands for creating indexes for them.

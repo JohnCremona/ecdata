@@ -981,11 +981,11 @@ def read_data(base_dir=ECDATA_DIR, file_types=new_main_file_types, ranges=all_ra
             print("Finished reading {} classes from {}".format(n, data_filename))
 
     if 'curvedata' in file_types and 'classdata' in file_types:
-        print("filling in class_deg and trace_hash from class to curve")
+        print("filling in class_deg, class_size and trace_hash from class to curve")
         for label, record in all_data.items():
             if int(record['number']) > 1:
                 label1 = label[:-1]+'1'
-                for col in ['class_deg', 'trace_hash']:
+                for col in ['class_deg', 'class_size', 'trace_hash']:
                     record[col] = all_data[label1][col]
 
     if 'classdata' in file_types and resort:
