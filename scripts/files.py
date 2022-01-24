@@ -1673,7 +1673,7 @@ def c4c6D(ainvs):
     D = -b2**2*b8 - 8*b4**3 - 27*b6**2 + 9*b2*b4*b6
     return (c4, c6, D)
 
-def add_extra_data(record, prec=100):
+def add_extra_data(record, prec=128):
     # We avoid constructing the elliptic curve as that is very much slower
     (c4, _, D) = c4c6D(parse_int_list(record['ainvs']))
     record['absD'] = ZZ(D).abs()

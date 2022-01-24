@@ -608,7 +608,7 @@ def process_raw_curves(infilename, outfilename, base_dir='.', split_by_N=False, 
                 nNcu, nNcl = output_one_conductor(N, allcurves[N], outfile)
                 print("N={}: {} curves in {} classes output to {}".format(N, nNcu, nNcl, outfilename))
 
-def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=100, verbose=1,
+def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=128, verbose=1,
                   allgensfilename=None, oldcurvedatafile=None, extragensfilename=None):
     alldata = {}
     nc = 0
