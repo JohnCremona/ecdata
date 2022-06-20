@@ -107,8 +107,11 @@ def get_gens(E, ar, verbose=0):
     prec0 = mwrank_get_precision()
     mwrank_set_precision(mwrank_saturation_precision)
     if verbose > 1:
-        print("Starting saturation (p<{})...".format(mwrank_saturation_maxprime))
-    gens, index, reg = E.saturation(gens, max_prime=mwrank_saturation_maxprime)
+        print("Starting saturation (automatic saturation bound)...")
+    gens, index, reg = E.saturation(gens, max_prime=-1)
+    # if verbose > 1:
+    #     print("Starting saturation (p<{})...".format(mwrank_saturation_maxprime))
+    # gens, index, reg = E.saturation(gens, max_prime=mwrank_saturation_maxprime)
     mwrank_set_precision(prec0)
     if verbose > 1:
         print("... finished saturation (index {}, new reg={})".format(index, reg))
@@ -121,7 +124,7 @@ def get_gens(E, ar, verbose=0):
 # prime degree.
 
 # Here we assume that the points in Plist are saturated, and only
-# resaturate their images at primes up to the masimum prime dividing
+# resaturate their images at primes up to the maximum prime dividing
 # an isogeny degree.
 
 def map_points(maps, Plist, verbose=0):

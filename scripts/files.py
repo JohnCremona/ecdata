@@ -699,6 +699,8 @@ datafile_columns = {
     'classdata': classdata_cols,
     }
 
+# datafile_columns['curvedata'] = curvedata_cols_old2  # TEMPORARY
+
 # print("curvedata columns")
 # print(datafile_columns['curvedata'])
 # print("curvedata_ext columns")
@@ -713,7 +715,7 @@ def parse_curvedata_line(line, raw=False, ext=False):
     else:
         cols = datafile_columns['curvedata']
     if len(data) != len(cols):
-        raise RuntimeError("curvedata line has {} colsumns but {} were expected".format(len(data), len(cols)))
+        raise RuntimeError("curvedata line has {} columns but {} were expected".format(len(data), len(cols)))
     if raw:
         record = dict([(col, data[n]) for n, col in enumerate(cols)])
         record['semistable'] = bool(int(record['semistable']))
@@ -744,7 +746,7 @@ def parse_curvedata_line(line, raw=False, ext=False):
     record['torsion_primes'] = [int(p) for p in Integer(record['torsion']).prime_divisors()]
     record['lmfdb_iso'] = ".".join([str(record['conductor']), record['lmfdb_isoclass']])
 
-    #record = add_extra_data(record)
+    record = add_extra_data(record) ## add absD and stable_faltings_height
     return record['label'], record
 
 def parse_classdata_line(line, raw=False):

@@ -1,5 +1,6 @@
 import os
 import sys
+sys.path.insert(0, '/home/jec/ecdata/scripts/')
 
 from sage.all import (EllipticCurve, Integer, ZZ, Set, factorial,
                       mwrank_get_precision, mwrank_set_precision, srange, prod, copy, gcd)
@@ -9,7 +10,8 @@ from red_gens import reduce_tgens, reduce_gens
 from trace_hash import TraceHashClass
 
 from files import (parse_line_label_cols, parse_curvedata_line,
-                   parse_allgens_line_simple, parse_extra_gens_line, write_datafiles)
+                   parse_allgens_line_simple, parse_extra_gens_line, write_datafiles,
+                   make_paricurves)
 
 from codec import (parse_int_list, parse_int_list_list, point_to_weighted_proj,
                    weighted_proj_to_affine_point, split_galois_image_code,
@@ -134,10 +136,9 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
 
         # Compute integral points (x-coordinates)
         intpts = [get_integral_points(Elist[i], genlist[i]) for i in range(ncurves)]
-        #if verbose:
-        #    print("intpts = {}".format(intpts))
-        for i, Ei, xs in zip(range(ncurves), Elist, intpts):
-            print("{}{}{} = {}: intpts = {}".format(N, cl, (i+1), Ei.ainvs(), xs))
+        if verbose:
+            for i, Ei, xs in zip(range(ncurves), Elist, intpts):
+                print("{}{}{} = {}: intpts = {}".format(N, cl, (i+1), Ei.ainvs(), xs))
 
         # Output data for optimal curves
 
