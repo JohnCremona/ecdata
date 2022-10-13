@@ -89,12 +89,17 @@ def make_datafiles(infilename, mode='w', verbose=False, prefix="t"):
             reglist = [1 for F in Elist]
         else:
             Plist = get_gens(E, r, verbose)
-            genlist = map_points(maps, Plist)
+            # Saturate these points
             prec0 = mwrank_get_precision()
             mwrank_set_precision(mwrank_saturation_precision)
             if verbose:
-                print("genlist (before saturation) = {}".format(genlist))
-            genlist = [Elist[i].saturation(genlist[i], max_prime=mwrank_saturation_maxprime)[0] for i in range(ncurves)]
+                print("gens (before saturation) = {}".format(Plist))
+            Plist, ind, _ = Elist[0].saturation(Plist, max_prime=-1)
+            if verbose:
+                print("gens (after saturation) = {}".format(Plist))
+                if ind>1:
+                    print("index gain {}".format(ind))
+            genlist = map_points(maps, Plist)
             if verbose:
                 print("genlist (before reduction) = {}".format(genlist))
             genlist = [Elist[i].lll_reduce(genlist[i])[0] for i in range(ncurves)]

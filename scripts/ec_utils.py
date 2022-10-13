@@ -146,6 +146,9 @@ def map_points(maps, Plist, verbose=0):
             break
         for j in range(1, ncurves):
             if (maps[i][j] != 0) and Qlists[j] == []:
+                if verbose>1:
+                    print("Mapping points from curve {} to curve {} via {}".format(i,j,maps[i][j]))
+                    print("points to be mapped: {}".format(Qlists[i]))
                 Qlists[j] = [maps[i][j](P) for P in Qlists[i]]
                 nfill += 1
     # now we saturate the points just computed at all primes up to maxp
