@@ -14,6 +14,7 @@ from trace_hash import TraceHashClass
 from codec import split, parse_int_list, parse_int_list_list, proj_to_point, proj_to_aff, point_to_weighted_proj, decode, encode, split_galois_image_code, parse_twoadic_string, shortstr, liststr, weighted_proj_to_proj
 from red_gens import reduce_gens
 from moddeg import get_modular_degree
+from min_quad_twist import min_quad_twist
 
 HOME = os.getenv("HOME")
 
@@ -205,13 +206,9 @@ def parse_allgens_line(line):
         record['sha'] = int(sha)
         record['sha_primes'] = [int(p) for p in sha.prime_divisors()]
 
-    Etw, Dtw = E.minimal_quadratic_twist()
-    if Etw.conductor() == N:
-        record['min_quad_twist_ainvs'] = ainvs
-        record['min_quad_twist_disc'] = 1
-    else:
-        record['min_quad_twist_ainvs'] = [int(a) for a in Etw.ainvs()]
-        record['min_quad_twist_disc'] = int(Dtw)
+    Etw, Dtw = min_quad_twist(E)
+    record['min_quad_twist_ainvs'] = [int(a) for a in Etw.ainvs()]
+    record['min_quad_twist_disc'] = int(Dtw)
 
     return label, record
 
@@ -746,7 +743,8 @@ def parse_curvedata_line(line, raw=False, ext=False):
     record['torsion_primes'] = [int(p) for p in Integer(record['torsion']).prime_divisors()]
     record['lmfdb_iso'] = ".".join([str(record['conductor']), record['lmfdb_isoclass']])
 
-    record = add_extra_data(record) ## add absD and stable_faltings_height
+    # The next line was only needed when we added the Faltings height and absD fields
+    #record = add_extra_data(record) ## add absD and stable_faltings_height
     return record['label'], record
 
 def parse_classdata_line(line, raw=False):
@@ -1470,12 +1468,13 @@ def make_all_upload_files(data, tables=all_tables, NN=None, include_id=False):
     for table in tables:
         make_table_upload_file(data, table, NN=NN, include_id=include_id)
 
-def write_curvedata(data, r, base_dir=MATSCHKE_DIR):
+def write_curvedata(data, r, base_dir=MATSCHKE_DIR, suffix=""):
     r"""
-    Write file base_dir/curvedata/curvedata.<r>
+    Write file base_dir/curvedata/curvedata.<r> (with an optional suffix)
     """
     cols = datafile_columns['curvedata']
-    filename = os.path.join(base_dir, 'curvedata', 'curvedata.{}'.format(r))
+    fn = f'curvedata.{r}.{suffix}' if suffix else f'curvedata.{r}'
+    filename = os.path.join(base_dir, 'curvedata', fn)
     #print("Writing data to {}".format(filename))
     n = 0
     with open(filename, 'w') as outfile:

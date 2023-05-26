@@ -10,8 +10,7 @@ from red_gens import reduce_tgens, reduce_gens
 from trace_hash import TraceHashClass
 
 from files import (parse_line_label_cols, parse_curvedata_line,
-                   parse_allgens_line_simple, parse_extra_gens_line, write_datafiles,
-                   make_paricurves)
+                   parse_allgens_line_simple, parse_extra_gens_line, write_datafiles)
 
 from codec import (parse_int_list, parse_int_list_list, point_to_weighted_proj,
                    weighted_proj_to_affine_point, split_galois_image_code,
@@ -23,6 +22,7 @@ from galrep import get_galrep_data
 from intpts import get_integral_points
 from aplist import my_aplist
 from moddeg import get_modular_degree
+from min_quad_twist import min_quad_twist
 
 from ec_utils import (mwrank_saturation_precision,
                       mwrank_saturation_maxprime, get_gens,
@@ -949,13 +949,9 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=128, ver
                 print(" ...done: {}".format(record['xcoord_integral_points']))
 
 
-            Etw, Dtw = E.minimal_quadratic_twist()
-            if Etw.conductor() == N:
-                record['min_quad_twist_ainvs'] = record['ainvs']
-                record['min_quad_twist_disc'] = 1
-            else:
-                record['min_quad_twist_ainvs'] = [int(a) for a in Etw.ainvs()]
-                record['min_quad_twist_disc'] = int(Dtw)
+            Etw, Dtw = min_quad_twist(E)
+            record['min_quad_twist_ainvs'] = [int(a) for a in Etw.ainvs()]
+            record['min_quad_twist_disc'] = int(Dtw)
 
             if verbose:
                 print("Finished processing {}".format(label))
