@@ -7,7 +7,7 @@ UPLOAD_DIR = os.path.join(HOME, "ecq-upload")
 sys.path.append(os.path.join(HOME, 'lmfdb'))
 
 all_tables = (db.ec_curvedata, db.ec_localdata, db.ec_mwbsd,
-              db.ec_classdata, db.ec_2adic, db.ec_galrep,
+              db.ec_classdata, db.ec_galrep,
               db.ec_torsion_growth, db.ec_iwasawa)
 
 main_tables = (db.ec_curvedata, db.ec_localdata, db.ec_mwbsd,

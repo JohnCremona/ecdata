@@ -107,11 +107,11 @@ def add_mqt(record):
         record['min_quad_twist_disc'] = D
     return record
 
-def add_mqt_range(r):
-    from files import read_data, write_curvedata, ECDATA_DIR
-    dat = read_data(file_types=['curvedata'], ranges=[r])
+def add_mqt_range(r, base_dir):
+    from files import read_data, write_curvedata
+    dat = read_data(base_dir=base_dir, file_types=['curvedata'], ranges=[r])
     for lab, rec in dat.items():
         dat[lab] = add_mqt(rec)
-    write_curvedata(dat, r, base_dir=ECDATA_DIR)
+    write_curvedata(dat, r, base_dir=base_dir)
 
 

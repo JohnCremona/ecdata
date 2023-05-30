@@ -1110,8 +1110,8 @@ def read_data_ext(base_dir=ECDATA_DIR, file_types=new_main_file_types, ranges=al
 # Function to output files which can be uploaded to the database using copy_from() or update_from_file()
 #
 # NB postgresql has various integer types of different *fixed*
-# bit-lengths, of which te largest if 'bigint' but even that is too
-# big for a 20-digit integer, so quite a few of the columns have to
+# bit-lengths, of which the largest is 'bigint' but even that is too
+# small for a 20-digit integer, so quite a few of the columns have to
 # use the 'numeric' type.  The website code will cast to integers
 # where necessary.
 #
@@ -1121,7 +1121,6 @@ def read_data_ext(base_dir=ECDATA_DIR, file_types=new_main_file_types, ranges=al
 # data files currently still have these fields as they are used to
 # create labels for data processing purposes. None of the other tables
 # have these columns (any more).
-
 
 schemas = {'ec_curvedata': {'Clabel': 'text', 'lmfdb_label': 'text', 'Ciso': 'text', 'lmfdb_iso': 'text',
                             'iso_nlabel': 'smallint', 'Cnumber': 'smallint', 'lmfdb_number': 'smallint',
