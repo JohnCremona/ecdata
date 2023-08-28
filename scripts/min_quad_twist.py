@@ -36,6 +36,15 @@ assert Set(min_quad_disc_CM_dict.keys()) + Set([0,1728]) == Set(cm_j_invariants(
 def isog_key(E):
     return E.aplist(100)
 
+def is_quadratic_twist(E1, E2):
+    """
+    Same as E1.is_quadratic_twist(E2) except that the return
+    value is a quadratic discriminant rather than the squarefree
+    integer as returned by Sage
+    """
+    D = E1.is_quadratic_twist(E2)
+    return 4*D if D%4 in [2,3] else D
+
 def min_quad_twist(E):
     """
     Input: E, an elliptic curve over Q.
@@ -44,7 +53,7 @@ def min_quad_twist(E):
     j = E.j_invariant()
     try:
         Emqt = EllipticCurve(min_quad_disc_CM_dict[j])
-        return Emqt, E.is_quadratic_twist(Emqt)
+        return Emqt, is_quadratic_twist(E, Emqt)
     except KeyError:
         pass
     assert j in [0,1728] or not E.has_cm()
@@ -75,7 +84,7 @@ def min_quad_twist(E):
     min_cond = min(E.conductor() for E in Elist)
     Elist = [E for E in Elist if E.conductor() == min_cond]
     if len(Elist)==1:
-        return Elist[0], E.is_quadratic_twist(Elist[0])
+        return Elist[0], is_quadratic_twist(E, Elist[0])
 
     # sort into isogeny classes and pick out first
 
@@ -86,11 +95,11 @@ def min_quad_twist(E):
     # This should leave 1 curve or 2 when E has CM
     n = len(Elist)
     if n==1:
-        return Elist[0], E.is_quadratic_twist(Elist[0])
+        return Elist[0], is_quadratic_twist(E, Elist[0])
 
     assert n==2 and j in [0, 1728]
     Elist.sort(key=lambda e: e.discriminant().abs())
-    return Elist[0], E.is_quadratic_twist(Elist[0])
+    return Elist[0], is_quadratic_twist(E, Elist[0])
 
 # Function to add (or overwrite) the fields 'min_quad_twist_ainvs' and
 # 'min_quad_twist_disc' from a curve record obtained from
