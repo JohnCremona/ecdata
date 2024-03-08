@@ -976,8 +976,8 @@ def read_data(base_dir=ECDATA_DIR, file_types=new_main_file_types, ranges=all_ra
                             all_data[label].update(record)
                         else:
                             all_data[label] = record
-                    if n%10000 == 0 and first:
-                        print("Read {} classes so far from {}".format(n, data_filename))
+                    # if n%10000 == 0 and first:
+                    #     print("Read {} classes so far from {}".format(n, data_filename))
             print("Finished reading {} classes from {}".format(n, data_filename))
 
     if 'curvedata' in file_types and 'classdata' in file_types:

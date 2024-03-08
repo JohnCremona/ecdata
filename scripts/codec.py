@@ -182,14 +182,14 @@ int_cols = ['number', 'lmfdb_number', 'iso_nlabel', 'faltings_index',
             'faltings_ratio', 'conductor', 'cm', 'signD',
             'min_quad_twist_disc', 'rank', 'analytic_rank', 'ngens',
             'torsion', 'tamagawa_product', 'sha', 'class_size', 'class_deg',
-            'nonmax_rad', 'twoadic_index']
+            'nonmax_rad', 'twoadic_index', 'degree', 'num_int_pts']
 bigint_cols = ['trace_hash', 'absD']
 int_list_cols = ['ainvs', 'isogeny_degrees', 'min_quad_twist_ainvs',
                  'bad_primes', 'tamagawa_numbers', 'kodaira_symbols',
                  'reduction_types', 'root_numbers', 'conductor_valuations',
                  'discriminant_valuations',
                  'j_denominator_valuations', 'rank_bounds',
-                 'torsion_structure',
+                 'torsion_structure', 'xcoord_integral_points',
                  'aplist', 'anlist', 'nonmax_primes']
 int_list_list_cols = ['isogeny_matrix', 'gens', 'torsion_generators']
 bool_cols = ['semistable']
