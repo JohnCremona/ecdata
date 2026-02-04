@@ -18,7 +18,7 @@ db.create_table(name='ec_curvedata',
                     'integer': ['conductor', 'nonmax_rad', 'num_int_pts', 'sha'],
                     'integer[]': ['bad_primes'],
                     'bigint': ['degree'],
-                    'boolean': ['semistable', 'potential_good_reduction'],
+                    'boolean': ['semistable', 'potential_good_reduction', 'squarefree_disc'],
                 },
                 label_col='lmfdb_label',
                 sort=['conductor', 'iso_nlabel', 'lmfdb_number'],
@@ -132,7 +132,9 @@ db.ec_curvedata.create_index(['torsion_structure'], type='btree')
 db.ec_curvedata.create_index(['nonmax_rad', 'id'], type='btree')
 db.ec_curvedata.create_index(['id'], type='btree')
 db.ec_curvedata.create_index(['semistable'], type='btree')
+db.ec_curvedata.create_index(['squarefree_disc'], type='btree')
 db.ec_curvedata.create_index(['semistable', 'conductor', 'iso_nlabel', 'lmfdb_number'], type='btree')
+db.ec_curvedata.create_index(['squarefree_disc', 'conductor', 'iso_nlabel', 'lmfdb_number'], type='btree')
 db.ec_curvedata.create_index(['potential_good_reduction'], type='btree')
 db.ec_curvedata.create_index(['potential_good_reduction', 'conductor', 'iso_nlabel', 'lmfdb_number'], type='btree')
 db.ec_curvedata.create_index(['class_size'], type='btree')

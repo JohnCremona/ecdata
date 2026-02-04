@@ -149,10 +149,11 @@ def parse_allgens_line(line):
     record['reduction_types'] = [ld['red'] for ld in local_data]
     record['root_numbers'] = [ld['rootno'] for ld in local_data]
     record['conductor_valuations'] = cv = [ld['ord_cond'] for ld in local_data]
-    record['discriminant_valuations'] = [ld['ord_disc'] for ld in local_data]
+    record['discriminant_valuations'] = dv = [ld['ord_disc'] for ld in local_data]
     record['j_denominator_valuations'] = [ld['ord_den_j'] for ld in local_data]
 
     record['semistable'] = all([v == 1 for v in cv])
+    record['squarefree_disc'] = all([v == 1 for v in dv])
     record['tamagawa_product'] = tamprod = prod(cps)
 
     # NB in the allgens file all points are stored in projective
@@ -634,7 +635,7 @@ def parse_extra_gens_line(line):
 curvedata_cols_old1 = ['label', 'isoclass', 'number', 'lmfdb_label', 'lmfdb_isoclass',
                        'lmfdb_number', 'iso_nlabel', 'faltings_index', 'faltings_ratio',
                        'conductor', 'ainvs', 'jinv', 'cm',
-                       'isogeny_degrees', 'semistable', 'signD',
+                       'isogeny_degrees', 'semistable', 'squarefree_disc', 'signD',
                        'min_quad_twist_ainvs', 'min_quad_twist_disc',
                        'bad_primes', 'tamagawa_numbers', 'kodaira_symbols',
                        'reduction_types', 'root_numbers', 'conductor_valuations',
@@ -654,7 +655,7 @@ intpts_cols = ['xcoord_integral_points', 'num_int_pts']
 curvedata_cols_old2 = ['label', 'isoclass', 'number', 'lmfdb_label', 'lmfdb_isoclass',
                        'lmfdb_number', 'iso_nlabel', 'faltings_index', 'faltings_ratio',
                        'conductor', 'ainvs', 'jinv', 'cm',
-                       'isogeny_degrees', 'semistable', 'signD',
+                       'isogeny_degrees', 'semistable', 'squarefree_disc', 'signD',
                        'min_quad_twist_ainvs', 'min_quad_twist_disc',
                        'bad_primes', 'tamagawa_numbers', 'kodaira_symbols',
                        'reduction_types', 'root_numbers', 'conductor_valuations',
@@ -673,7 +674,7 @@ curvedata_cols_old2 = ['label', 'isoclass', 'number', 'lmfdb_label', 'lmfdb_isoc
 curvedata_cols = ['label', 'isoclass', 'number', 'lmfdb_label', 'lmfdb_isoclass',
                   'lmfdb_number', 'iso_nlabel', 'faltings_index', 'faltings_ratio',
                   'conductor', 'ainvs', 'jinv', 'cm',
-                  'isogeny_degrees', 'semistable', 'signD', 'absD',
+                  'isogeny_degrees', 'semistable', 'squarefree_disc', 'signD', 'absD',
                   'min_quad_twist_ainvs', 'min_quad_twist_disc',
                   'bad_primes', 'tamagawa_numbers', 'kodaira_symbols',
                   'reduction_types', 'root_numbers', 'conductor_valuations',
@@ -716,6 +717,7 @@ def parse_curvedata_line(line, raw=False, ext=False):
     if raw:
         record = dict([(col, data[n]) for n, col in enumerate(cols)])
         record['semistable'] = bool(int(record['semistable']))
+        record['squarefree_disc'] = bool(int(record['squarefree_disc']))
         record['potential_good_reduction'] = (parse_int_list(record['jinv'])[1] == 1)
         record['num_bad_primes'] = str(1+record['bad_primes'].count(","))
         record['class_size'] = str(1+record['isogeny_degrees'].count(","))
@@ -1129,6 +1131,7 @@ schemas = {'ec_curvedata': {'Clabel': 'text', 'lmfdb_label': 'text', 'Ciso': 'te
                             'nonmax_primes': 'smallint[]', 'nonmax_rad': 'integer',
                             'bad_primes': 'integer[]', 'num_bad_primes': 'smallint',
                             'semistable': 'boolean', 'potential_good_reduction': 'boolean',
+                            'squarefree_disc': 'boolean',
                             'optimality': 'smallint', 'manin_constant': 'smallint',
                             'num_int_pts': 'integer', 'torsion': 'smallint',
                             'torsion_structure': 'smallint[]', 'torsion_primes': 'smallint[]',

@@ -192,7 +192,7 @@ int_list_cols = ['ainvs', 'isogeny_degrees', 'min_quad_twist_ainvs',
                  'torsion_structure', 'xcoord_integral_points',
                  'aplist', 'anlist', 'nonmax_primes']
 int_list_list_cols = ['isogeny_matrix', 'gens', 'torsion_generators']
-bool_cols = ['semistable']
+bool_cols = ['semistable', 'squarefree_disc']
 QQ_cols = ['jinv']
 RR_cols = ['regulator', 'real_period', 'area', 'faltings_height', 'stable_faltings_height', 'special_value', 'sha_an']
 RR_list_cols = ['heights']

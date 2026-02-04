@@ -10,7 +10,8 @@ from red_gens import reduce_tgens, reduce_gens
 from trace_hash import TraceHashClass
 
 from files import (parse_line_label_cols, parse_curvedata_line,
-                   parse_allgens_line_simple, parse_extra_gens_line, write_datafiles)
+                   parse_allgens_line_simple, parse_extra_gens_line,
+                   make_paricurves, write_datafiles)
 
 from codec import (parse_int_list, parse_int_list_list, point_to_weighted_proj,
                    weighted_proj_to_affine_point, split_galois_image_code,
@@ -791,10 +792,11 @@ def make_new_data(infilename, base_dir, Nmin=None, Nmax=None, PRECISION=128, ver
             record['reduction_types'] = [ld['red'] for ld in local_data]
             record['root_numbers'] = [ld['rootno'] for ld in local_data]
             record['conductor_valuations'] = cv = [ld['ord_cond'] for ld in local_data]
-            record['discriminant_valuations'] = [ld['ord_disc'] for ld in local_data]
+            record['discriminant_valuations'] = dv = [ld['ord_disc'] for ld in local_data]
             record['j_denominator_valuations'] = [ld['ord_den_j'] for ld in local_data]
 
             record['semistable'] = all([v == 1 for v in cv])
+            record['squarefree_disc'] = all([v == 1 for v in dv])
             record['tamagawa_product'] = tamprod = prod(cps)
             if verbose > 1:
                 print("local data done")

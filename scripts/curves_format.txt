@@ -47,7 +47,7 @@ z>0, unweighted projective coordinates.
 Dependent columns: heights, torsion, torsion_primes, equation,
                    num_bad_primes, bad_primes, jinv, min_quad_twist,
                    signD, min_quad_twist, cm, trace_hash, local_data,
-                   semistable, aplist, anlist
+                   semistable, squarefree_disc, aplist, anlist
 
 NB (1) these require creating each curve and should not be done on the
 fly.  We should write and run a one-off script to create a new data
@@ -171,7 +171,7 @@ New files with extra data
 curvedata.*: label, isoclass, number, lmfdb_label, lmfdb_isoclass,
              lmfdb_number, iso_nlabel,
 
-             conductor, ainvs, jinv, cm, isogeny_degrees, semistable,
+             conductor, ainvs, jinv, cm, isogeny_degrees, semistable, squarefree_disc,
              signD, min_quad_twist_ainvs, min_quad_twist_disc,
 
              bad_primes, tamagawa_numbers, kodaira_symbols,

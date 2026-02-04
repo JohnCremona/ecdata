@@ -68,7 +68,8 @@ ec_curvedata: one row per curve, contains all columns used in search
  'bad_primes': 'integer[]',
  'degree': 'bigint',
  'semistable': 'boolean',
- 'potential_good_reduction': 'boolean'}
+ 'potential_good_reduction': 'boolean',
+ 'squarefree_disc': 'boolean'}
 
 NB (1) no 'equation' column: constructed on the fly from ainvs.
 (2) we store the ainvs of the minimal quadratic twist and look up its
