@@ -632,43 +632,6 @@ def parse_extra_gens_line(line):
 
 # Original columns of a curvedata file:
 
-curvedata_cols_old1 = ['label', 'isoclass', 'number', 'lmfdb_label', 'lmfdb_isoclass',
-                       'lmfdb_number', 'iso_nlabel', 'faltings_index', 'faltings_ratio',
-                       'conductor', 'ainvs', 'jinv', 'cm',
-                       'isogeny_degrees', 'semistable', 'squarefree_disc', 'signD',
-                       'min_quad_twist_ainvs', 'min_quad_twist_disc',
-                       'bad_primes', 'tamagawa_numbers', 'kodaira_symbols',
-                       'reduction_types', 'root_numbers', 'conductor_valuations',
-                       'discriminant_valuations', 'j_denominator_valuations',
-                       'rank', 'rank_bounds', 'analytic_rank', 'ngens', 'gens',
-                       'heights', 'regulator', 'torsion', 'torsion_structure',
-                       'torsion_generators', 'tamagawa_product', 'real_period',
-                       'area', 'faltings_height', 'special_value', 'sha_an', 'sha']
-
-twoadic_cols = ['twoadic_index', 'twoadic_label', 'twoadic_log_level', 'twoadic_gens']
-galrep_cols = ['modp_images', 'nonmax_primes', 'nonmax_rad']
-intpts_cols = ['xcoord_integral_points', 'num_int_pts']
-
-# Columns after adding twoadic, galrep and intpts columns (making
-# those separate files unnecessary) and 'trac_hash' and 'degree':
-
-curvedata_cols_old2 = ['label', 'isoclass', 'number', 'lmfdb_label', 'lmfdb_isoclass',
-                       'lmfdb_number', 'iso_nlabel', 'faltings_index', 'faltings_ratio',
-                       'conductor', 'ainvs', 'jinv', 'cm',
-                       'isogeny_degrees', 'semistable', 'squarefree_disc', 'signD',
-                       'min_quad_twist_ainvs', 'min_quad_twist_disc',
-                       'bad_primes', 'tamagawa_numbers', 'kodaira_symbols',
-                       'reduction_types', 'root_numbers', 'conductor_valuations',
-                       'discriminant_valuations', 'j_denominator_valuations',
-                       'rank', 'rank_bounds', 'analytic_rank', 'ngens', 'gens',
-                       'heights', 'regulator', 'torsion', 'torsion_structure',
-                       'torsion_generators', 'tamagawa_product', 'real_period',
-                       'area', 'faltings_height', 'special_value', 'sha_an', 'sha',
-                       'trace_hash', 'degree',
-                       'xcoord_integral_points', 'num_int_pts',
-                       'twoadic_index', 'twoadic_label', 'twoadic_log_level', 'twoadic_gens',
-                       'modp_images', 'nonmax_primes', 'nonmax_rad']
-
 # Columns after adding 'absD' and 'stable_faltings_height'
 
 curvedata_cols = ['label', 'isoclass', 'number', 'lmfdb_label', 'lmfdb_isoclass',
@@ -711,13 +674,17 @@ def parse_curvedata_line(line, raw=False, ext=False):
     if ext:
         cols = datafile_columns['curvedata_ext']
     else:
-        cols = datafile_columns['curvedata']
+        cols = copy(datafile_columns['curvedata'])
     if len(data) != len(cols):
         raise RuntimeError("curvedata line has {} columns but {} were expected".format(len(data), len(cols)))
     if raw:
         record = dict([(col, data[n]) for n, col in enumerate(cols)])
         record['semistable'] = bool(int(record['semistable']))
-        record['squarefree_disc'] = bool(int(record['squarefree_disc']))
+        if 'squarefree_disc' in record:
+            record['squarefree_disc'] = bool(int(record['squarefree_disc']))
+        else:
+            dv = parse_int_list(record['discriminant_valuations'])
+            record['squarefree_disc'] = bool(all(v<2 for v in dv))
         record['potential_good_reduction'] = (parse_int_list(record['jinv'])[1] == 1)
         record['num_bad_primes'] = str(1+record['bad_primes'].count(","))
         record['class_size'] = str(1+record['isogeny_degrees'].count(","))
@@ -1470,14 +1437,14 @@ def make_all_upload_files(data, tables=all_tables, NN=None, include_id=False):
     for table in tables:
         make_table_upload_file(data, table, NN=NN, include_id=include_id)
 
-def write_curvedata(data, r, base_dir=MATSCHKE_DIR, suffix=""):
+def write_curvedata(data, r, base_dir=ECDATA_DIR, suffix=""):
     r"""
     Write file base_dir/curvedata/curvedata.<r> (with an optional suffix)
     """
     cols = datafile_columns['curvedata']
     fn = f'curvedata.{r}.{suffix}' if suffix else f'curvedata.{r}'
     filename = os.path.join(base_dir, 'curvedata', fn)
-    #print("Writing data to {}".format(filename))
+    print("Writing data to {}".format(filename))
     n = 0
     with open(filename, 'w') as outfile:
         for record in data.values():
@@ -1488,7 +1455,7 @@ def write_curvedata(data, r, base_dir=MATSCHKE_DIR, suffix=""):
 
 # temporary function for writing extended curvedata files
 
-def write_curvedata_ext(data, r, base_dir=MATSCHKE_DIR):
+def write_curvedata_ext(data, r, base_dir=ECDATA_DIR):
     r"""
     Write file base_dir/curvedata/curvedata.<r>.ext
     """
@@ -1511,7 +1478,7 @@ def write_curvedata_ext(data, r, base_dir=MATSCHKE_DIR):
                 print("... {} lines written to {} so far".format(n, filename))
     print("{} lines written to {}".format(n, filename))
 
-def write_classdata(data, r, base_dir=MATSCHKE_DIR):
+def write_classdata(data, r, base_dir=ECDATA_DIR):
     r"""
     Write file base_dir/classdata/classdata.<r>
     """
@@ -1527,7 +1494,7 @@ def write_classdata(data, r, base_dir=MATSCHKE_DIR):
                 n += 1
     print("{} lines written to {}".format(n, filename))
 
-def write_intpts(data, r, base_dir=MATSCHKE_DIR):
+def write_intpts(data, r, base_dir=ECDATA_DIR):
     r"""
     Write file base_dir/intpts/intpts.<r>
 
@@ -1543,7 +1510,7 @@ def write_intpts(data, r, base_dir=MATSCHKE_DIR):
             n += 1
     print("{} lines written to {}".format(n, filename))
 
-def write_degphi(data, r, base_dir=MATSCHKE_DIR):
+def write_degphi(data, r, base_dir=ECDATA_DIR):
     r"""
     Write file base_dir/alldegphi/alldegphi.<r>
 
@@ -1560,7 +1527,7 @@ def write_degphi(data, r, base_dir=MATSCHKE_DIR):
                 n += 1
     print("{} lines written to {}".format(n, filename))
 
-def write_datafiles(data, r, base_dir=MATSCHKE_DIR):
+def write_datafiles(data, r, base_dir=ECDATA_DIR):
     r"""Write file base_dir/<ft>/<ft>.<r> for ft in ['curvedata',
     'classdata', 'intpts', 'alldegphi']
     """
