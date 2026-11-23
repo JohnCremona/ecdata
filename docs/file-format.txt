@@ -104,7 +104,7 @@ Files:
 
 1. curves:   ID AI R T (for curves with NCURVE=1 only)
 2. allcurves: ID AI R T
-3. allgens:   ID AI R TOR TGENS GENS
+3. allgens:   ID AI R TOR GENS TGENS
 4. aplist:    N CLASSCODE AP25 BQ
 5. allbsd:    ID AI R T CP OM L1 REG SHA
 6. degphi:    ID DEG PDEG AI (for curves with NCURVE=1 only)
